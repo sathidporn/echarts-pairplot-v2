@@ -1,6 +1,10 @@
 import EChartsReact from "echarts-for-react"
 import { useMemo } from "react"
 const histogramBarCount = 40
+
+const offset = 5
+const gap = 3
+
 export default function PairPlot({series, timeseriesAxis, clusters, dataClusterIndex, style, onBrushActivate = () => {}, onBrushDeactivate = () => {}, onSelected = () => {}}) {
   let clusterIndex = useMemo(() => {
     if (dataClusterIndex === undefined) {
@@ -22,63 +26,74 @@ export default function PairPlot({series, timeseriesAxis, clusters, dataClusterI
       categories.push(i)
     }
     let categoriesColor = clusters.map(({color}) => color)
-    const offset = 5
-    const gap = 3
     const gridWidth = (100 - offset - gap) / (seriesCount + 1) - gap
     const gridHeight = (100 - offset - gap) / seriesCount - gap
+    function buildGrid(id, i, j) {
+      return {
+        id: id,
+        left: `${offset + j * (gridWidth + gap)}%`,
+        top: `${offset + i * (gridHeight + gap)}%`,
+        width: `${gridWidth}%`,
+        height: `${gridHeight}%`,
+        // containLabel: true,
+        show: true
+      }
+    }
+    function buildXAxis(name, show) {
+      return {
+        name,
+        scale: true,
+        type: 'value',
+        position: 'top',
+        gridIndex: index,
+        axisLabel: {
+          show
+        },
+        nameLocation: 'center'
+      }
+    }
+    function buildYAxis(name, type, show) {
+      return {
+        name,
+        scale: true,
+        type,
+        position: 'right',
+        gridIndex: index,
+        axisLabel: {
+          show,
+          showMinLabel: true,
+          showMaxLabel: true
+        },
+        nameLocation: 'center'
+      }
+    }
+    function buildScatterSeries(xName, yName, xFormatter) {
+      return {
+        type: 'scatter',
+        encode: {
+          x: [xName],
+          y: [yName]
+        },
+        xAxisIndex: index,
+        yAxisIndex: index,
+        color: '#5470c6',
+        tooltip: {
+          formatter: params => {
+            return `${params.marker}: x=${xFormatter(params.dataIndex)}, y=${series[yName][params.dataIndex].toFixed(2)}`
+          }
+        }
+      }
+    }
     for (let i = 0; i < seriesCount; i++) {
       for (let j = 0; j < seriesCount; j++) {
         if (j < i) continue
-        grid.push({
-          id: `grid-${seriesNames[i]}-${seriesNames[j]}`,
-          left: `${offset + j * (gridWidth + gap)}%`,
-          top: `${offset + i * (gridHeight + gap)}%`,
-          width: `${gridWidth}%`,
-          height: `${gridHeight}%`,
-          // containLabel: true,
-          show: true
-        })
-        xAxis.push({
-          name: i === 0?seriesNames[j]:undefined,
-          scale: true,
-          type: 'value',
-          position: 'top',
-          gridIndex: index,
-          axisLabel: {
-            show: i !== j?false:true
-          },
-          nameLocation: 'center'
-        })
-        yAxis.push({
-          // name: j === seriesCount - 1?seriesNames[i]:undefined,
-          scale: true,
-          type: i !== j?'value':'category',
-          position: 'right',
-          gridIndex: index,
-          axisLabel: {
-            show: false,
-            showMinLabel: true,
-            showMaxLabel: true
-          },
-          nameLocation: 'center'
-        })
+        grid.push(buildGrid(`grid-${seriesNames[i]}-${seriesNames[j]}`, i, j))
+        xAxis.push(buildXAxis(i === 0?seriesNames[j]:undefined, i !== j?false:true))
+        yAxis.push(buildYAxis(undefined, i !== j?'value':'category', false))
+        
         if (i !== j) {
           brushLink.push(index)
-          seriesOption.push({
-            type: 'scatter',
-            encode: {
-              x: [seriesNames[j]],
-              y: [seriesNames[i]]
-            },
-            xAxisIndex: index,
-            yAxisIndex: index,
-            color: '#5470c6',
-            tooltip: {
-              formatter: params => {
-                return `${params.marker}: x=${series[seriesNames[j]][params.dataIndex].toFixed(2)}, y=${series[seriesNames[i]][params.dataIndex].toFixed(2)}`
-              }
-            }
-          })
+          seriesOption.push(buildScatterSeries(seriesNames[j], seriesNames[i], dataIndex => series[seriesNames[j]][dataIndex].toFixed(2)))
         } else {
           let [min, max] = [Number.MAX_SAFE_INTEGER, Number.MIN_SAFE_INTEGER]
           // Scan for min/max
@@ -119,55 +134,12 @@ export default function PairPlot({series, timeseriesAxis, clusters, dataClusterI
       }
     }
     for (let i = 0; i < seriesCount; i++) {
-      grid.push({
-        id: `grid-${seriesNames[i]}-timeseries}`,
-        left: `${offset + seriesCount * (gridWidth + gap)}%`,
-        top: `${offset + i * (gridHeight + gap)}%`,
-        width: `${gridWidth}%`,
-        height: `${gridHeight}%`,
-        // containLabel: true,
-        show: true
-      })
-      xAxis.push({
-        name: i === 0?"timeseries":undefined,
-        scale: true,
-        type: 'value',
-        position: 'top',
-        gridIndex: index,
-        axisLabel: {
-          show: i === 0
-        },
-        nameLocation: 'center'
-      })
-      yAxis.push({
-        name: seriesNames[i],
-        scale: true,
-        type: 'value',
-        position: 'right',
-        gridIndex: index,
-        axisLabel: {
-          show: true,
-          showMinLabel: true,
-          showMaxLabel: true
-        },
-        nameLocation: 'center'
-      })
+      grid.push(buildGrid(`grid-${seriesNames[i]}-timeseries}`, i, seriesCount))
+      xAxis.push(buildXAxis(i === 0?"timeseries":undefined, i === 0))
+      yAxis.push(buildYAxis(seriesNames[i], 'value', true))
       brushLink.push(index)
-      seriesOption.push({
-        type: 'scatter',
-        encode: {
-          x: ["timeseries"],
-          y: [seriesNames[i]]
-        },
-        xAxisIndex: index,
-        yAxisIndex: index,
-        color: '#5470c6',
-        tooltip: {
-          formatter: params => {
-            return `${params.marker}: x=${timeseriesAxis[params.dataIndex]}, y=${series[seriesNames[i]][params.dataIndex].toFixed(2)}`
-          }
-        }
-      })
+      seriesOption.push(buildScatterSeries("timeseries", seriesNames[i], dataIndex => timeseriesAxis[dataIndex]))
+      
       index++
     }
     return {
