@@ -2,8 +2,11 @@ import './App.css';
 import {useCallback, useMemo, useReducer, useState} from 'react'
 
 import { generateRandomSeries, generateSequence } from './utils/data_generator';
+
 import PairPlot from './components/PairPlot';
 import ClustersTable from './components/ClustersTable';
+import SensorsTable from './components/SensorsTable'
+import { Grid } from '@material-ui/core';
 
 const seriesConfigs = {
   "seriesA": {n: 256},
@@ -16,24 +19,33 @@ const defaultCluster = {
   color: "#00ff00"
 }
 function App() {
-  let series = useMemo(() => {
-    let temp = {}
-    for (let [key, value] of Object.entries(seriesConfigs)) {
-      temp[key] = generateRandomSeries(value)
-    }
-    return temp
-  }, [])
-  let timeseries = useMemo(() => {
-    return generateSequence({n: 256})
-  }, [])
+  // let series = useMemo(() => {
+  //   let temp = {}
+  //   for (let [key, value] of Object.entries(seriesConfigs)) {
+  //     temp[key] = generateRandomSeries(value)
+  //   }
+  //   return temp
+  // }, [])
+  // let timeseries = useMemo(() => {
+  //   return generateSequence({n: 256})
+  // }, [])
+  // console.log("series",series)
+  // console.log("timeseries",timeseries)
+
+  // series from csv file
+  let [timeseries, setTimeSeries] = useState()
+  let [series, setSeries] = useState()
+
   const [clusters, setClusters] = useState([defaultCluster])
   const clustersChangeHandler = useCallback(clusters => {
     setClusters(clusters)
   }, [setClusters])
+
   const [activeClusterIndex, setActiveClusterIndex] = useState(0)
   const activeClusterChangeHandler = useCallback(index => {
     setActiveClusterIndex(index)
   }, [setActiveClusterIndex])
+
   const [brushingMode, setBrushingMode] = useState(false)
   const [dataClusterIndex, updateDataClusterIndex] = useReducer(
     (state, payload) => {
@@ -59,8 +71,9 @@ function App() {
         return state
       }
     }, 
-    Object.values(series)[0].map(() => -1)
+    series ? Object.values(series)[0].map(() => -1) : []
   )
+
   const brushActivateHandler = useCallback(() => {
     setBrushingMode(true)
   }, [setBrushingMode])
@@ -70,10 +83,29 @@ function App() {
   const onSelected = useCallback(index => {
     updateDataClusterIndex(index)
   }, [updateDataClusterIndex])
+
+  const onGetSeries = useCallback((series, timeseries) => {
+      setSeries(series)
+      setTimeSeries(timeseries)
+      updateDataClusterIndex(Object.values(series)[0].map(() => -1))    
+  },[setSeries, setTimeSeries, updateDataClusterIndex])
+
   return (
     <div className="App">
-      <PairPlot style={{width: '100vw', height: '100vh'}} series={series} timeseriesAxis={timeseries} clusters={clusters} dataClusterIndex={dataClusterIndex} onBrushActivate={brushActivateHandler} onBrushDeactivate={brushDeactivateHandler} onSelected={onSelected} />
-      <ClustersTable clusters={clusters} onChange={clustersChangeHandler} activeClusterIndex={activeClusterIndex} onActiveChange={activeClusterChangeHandler} dataClusterIndex={dataClusterIndex} />
+    <Grid item container lg={12} spacing={1}>
+      <Grid item lg={2}>
+        <SensorsTable onGetSeries={onGetSeries}></SensorsTable>
+        {/* <SensorsTable ></SensorsTable> */}
+        <ClustersTable clusters={clusters} onChange={clustersChangeHandler} activeClusterIndex={activeClusterIndex} onActiveChange={activeClusterChangeHandler} dataClusterIndex={dataClusterIndex} />
+      </Grid>
+      <Grid item lg={10}>
+        {series &&
+        <>
+        <PairPlot style={{width: '100vw', height: '100vh'}} series={series} timeseriesAxis={timeseries} clusters={clusters} dataClusterIndex={dataClusterIndex} onBrushActivate={brushActivateHandler} onBrushDeactivate={brushDeactivateHandler} onSelected={onSelected} />
+        </>
+        }
+      </Grid>
+    </Grid>
     </div>
   );
 }

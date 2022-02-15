@@ -6,6 +6,8 @@ const offset = 5
 const gap = 3
 
 export default function PairPlot({series, timeseriesAxis, clusters, dataClusterIndex, style, onBrushActivate = () => {}, onBrushDeactivate = () => {}, onSelected = () => {}}) {
+  console.log("series",series)
+  console.log("timeseriesAxis", timeseriesAxis)
   let clusterIndex = useMemo(() => {
     if (dataClusterIndex === undefined) {
       return Object.entries(series)[0][1].map(() => -1)
@@ -180,6 +182,7 @@ export default function PairPlot({series, timeseriesAxis, clusters, dataClusterI
       }]
     }
   }, [clusterIndex, clusters, series, timeseriesAxis])
+  console.log("option", option)
   const eventsHandler = useMemo(() => ({
     'brushselected': (params) => {
       let {batch} = params
