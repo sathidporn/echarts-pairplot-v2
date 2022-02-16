@@ -6,8 +6,6 @@ const offset = 5
 const gap = 3
 
 export default function PairPlot({series, timeseriesAxis, clusters, dataClusterIndex, style, onBrushActivate = () => {}, onBrushDeactivate = () => {}, onSelected = () => {}}) {
-  console.log("series",series)
-  console.log("timeseriesAxis", timeseriesAxis)
   let clusterIndex = useMemo(() => {
     if (dataClusterIndex === undefined) {
       return Object.entries(series)[0][1].map(() => -1)
@@ -41,11 +39,11 @@ export default function PairPlot({series, timeseriesAxis, clusters, dataClusterI
         show: true
       }
     }
-    function buildXAxis(name, show) {
+    function buildXAxis(name, show, type='value') {
       return {
         name,
         scale: true,
-        type: 'value',
+        type,
         position: 'top',
         gridIndex: index,
         axisLabel: {
@@ -137,7 +135,7 @@ export default function PairPlot({series, timeseriesAxis, clusters, dataClusterI
     }
     for (let i = 0; i < seriesCount; i++) {
       grid.push(buildGrid(`grid-${seriesNames[i]}-timeseries}`, i, seriesCount))
-      xAxis.push(buildXAxis(i === 0?"timeseries":undefined, i === 0))
+      xAxis.push(buildXAxis(i === 0?"timeseries":undefined, i === 0, "time"))
       yAxis.push(buildYAxis(seriesNames[i], 'value', true))
       brushLink.push(index)
       seriesOption.push(buildScatterSeries("timeseries", seriesNames[i], dataIndex => timeseriesAxis[dataIndex]))
@@ -182,7 +180,6 @@ export default function PairPlot({series, timeseriesAxis, clusters, dataClusterI
       }]
     }
   }, [clusterIndex, clusters, series, timeseriesAxis])
-  console.log("option", option)
   const eventsHandler = useMemo(() => ({
     'brushselected': (params) => {
       let {batch} = params
@@ -203,5 +200,5 @@ export default function PairPlot({series, timeseriesAxis, clusters, dataClusterI
       }
     }
   }), [onBrushActivate, onBrushDeactivate, onSelected])
-  return <EChartsReact style={style} option={option} onEvents={eventsHandler} />
+  return <EChartsReact style={style} option={option} notMerge={true} onEvents={eventsHandler} />
 }

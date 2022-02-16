@@ -1,19 +1,19 @@
 import './App.css';
-import {useCallback, useMemo, useReducer, useState} from 'react'
+import {useCallback, useReducer, useState, useMemo} from 'react'
 
-import { generateRandomSeries, generateSequence } from './utils/data_generator';
+// import { generateRandomSeries, generateSequence } from './utils/data_generator';
 
 import PairPlot from './components/PairPlot';
 import ClustersTable from './components/ClustersTable';
 import SensorsTable from './components/SensorsTable'
 import { Grid } from '@material-ui/core';
 
-const seriesConfigs = {
-  "seriesA": {n: 256},
-  "seriesB": {n: 256, min: 10, max: 15},
-  "seriesC": {n: 256, min: 95, max: 105},
-  "seriesD": {n: 256, min: 1000, max: 1001},
-}
+// const seriesConfigs = {
+//   "seriesA": {n: 256},
+//   "seriesB": {n: 256, min: 10, max: 15},
+//   "seriesC": {n: 256, min: 95, max: 105},
+//   "seriesD": {n: 256, min: 1000, max: 1001},
+// }
 const defaultCluster = {
   id: "default",
   color: "#00ff00"
@@ -84,7 +84,7 @@ function App() {
     updateDataClusterIndex(index)
   }, [updateDataClusterIndex])
 
-  const onGetSeries = useCallback((series, timeseries) => {
+  const onAllSeries = useCallback((series, timeseries) => {
       setSeries(series)
       setTimeSeries(timeseries)
       updateDataClusterIndex(Object.values(series)[0].map(() => -1))    
@@ -92,16 +92,16 @@ function App() {
 
   return (
     <div className="App">
-    <Grid item container lg={12} spacing={1}>
+    <Grid item container lg={12} spacing={0}>
       <Grid item lg={2}>
-        <SensorsTable onGetSeries={onGetSeries}></SensorsTable>
-        {/* <SensorsTable ></SensorsTable> */}
+      {/* <SensorsTable></SensorsTable> */}
+        <SensorsTable onAllSeries={onAllSeries}></SensorsTable>
         <ClustersTable clusters={clusters} onChange={clustersChangeHandler} activeClusterIndex={activeClusterIndex} onActiveChange={activeClusterChangeHandler} dataClusterIndex={dataClusterIndex} />
       </Grid>
-      <Grid item lg={10}>
+      <Grid item lg={2}>
         {series &&
         <>
-        <PairPlot style={{width: '100vw', height: '100vh'}} series={series} timeseriesAxis={timeseries} clusters={clusters} dataClusterIndex={dataClusterIndex} onBrushActivate={brushActivateHandler} onBrushDeactivate={brushDeactivateHandler} onSelected={onSelected} />
+        <PairPlot style={{width: '80vw', height: '100vh'}} series={series} timeseriesAxis={timeseries} clusters={clusters} dataClusterIndex={dataClusterIndex} onBrushActivate={brushActivateHandler} onBrushDeactivate={brushDeactivateHandler} onSelected={onSelected} />
         </>
         }
       </Grid>

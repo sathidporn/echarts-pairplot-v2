@@ -26,8 +26,13 @@ export default function DatePicker({ startSeries, endSeries, onFilteredByDate=()
                 max={format(new Date(), "yyyy-MM-dd")}
                 value={format(endDate, "yyyy-MM-dd")}
                 onChange={(e) => {
-                setEndDate(new Date(e.target.value))
-                onFilteredByDate(startDate, new Date(e.target.value))
+                    let endDate = new Date(e.target.value?.length !== 0?e.target.value:new Date())
+                    endDate.setHours(23)
+                    endDate.setMinutes(59)
+                    endDate.setSeconds(59)
+                    endDate.setMilliseconds(999)
+                    setEndDate(endDate)
+                    onFilteredByDate(startDate, endDate)
                 }}
             />
         </div>
