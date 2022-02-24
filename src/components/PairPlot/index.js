@@ -49,7 +49,8 @@ export default function PairPlot({series, timeseriesAxis, clusters, dataClusterI
         axisLabel: {
           show
         },
-        nameLocation: 'center'
+        nameLocation: 'center',
+        nameGap: 30,
       }
     }
     function buildYAxis(name, type, show) {
@@ -62,9 +63,10 @@ export default function PairPlot({series, timeseriesAxis, clusters, dataClusterI
         axisLabel: {
           show,
           showMinLabel: true,
-          showMaxLabel: true
+          showMaxLabel: true,
         },
-        nameLocation: 'center'
+        nameLocation: 'center',
+        nameGap: 50,
       }
     }
     function buildScatterSeries(xName, yName, xFormatter) {
