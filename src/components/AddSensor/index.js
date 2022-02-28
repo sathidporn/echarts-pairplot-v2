@@ -1,11 +1,11 @@
 import React from 'react';
-import Grid from '@material-ui/core/Grid'
+import Grid from '@mui/material/Grid'
 import { useCallback, useState }  from 'react';
-import { Table, TableContainer, TableHead, TableBody, TableRow, TableCell, Typography, Button, Select, MenuItem, IconButton, Tooltip, TextField } from '@material-ui/core';
-import ArrowDropDownCircleIcon from '@material-ui/icons/ArrowDropDownCircle';
-import CancelIcon from '@material-ui/icons/Cancel'
-import EditIcon from '@material-ui/icons/Edit';
-import CheckIcon from '@material-ui/icons/Check';
+import { Table, TableContainer, TableHead, TableBody, TableRow, TableCell, Typography, Button, Select, MenuItem, IconButton, Tooltip, TextField } from '@mui/material';
+import ArrowDropDownCircleIcon from '@mui/icons-material/ArrowDropDownCircle';
+import CancelIcon from '@mui/icons-material/Cancel'
+import EditIcon from '@mui/icons-material/Edit';
+import CheckIcon from '@mui/icons-material/Check';
 import { style } from '../../styles/style';
 
 import { generateSensorName, maximumSensorSelection } from '../../utils/calculate_sensor';
@@ -23,10 +23,14 @@ export default function AddSensor({ sensorsObj, onFeatureSensor=()=>{}}){
     let [constant, setConstant] = useState()
 
     const handleChangeCalType = useCallback((type) => {
-        setCalType(type)
-        let name = generateSensorName({sensorList, calType: type})
-        setSpecialSensorName(name)
-    }, [sensorList, setCalType, setSpecialSensorName])
+        if(type !== calType){
+            setCalType(type)
+            setSensorList([])
+            setConstant(undefined)
+            let name = generateSensorName({sensorList, calType: type})
+            setSpecialSensorName(name)
+        }
+    }, [sensorList, calType, setCalType, setSpecialSensorName])
 
     const handleChangeProcessType = useCallback((type) => {
         if(type !== processType){
@@ -60,8 +64,7 @@ export default function AddSensor({ sensorsObj, onFeatureSensor=()=>{}}){
     },[calType, sensorList, setSensorList, setSpecialSensorName])
 
     const onGenerateSensor = useCallback(() => {
-        let maxSensors = maximumSensorSelection({calType, processType})
-        console.log("special sensor",maxSensors)
+        // console.log("special sensor",maxSensors)
         let objNewSensor = {sensor:sensorList, name: specialSensorName, calType: calType, processType: processType, constant: constant}
         onFeatureSensor(objNewSensor)
         setSensorList([])
@@ -69,27 +72,28 @@ export default function AddSensor({ sensorsObj, onFeatureSensor=()=>{}}){
 
     return(
         <>
-        <Grid item container lg={12} spacing={1}>
-            <Grid item container lg={12} spacing={1}>
-                <Grid item lg={6}>
+        <Grid item container xs={12} sm={12} md={12} lg={12} spacing={1}>
+            <Grid item container xs={12} sm={12} md={12} lg={12} spacing={1}>
+                <Grid item xs={6} sm={6} md={6} lg={6}>
                     <Select
+                        value={calType}
                         IconComponent = {ArrowDropDownCircleIcon}
-                        onChange={(e)=>handleChangeCalType(e.target.value)}
                         // value={diffType}
-                        defaultValue={calType}
+                        // defaultValue={calType}
                         autoFocus={true}
                         inputProps={{
                             classes: {
-                                icon: classes.selectorIcon,
+                                icon: classes.selector,
                                 root: classes.selector,
                             },
                         }}   
                         className={classes.selector}  
                         MenuProps={{
                             classes:{
-                            list: classes.menuItem
+                                list: classes.menuItem
                             }
-                        }}     
+                        }}  
+                        onChange={(e)=>handleChangeCalType(e.target.value)}   
                     >
                         <MenuItem value="add" className={classes.menuItem}>Add</MenuItem>
                         <MenuItem value="diff" className={classes.menuItem}>Diff</MenuItem>
@@ -98,26 +102,26 @@ export default function AddSensor({ sensorsObj, onFeatureSensor=()=>{}}){
                         <MenuItem value="average" className={classes.menuItem}>Average</MenuItem>
                     </Select>
                 </Grid>
-                <Grid item lg={6}>
+                <Grid item xs={6} sm={6} md={6} lg={6}>
                     {/* <TextField id="outlined-basic" label="Outlined" variant="outlined"  className={classes.textField}  ></TextField> */}
                     <Select
+                        value={processType}
                         IconComponent = {ArrowDropDownCircleIcon}
-                        onChange={(e)=>handleChangeProcessType(e.target.value)}
                         // value={diffType}
-                        defaultValue={processType}
                         autoFocus={true}
                         inputProps={{
                             classes: {
-                                icon: classes.selectorIcon,
+                                icon: classes.selector,
                                 root: classes.selector,
                             },
                         }}   
                         className={classes.selector}  
                         MenuProps={{
                             classes:{
-                            list: classes.menuItem
+                                list: classes.menuItem
                             }
-                        }}     
+                        }} 
+                        onChange={(e)=>handleChangeProcessType(e.target.value)}    
                     >
                         <MenuItem value="sensor" className={classes.menuItem}>By sensor</MenuItem>
                         <MenuItem value="constant" className={classes.menuItem}>By constant</MenuItem>
@@ -129,9 +133,9 @@ export default function AddSensor({ sensorsObj, onFeatureSensor=()=>{}}){
 
             {sensorList.length > 0 &&
             <>
-            <Grid item lg={12} className={classes.sensorBox} align="left">
+            <Grid item xs={12} sm={12} md={12} lg={12} align="left">
                 {processType === "constant" &&
-                    <Grid item container lg={12} align="left" style={{paddingLeft: 10}}>
+                    <Grid item container lg={12} align="left" >
                         <Grid item lg={2}>
                             <Typography className={classes.blueText}>CONSTANT : </Typography>
                         </Grid>
@@ -159,34 +163,40 @@ export default function AddSensor({ sensorsObj, onFeatureSensor=()=>{}}){
                         </Grid>
                     </Grid>
                 }
+            </Grid>
+            <Grid item container xs={12} sm={12} md={12} lg={12} align="left">
+                <Grid item xs={2} sm={2} md={2} lg={2}>
+                    <Typography className={classes.blueText}>SENSOR : </Typography>
+                </Grid>
+                <Grid item xs={10} sm={10} md={10} lg={10} className={classes.sensorBox}>
                 {sensorList.map((sensor) => {
                     return(
-                    <Grid key={sensor} item container lg={12} spacing={0} style={{paddingLeft: 10}}>
-                        <Grid item lg={12}>
-                        <Tooltip title={sensor} placement="bottom">
-                            <Typography className={classes.blueText}>
-                                {sensor.length > 40 ? `${sensor.substring(0,40)}...` : `${sensor}`}
-                                <Tooltip title="Remove" placement="right">
-                                <IconButton onClick={()=>onRemoveSensor(sensor)} >
-                                    <CancelIcon style={{fontSize:'1rem', color:"#858e95", borderRadius:5}}></CancelIcon>
-                                </IconButton>
-                                </Tooltip>
-                            </Typography>
-                        </Tooltip>
-                        </Grid>
-                    </Grid>
-                        
+                    <Grid key={sensor} item container xs={10} sm={10} md={10} lg={10} spacing={1} style={{paddingLeft: 10}}>
+                        <Grid item xs={12} sm={12} md={12} lg={12}>
+                            <Tooltip title={sensor} placement="top">
+                                <Typography className={classes.blueText}>
+                                    {sensor.length > 40 ? `${sensor.substring(0,40)}...` : `${sensor}`}
+                                    {/* <Tooltip title="Remove" placement="right"> */}
+                                    <IconButton onClick={()=>onRemoveSensor(sensor)} >
+                                        <CancelIcon style={{fontSize:'1rem', color:"#f04461", borderRadius:5}}></CancelIcon>
+                                    </IconButton>
+                                    {/* </Tooltip> */}
+                                </Typography>
+                            </Tooltip>
+                            </Grid>
+                    </Grid>  
                     )
                 })}
+                </Grid>
             </Grid>
-            <Grid item lg={12} align="left">
-                <Grid item container lg={12} align="left" style={{paddingLeft: 10}}>
-                    <Grid item lg={2}>
+            <Grid item xs={12} sm={12} md={12} lg={12} align="left">
+                <Grid item container xs={12} sm={12} md={12} lg={12} align="left">
+                    <Grid item xs={2} sm={2} md={2} lg={2}>
                         <Typography className={classes.blueText}>NAME : </Typography>
                     </Grid>
-                    <Grid item lg={9}>
+                    <Grid item xs={10} sm={10} md={10} lg={10}>
                         <form autoComplete="off" onSubmit={e => {e.preventDefault()}}>
-                            <Tooltip title={specialSensorName} placement="right">
+                            <Tooltip title={specialSensorName} placement="top">
                                 <TextField
                                     fullWidth
                                     className={classes.textField}
@@ -203,18 +213,18 @@ export default function AddSensor({ sensorsObj, onFeatureSensor=()=>{}}){
                                           root: classes.textField,
                                           disabled: classes.textField
                                         }
-                                      }}
+                                    }}
                                     variant="outlined"
                                     error={specialSensorName === ""}
                                     onChange={({target}) => setSpecialSensorName(target.value)}
                                     value={specialSensorName}
                                     tabIndex={0}
-                                    disabled={!editName}
+                                    // disabled={!editName}
                                 />
                             </Tooltip>
                         </form>
                     </Grid>
-                    <Grid item lg={1}>
+                    {/* <Grid item xs={1} sm={1} md={1} lg={1}>
                         <Tooltip title="Edit" placement="right">
                             <IconButton onClick={()=>editSensorName()} >
                                 {editName === false &&
@@ -225,22 +235,22 @@ export default function AddSensor({ sensorsObj, onFeatureSensor=()=>{}}){
                                 }
                             </IconButton>
                         </Tooltip>
-                    </Grid>
+                    </Grid> */}
                 </Grid>
             </Grid>
-            <Grid item lg={12}>
+            <Grid item xs={12} sm={12} md={12} lg={12}>
                 <Button onClick={()=>onGenerateSensor()} className={classes.button}>Generate Sensor</Button>
             </Grid>
             </>
             } 
  
-            <Grid item lg={12}>
+            <Grid item xs={12} sm={12} md={12} lg={12}>
                 <TableContainer className={classes.tableContainer} >
                     <Table size="small" stickyHeader aria-label="sticky table">
                         <TableHead>
                         <TableRow>
-                            <TableCell align="left" className={classes.tableHead}>Add</TableCell>
-                            <TableCell className={classes.tableHead}>Sensor</TableCell>
+                            <TableCell align="left" className={classes.tableCell}>Add</TableCell>
+                            <TableCell className={classes.tableCell}>Sensor</TableCell>
                         </TableRow>
                         </TableHead>
                         <TableBody>
@@ -250,11 +260,11 @@ export default function AddSensor({ sensorsObj, onFeatureSensor=()=>{}}){
                                 key={sensor.tag}
                                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                             >
-                                <TableCell align="right"  className={classes.tableCell}>
+                                <TableCell align="left"  className={classes.tableCell}>
                                     <Button onClick={()=>onAddSensor(sensor.tag)} className={classes.button}>Add</Button>
                                 </TableCell>
                                 <TableCell component="th" scope="row" className={classes.tableCell}>
-                                    <Typography  className={classes.formControlLabel}>{sensor.tag}</Typography>
+                                    <Typography className={classes.formControlLabel}>{sensor.tag}</Typography>
                                 </TableCell>
                             </TableRow>
                             )

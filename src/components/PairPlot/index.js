@@ -6,6 +6,8 @@ const offset = 5
 const gap = 3
 
 export default function PairPlot({series, timeseriesAxis, clusters, dataClusterIndex, style, onBrushActivate = () => {}, onBrushDeactivate = () => {}, onSelected = () => {}}) {
+  console.log("pairplot",dataClusterIndex)
+  // console.log("categoriesColor",categoriesColor, categories)
   let clusterIndex = useMemo(() => {
     if (dataClusterIndex === undefined) {
       return Object.entries(series)[0][1].map(() => -1)
@@ -202,5 +204,5 @@ export default function PairPlot({series, timeseriesAxis, clusters, dataClusterI
       }
     }
   }), [onBrushActivate, onBrushDeactivate, onSelected])
-  return <EChartsReact style={style} option={option} notMerge={true} onEvents={eventsHandler} />
+  return <EChartsReact style={style} option={option} notMerge={false} onEvents={eventsHandler} />
 }

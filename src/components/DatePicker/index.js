@@ -1,7 +1,7 @@
 import React from 'react'
 import { useState } from 'react'
 import { format, subMonths } from 'date-fns'
-import { Grid, TextField } from '@material-ui/core'
+import { Grid, TextField } from '@mui/material'
 import { style } from '../../styles/style'
 const useStyles = style
 const MAX_PERIOD = 24
@@ -12,7 +12,7 @@ export default function DatePicker({ startSeries, endSeries, onFilteredByDate=()
     let [endDate, setEndDate] = useState(new Date(endSeries))
 
     return(
-        <Grid item container lg={12}>
+        <Grid item container xs={12} sm={12} md={12} lg={12}>
             {/* <input
                 type="date"
                 name="start date"
@@ -31,7 +31,7 @@ export default function DatePicker({ startSeries, endSeries, onFilteredByDate=()
                     // onFilteredByDate(new Date(e.target.value), endDate)
                 }}
             /> */}
-            <Grid item lg={6}>
+            <Grid item xs={6} sm={6} md={6} lg={6}>
             <form className={classes.container} noValidate>
                 <TextField
                     label="Start Date"
@@ -64,7 +64,7 @@ export default function DatePicker({ startSeries, endSeries, onFilteredByDate=()
                 />
             </form> 
             </Grid>
-            <Grid item lg={6}>
+            <Grid item xs={6} sm={6} md={6} lg={6}>
             <form className={classes.container} noValidate>
                 <TextField
                     label="End Date"

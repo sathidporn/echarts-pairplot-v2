@@ -7,13 +7,14 @@ import {useCallback, useReducer, useState, useMemo} from 'react'
 import PairPlot from './components/PairPlot';
 import LinePlot from './components/LinePlot'
 import ClustersTable from './components/ClustersTable';
+import ClusterRange from './components/ClusterRange';
 import SensorsTable from './components/SensorsTable'
-import { Accordion, AccordionDetails, AccordionSummary, Grid } from '@material-ui/core';
+import { Accordion, AccordionDetails, AccordionSummary, Grid } from '@mui/material';
 import DatePicker from './components/DatePicker';
 import PlotTypePicker from './components/PlotTypePicker';
 import ImportData from './components/ImportData';
 import AddSensor from './components/AddSensor';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { style } from './styles/style';
 import { generateSpecialSensor } from './utils/calculate_sensor';
 
@@ -62,6 +63,7 @@ function App() {
   const [brushingMode, setBrushingMode] = useState(false)
   const [dataClusterIndex, updateDataClusterIndex] = useReducer(
     (state, payload) => {
+      // console.log("updateDataClusterIndex", brushingMode, state, payload)
       if (brushingMode === false) return state
       let changed = false
       // First pass, reset all cluster index of current active cluster selection
@@ -95,6 +97,7 @@ function App() {
     setBrushingMode(false)
   }, [setBrushingMode])
   const onSelected = useCallback(index => {
+    // console.log("index",index)
     updateDataClusterIndex(index)
   }, [updateDataClusterIndex])
 
@@ -130,7 +133,7 @@ function App() {
 
   // const onFilteredBySensors = useCallback((series, timeseries) => {
   const onFilteredBySensors = useCallback((tag, values,  checkedSensors, newSensorsObj ) => {
-    console.log("new", checkedSensors, newSensorsObj)
+    // console.log("new", checkedSensors, newSensorsObj)
     let newSeries = {}
     // get tag and values of sensor for merge to sensor obj
     if( tag && values){
@@ -156,7 +159,7 @@ function App() {
     }
     setCheckedSensors(checkedSensors)
     setSensorsObj(newSensorsObj)
-    console.log("by sensor / series",filteredSeries)
+    // console.log("by sensor / series",filteredSeries)
    
   },[series, setSeries, updateDataClusterIndex, setCheckedSensors, setSensorsObj])
   
@@ -190,11 +193,11 @@ function App() {
     }
     setStartDate(startDate)
     setEndDate(endDate)
-    console.log("by date / series",filteredSeries)
+    // console.log("by date / series",filteredSeries)
   }, [checkedSensors, series, timestampsAxis, setSeries, setTimestampsAxis, setStartDate, setEndDate, updateDataClusterIndex])
 
   const onFeatureSensor = useCallback((newSensor) => {
-    console.log("objNewSensor",newSensor)
+    // console.log("objNewSensor",newSensor)
     let newObj = {}
     let result = generateSpecialSensor({raw, newSensor})
     newObj[`${newSensor.name}`] = result
@@ -203,6 +206,13 @@ function App() {
 
   },[raw, sensorsObj, setRaw, setSensorsObj])
   // end
+
+
+  const onTestClusterRange = useCallback((clusterIndexArr, clusters) => {
+    console.log("test",clusterIndexArr)
+    updateDataClusterIndex(clusterIndexArr)
+    setClusters(clusters)
+  }, [updateDataClusterIndex, setClusters])
 
   return (
     <div className="App">
@@ -256,13 +266,20 @@ function App() {
             </AccordionDetails>
           </Accordion>
 
-          {plotType === "scatter" &&
+          {series && plotType === "scatter" &&
           <Accordion defaultExpanded={true}>
             <AccordionSummary className={classes.accordionSummary} expandIcon={<ExpandMoreIcon className={classes.accordionIcon} />}>
               Cluster
             </AccordionSummary>
             <AccordionDetails className={classes.accordionDetail}>
-              <ClustersTable clusters={clusters} onChange={clustersChangeHandler} activeClusterIndex={activeClusterIndex} onActiveChange={activeClusterChangeHandler} dataClusterIndex={dataClusterIndex} />
+              <Grid item container lg={12} spacing={1}>
+                <Grid item lg={12}>
+                  <ClustersTable clusters={clusters} onChange={clustersChangeHandler} activeClusterIndex={activeClusterIndex} onActiveChange={activeClusterChangeHandler} dataClusterIndex={dataClusterIndex} />
+                </Grid>
+                <Grid item lg={12}>
+                  <ClusterRange checkedSensors={checkedSensors} timestampsAxis={timestampsAxis} series={series} onBrushActivate={brushActivateHandler} onTestClusterRange={onSelected}></ClusterRange>
+                </Grid>
+              </Grid>
             </AccordionDetails>
           </Accordion>
           }

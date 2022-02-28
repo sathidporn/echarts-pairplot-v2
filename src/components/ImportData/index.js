@@ -1,6 +1,6 @@
 import React from 'react'
 import { useState, useCallback, useMemo } from 'react';
-import { Button, Grid, Typography } from '@material-ui/core';
+import { Button, Grid, Typography } from '@mui/material';
 
 import { style } from '../../styles/style';
 
@@ -73,8 +73,8 @@ const onGetFile = useCallback((target) => {
 
 
     return(
-        <Grid item container lg={12} spacing={1} style={{padding:10}}>
-            <Grid item lg={6} algin="left">
+        <Grid item container xs={12} sm={12} md={12} lg={12} spacing={1} style={{padding:10}}>
+            <Grid item xs={6} sm={6} md={6} lg={6} algin="left">
                 {/* <Input 
                     id="file" 
                     name="file"
@@ -100,7 +100,7 @@ const onGetFile = useCallback((target) => {
                 </Button>
 
             </Grid>
-            <Grid item lg={6} algin="left">
+            <Grid item xs={6} sm={6} md={6} lg={6} algin="left">
                 <Button
                     onClick={showTableHandler} 
                     className={classes.button}

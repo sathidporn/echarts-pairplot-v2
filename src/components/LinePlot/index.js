@@ -4,7 +4,7 @@ import {useMemo} from "react"
 const axisOffset = 35
 
 let ScoreChartTemplate = ({y = [], timeseriesAxis, series, startDate, endDate, clusterIndex}) => {
-    console.log("y",y)
+    // console.log("y",y)
     let yAxis 
     if (y && y.length > 0) {
         yAxis = [{
@@ -225,7 +225,7 @@ export default function LinePlot({ startDate, endDate, timeseriesAxis, series, d
         }
         return dataClusterIndex
     }, [dataClusterIndex, series])
-    console.log("clusterIndex",dataClusterIndex)
+    // console.log("clusterIndex",dataClusterIndex)
 
     let sensorCheck = useMemo(() => {
         let sensorCheck = []
@@ -251,7 +251,7 @@ export default function LinePlot({ startDate, endDate, timeseriesAxis, series, d
         return sensorCheck
     }, [sensors, series, timeseriesAxis, clusterIndex])
 
-    console.log("sensorCheck",sensorCheck, clusterIndex)
+    // console.log("sensorCheck",sensorCheck, clusterIndex)
 
     return(
         <>

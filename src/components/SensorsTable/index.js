@@ -1,11 +1,11 @@
 // import papa from 'papaparse'
 import React from 'react';
-import Grid from '@material-ui/core/Grid'
-import { Checkbox, Typography, Select, MenuItem} from '@material-ui/core';
-import { Table, TableContainer, TableHead, TableBody, TableRow, TableCell } from '@material-ui/core';
-import { FormControlLabel } from '@material-ui/core';
+import Grid from '@mui/material/Grid'
+import { Checkbox, Typography, Select, MenuItem} from '@mui/material';
+import { Table, TableContainer, TableHead, TableBody, TableRow, TableCell } from '@mui/material';
+import { FormControlLabel } from '@mui/material';
 import { useCallback } from 'react';
-import ArrowDropDownCircleIcon from '@material-ui/icons/ArrowDropDownCircle';
+import ArrowDropDownCircleIcon from '@mui/icons-material/ArrowDropDownCircle';
 
 
 import { style } from '../../styles/style';
@@ -15,10 +15,10 @@ const useStyles = style
 
 export default function SensorsData({ sensorsObj, checkedSensors, raw, timestampsIndex, onFilteredBySensors = () => {}}) {
   const classes = useStyles();
-  console.log("checkedSensors",checkedSensors)
+  // console.log("checkedSensors",checkedSensors)
   // change checked prop of sensor obj
   const toggleSensors = useCallback ((tag,checked) => {
-    console.log("toggle",tag,checked)
+    // console.log("toggle",tag,checked)
     let newSensors
     let newSensorsObj
     // make new sensor array
@@ -83,14 +83,14 @@ export default function SensorsData({ sensorsObj, checkedSensors, raw, timestamp
 
   return (
     <div className="App">
-      <Grid item container lg={12} spacing={1}>
-        <Grid item lg={12}>
+      <Grid item container xs={12} sm={12} md={12} lg={12} spacing={1}>
+        <Grid item xs={12} sm={12} md={12} lg={12}>
         <TableContainer className={classes.tableContainer} >
-          <Table size="small" stickyHeader aria-label="sticky table">
+          <Table size="small" stickyHeader>
             <TableHead>
               <TableRow>
-                <TableCell className={classes.tableHead}>Sensor</TableCell>
-                <TableCell align="left" className={classes.tableHead}>Sampling</TableCell>
+                <TableCell className={classes.tableCell}>Sensor</TableCell>
+                <TableCell align="left" className={classes.tableCell}>Sampling</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -103,7 +103,9 @@ export default function SensorsData({ sensorsObj, checkedSensors, raw, timestamp
                   <TableCell component="th" scope="row" className={classes.tableCell}>
                     {/* <TextField type="checkbox" checked={sensor.checked} onChange={(e)=> toggleSensors(sensor.tag,e.target.checked)}/>{sensor.tag} */}
                     <FormControlLabel 
-                        control={<><Checkbox style={{color:"#51b4ec"}} size="small" checked={sensor.checked} onChange={(e)=> toggleSensors(sensor.tag,e.target.checked)} /> <Typography className={classes.formControlLabel}>{sensor.tag}</Typography></>} 
+                        control={<><Checkbox style={{color:"#51b4ec"}} size="small" checked={sensor.checked} onChange={(e)=> toggleSensors(sensor.tag,e.target.checked)} /> </>} 
+                        label={<Typography className={classes.formControlLabel}>{sensor.tag}</Typography>}
+                        className={classes.formControlLabel}
                     />
                   </TableCell>
                   <TableCell align="left" className={classes.tableCell}>
@@ -112,15 +114,15 @@ export default function SensorsData({ sensorsObj, checkedSensors, raw, timestamp
                       IconComponent = {ArrowDropDownCircleIcon}
                       onChange={(e)=>selectedSampling(sensor.tag, e.target.value)}
                       // value={diffType}
+                      className={classes.selector}  
                       defaultValue={"mean"}
                       autoFocus={true}
                       inputProps={{
                         classes: {
-                            icon: classes.selectorIcon,
                             root: classes.selector,
+                            icon: classes.selector,
                         },
                       }}   
-                      className={classes.selector}  
                       MenuProps={{
                         classes:{
                           list: classes.menuItem

@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from 'react';
-import { RadioGroup } from '@material-ui/core';
-import { Radio } from '@material-ui/core';
-import { FormControlLabel } from '@material-ui/core';
+import { RadioGroup } from '@mui/material';
+import { Radio } from '@mui/material';
+import { FormControlLabel } from '@mui/material';
 
 export default function PlotTypePicker({ onSelectedType = () => {} }){
     let [type, setType] = useState("scatter")

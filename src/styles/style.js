@@ -1,4 +1,4 @@
-import { makeStyles } from "@material-ui/core/styles";
+import { makeStyles } from '@mui/styles';
 
 const FONT_SIZE_HEAD = "1rem"
 const FONT_SIZE_CONTENT = "0.7rem"
@@ -19,19 +19,29 @@ export const style = makeStyles((theme) => ({
     },
     sensorBox: {
         backgroundColor: '#242f39',
-        borderRadius: 10
+        borderRadius: 10,
+        overflowY: 'auto',
+        minHeight: '2vh',
+        maxHeight: '20vh',
     },
     accordionSummary: {
-        backgroundColor: '#454c54',
-        color: '#ffffff'
+        '&.MuiAccordionSummary-root': {
+            backgroundColor: '#454c54',
+            color: '#ffffff'
+
+        }
     },
     accordionSummaryExpanded: {
-        backgroundColor: '#454c54',
-        color: '#51b4ec',
+        '&.MuiAccordionSummary-root': {
+            backgroundColor: '#454c54',
+            color: '#51b4ec',
+        }
     },
     accordionDetail: {
-        backgroundColor: '#454c54',
-        color: '#ffffff'
+        '&.MuiAccordionDetails-root': {
+            backgroundColor: '#454c54',
+            color: '#ffffff'
+        }
     },
     accordionIcon: {
         color: '#ffffff',
@@ -55,104 +65,173 @@ export const style = makeStyles((theme) => ({
         zIndex: -1,
     },
     button: {
-        backgroundColor: '#51b4ec',
-        fontSize: FONT_SIZE_BUTTON,
-        color: '#ffffff',
-        height: 20,
-        '&:hover': {
+        '&.MuiButton-root': {
             backgroundColor: '#51b4ec',
-            color: '#ffffff',
-        },
+            fontSize: FONT_SIZE_BUTTON,
+            color: '#000a14',
+            height: 20,
+            '&:hover': {
+                backgroundColor: '#51b4ec',
+                color: '#ffffff',
+            },
+        }
     },
     tableContainer: {
-        overflowY: 'auto', 
-        overflowX: 'auto', 
-        height: '50vh',
-        width: '22vw',
-        backgroundColor: '#242f39',
-        borderRadius: 5,
+       '&.MuiTableContainer-root': {
+            overflowY: 'auto', 
+            overflowX: 'auto', 
+            maxHeight: '50vh',
+            minWidth: '20vw',
+            backgroundColor: '#242f39',
+            borderRadius: 5,
+       }
     },
     tableHead: {
-        fontSize: FONT_SIZE_HEAD,
-        backgroundColor: '#242f39',
-        color: '#ffffff',
-        position: "sticky",
-        top: 0,
-        borderBottomColor: 'black'
+        '&.MuiTableHead-root': {
+            fontSize: FONT_SIZE_HEAD,
+            backgroundColor: '#242f39',
+            color: '#ffffff',
+            position: "sticky",
+            top: 0,
+            borderBottomColor: 'black'
+        }
     },
     tableBody: {
-        fontSize: FONT_SIZE_CONTENT,
+        '&.MuiTableBody-root': {
+            fontSize: FONT_SIZE_CONTENT,
+        }
     },
     tableCell: {
-        borderBottomColor: '#242f39'
+        '&.MuiTableCell-root': {
+            borderBottomColor: '#242f39',
+            backgroundColor: '#242f39',
+            color: '#ffffff',
+            fontSize: FONT_SIZE_CONTENT,
+        },
+        '&.MuiFormControlLabel-root': {
+            color: '#ffffff',
+            fontSize: FONT_SIZE_CONTENT,
+        },
+        '&.MuiFormControlLabel-label': {
+            color: '#ffffff',
+            fontSize: FONT_SIZE_CONTENT,
+        }
     },
     formControlLabel: {
-        color: '#ffffff',
-        fontSize: FONT_SIZE_CONTENT,
+        '&.MuiFormControlLabel-root': {
+            color: '#ffffff',
+            fontSize: FONT_SIZE_CONTENT,
+        },
+        '&.MuiFormControlLabel-label': {
+            color: '#ffffff',
+            fontSize: FONT_SIZE_CONTENT,
+        },
+        '&.MuiTypography-root': {
+            color: '#ffffff',
+            fontSize: FONT_SIZE_CONTENT,
+        }
     },
     blueText: {
-        color: '#51b4ec',
-        fontSize: FONT_SIZE_CONTENT,
+        '&.MuiTypography-root': {
+            color: '#51b4ec',
+            fontSize: FONT_SIZE_CONTENT,
+        }
     },
     headerText: {
-        color: '#51b4ec',
-        fontSize: FONT_SIZE_HEAD,
+        '&.MuiTypography-root': {
+            color: '#51b4ec',
+            fontSize: FONT_SIZE_HEAD,
+        }
     },
     contentTextWhite: {
-        color: '#ffffff',
-        fontSize: FONT_SIZE_CONTENT,
+        '&.MuiTypography-root': {
+            color: '#ffffff',
+            fontSize: FONT_SIZE_CONTENT,
+        }
     },
     textField: {
         color: "#ffffff",
-        height: 20,
-        fontSize: FONT_SIZE_CONTENT,
-        '&.MuiTextField-root': {
-            color: 'white',
-            fontSize: FONT_SIZE_CONTENT,
+        height: 30,
+        borderColor: '#51b4ec',
+        '&.MuiFormControl-root ': {
+            minWidth: "-webkit-fill-available",
             borderColor: '#51b4ec',
+        },
+        '&.MuiOutlinedInput-root': {
+            color: "#ffffff",
+            backgroundColor: '#242f39',
+            fontSize: FONT_SIZE_CONTENT,
+            paddingLeft: 20,
+            minWidth: '6vw',
+            borderColor: '#51b4ec',
+            borderRadius: 10,
             '& fieldset': {
                 borderColor: '#51b4ec',
+                color: '#ffffff',
             },
             '&:hover fieldset': {
                 borderColor: '#51b4ec',
+                color: '#ffffff',
             },
-            "&.Mui-focused fieldset": {
+            '&:disabled': {
+                backgroundColor: '#454c54',
+                color: '#ffffff',
+            },
+            '&.Mui-disabled': {
+                borderColor: '#51b4ec',
+                color: '#ffffff',
+            }
+        },
+        '&.Mui-focused fieldset': {
+            borderColor: '#51b4ec',
+            color: '#ffffff',
+        },
+        '&.Mui-disabled fieldset': {
+            borderColor: '#51b4ec',
+            color: '#ffffff',
+        }
+    },
+    selector: {
+        // '&.MuiSelect-select': {
+        //     borderColor: '#51b4ec',
+        // },
+        // '&.MuiInput-root': {
+        //     borderColor: '#51b4ec',
+        // },
+        // '&.MuiSelect-outlined': {
+        //     borderColor: '#51b4ec',
+        // },
+        // '&.MuiOutlinedInput-input' : {
+        //     borderColor: '#51b4ec',
+        // },
+        // '&.MuiInputBase-input': {
+        //     borderColor: '#51b4ec',
+        // },
+        '&.MuiOutlinedInput-root': {
+            display: "flex",
+            // flexWrap: "wrap",
+            height: 30,
+            color: "#ffffff",
+            backgroundColor: '#242f39',
+            fontSize: FONT_SIZE_CONTENT,
+            paddingLeft: 20,
+            minWidth: '6vw',
+            borderColor: '#51b4ec',
+            borderRadius: 10,
+            '&:before': {
                 borderColor: '#51b4ec',
             },
-            "&.Mui-disabled fieldset": {
+            '&:after': {
                 borderColor: '#51b4ec',
             }
         },
-        "& input.Mui-disabled": {
-            color: 'white',
+        '&.MuiInputBase-root': {
             borderColor: '#51b4ec',
         },
-        "& label.Mui-disabled": {
-            color: '#51b4ec',
-        },
-        // input label when focused
-        "& label.Mui-focused": {
-            color: '#51b4ec',
-        },
-
-    },
-    selector: {
-        display: "flex",
-        flexWrap: "wrap",
-        color: "#ffffff",
-        backgroundColor: '#242f39',
-        fontSize: FONT_SIZE_CONTENT,
-        paddingLeft: 20,
-        borderRadius: 10,
-        minWidth: '6vw',
-        '&.MuiPaper-root': {
-            backgroundColor: '#242f39'
-        },
-        '&.MuiList-root': {
-            backgroundColor: '#242f39'
-        },
-        '&.MuiMenu-list' : {
-            backgroundColor: '#242f39'
+        '&.MuiSvgIcon-root': {
+            fill: "#ffffff",
+            fontSize: FONT_SIZE_ICON,
+            paddingRight: 5
         },
     },
     selectorIcon: {
@@ -161,26 +240,38 @@ export const style = makeStyles((theme) => ({
         paddingRight: 5
     },
     menuItem: {
-        backgroundColor: '#242f39',
-        color: '#ffffff',
-        paddingRight: 10,
+        '&.MuiMenuItem-root': {
+            backgroundColor: '#242f39',
+            color: '#ffffff',
+            paddingRight: 10,
+            '&:hover': {
+                backgroundColor: '#454c54',
+                color: '#ffffff',
+            }, 
+            '&.Mui-selected': {
+                backgroundColor: '#51b4ec',
+                color: '#ffffff',
+                '&:hover': {
+                    backgroundColor: '#454c54',
+                    color: '#ffffff',
+                },
+            },  
+        },
         "&.MuiList-padding ":{
             paddingTop:0,
             paddingBottom:0,
             borderRadius:5
-        }
+        },
     },
     datePicker: {
-        backgroundColor: 'linear-gradient(125.86deg, rgba(255, 255, 255, 0.3) -267.85%, rgba(255, 255, 255, 0) 138.29%)',
-        color: '#51b4ec',
-        borderColor: "white",
         '& .MuiInputBase-input': {
             color: 'white',
             fontSize: FONT_SIZE_CONTENT,
-            padding:"6px 10px"
+            padding:"6px 10px",
         },
         '&.MuiFormControl-root ': {
-            minWidth: "-webkit-fill-available"
+            minWidth: "-webkit-fill-available",
+            borderColor: '#51b4ec',
         },
         '&.MuiTextField-root': {
             color: 'white',
@@ -199,31 +290,12 @@ export const style = makeStyles((theme) => ({
                 borderColor: '#51b4ec',
             }
         },
-        "& input.Mui-disabled": {
-            color: 'white',
-            borderColor: '#51b4ec',
-        },
-        "& label.Mui-disabled": {
+        '&.MuiInputLabel-root ': {
             color: '#51b4ec',
         },
-        // input label when focused
         "& label.Mui-focused": {
             color: '#51b4ec',
-        },
-        // // focused color for input with variant='standard'
-        // "& .MuiInput-underline:before": {
-        //     borderBottomColor: '#51b4ec',
-        // },
-        // // focused color for input with variant='standard'
-        // "& .MuiInput-underline:after": {
-        //     borderBottomColor: '#51b4ec',
-        // },
-        // // focused color for input with variant='filled'
-        // "& .MuiFilledInput-underline:after": {
-        //     borderBottomColor: '#51b4ec',
-        // },
-
-        
+        },   
     },
 
 
