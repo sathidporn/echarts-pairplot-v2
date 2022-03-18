@@ -1,5 +1,8 @@
 import EChartsReact from "echarts-for-react"
 import { useEffect, useMemo, useRef, useState } from "react"
+import { Grid } from "@mui/material"
+import { style } from "../../styles/style"
+const useStyles = style
 const histogramBarCount = 40
 
 const offset = 5
@@ -7,6 +10,7 @@ const gap = 3
 
 export default function PairPlot({series, timestamps, clusters, dataClusterIndex, style, onBrushActivate = () => {}, onBrushDeactivate = () => {}, onSelected = () => {}}) {
   // console.log("pairplot",dataClusterIndex, series)
+  const classes = useStyles();
   let chartRef = useRef()
   let clusterIndex = useMemo(() => {
     if (dataClusterIndex === undefined) {
@@ -44,12 +48,22 @@ export default function PairPlot({series, timestamps, clusters, dataClusterIndex
     function buildXAxis(name, show, type='value') {
       return {
         name,
+        nameTextStyle: {
+          color: "#ffffff"
+        },
         scale: true,
         type,
         position: 'top',
         gridIndex: index,
         axisLabel: {
-          show
+          show,
+          color: "#ffffff"
+        },
+        splitLine: {
+          lineStyle: {
+              color: 'white',
+              opacity: 0
+          }
         },
         nameLocation: 'center',
         nameGap: 30,
@@ -58,6 +72,9 @@ export default function PairPlot({series, timestamps, clusters, dataClusterIndex
     function buildYAxis(name, type, show) {
       return {
         name,
+        nameTextStyle: {
+          color: "#ffffff"
+        },
         scale: true,
         type,
         position: 'right',
@@ -66,6 +83,13 @@ export default function PairPlot({series, timestamps, clusters, dataClusterIndex
           show,
           showMinLabel: true,
           showMaxLabel: true,
+          color: "#ffffff"
+        },
+        splitLine: {
+          lineStyle: {
+              color: 'white',
+              opacity: 0
+          }
         },
         nameLocation: 'center',
         nameGap: 50,
@@ -85,7 +109,7 @@ export default function PairPlot({series, timestamps, clusters, dataClusterIndex
           formatter: params => {
             return `${params.marker}: x=${xFormatter(params.dataIndex)}, y=${series[yName][params.dataIndex].toFixed(2)}`
           }
-        }
+        },
       }
     }
     for (let i = 0; i < seriesCount; i++) {
@@ -129,7 +153,7 @@ export default function PairPlot({series, timestamps, clusters, dataClusterIndex
               formatter: params => {
                 return `${params.data[1].toFixed(2)}: ${params.data[0].toFixed(0)} points`
               }
-            }
+            },
           })
           xAxis[index].show = true
           yAxis[index].show = true
@@ -229,5 +253,13 @@ export default function PairPlot({series, timestamps, clusters, dataClusterIndex
   //   }
   // }, [brushActive])
 
-  return <EChartsReact style={style} ref={e => chartRef.current = e} option={option} notMerge={!brushActive} lazyUpdate={false} onEvents={eventsHandler} />
+  return (
+    <>
+    <Grid item xs={12} sm={12} md={12} lg={12} className={classes.blackBackground}>
+      <EChartsReact style={style} ref={e => chartRef.current = e} option={option} notMerge={!brushActive} lazyUpdate={false} onEvents={eventsHandler} />
+    </Grid>
+    
+    </>
+  )
+
 }

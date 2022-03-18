@@ -18,6 +18,9 @@ export const style = makeStyles((theme) => ({
     background: {
         backgroundColor: '#242f39',
     },
+    blackBackground: {
+        backgroundColor: '#000a14',
+    },
     toolbox: {
         backgroundColor: '#242f39',
         overflowY: 'auto', 

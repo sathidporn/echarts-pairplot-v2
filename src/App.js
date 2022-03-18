@@ -469,7 +469,7 @@ function App() {
       {/* </div> */}
       </Grid>
 
-      <Grid item xs={9} sm={9} md={9} lg={9}>
+      <Grid item xs={9} sm={9} md={9} lg={9} className={classes.blackBackground}>
         {series &&
         <>
         {plotType === "scatter" &&

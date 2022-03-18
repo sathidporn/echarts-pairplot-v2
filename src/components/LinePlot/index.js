@@ -1,5 +1,8 @@
 import EChartsReact from "echarts-for-react"
 import {useMemo} from "react"
+import Grid from "@material-ui/core/Grid"
+import { style } from "../../styles/style"
+const useStyles = style
 
 const axisOffset = 35
 
@@ -26,11 +29,11 @@ let ScoreChartTemplate = ({y = [], timestamps, series, startDate, endDate, clust
             },
             axisLine: {
                 lineStyle:{
-                    opacity: 0.1,
+                    opacity: 0.5,
                 }
             },
             axisLabel: {
-                color: '#242f39'
+                color: '#ffffff'
             },
             axisPointer: {
                 show: true,
@@ -62,7 +65,7 @@ let ScoreChartTemplate = ({y = [], timestamps, series, startDate, endDate, clust
                 }
             },
             axisLabel: {
-                color: '#242f39'
+                color: '#ffffff'
             },
             axisPointer: {
                 label: {
@@ -132,7 +135,10 @@ let ScoreChartTemplate = ({y = [], timestamps, series, startDate, endDate, clust
             left: 'center',
         },
         legend: {
-            show: true
+            show: true,
+            textStyle: {
+                color: '#ffffff',
+            },
         },
         xAxis: [
             {
@@ -148,7 +154,6 @@ let ScoreChartTemplate = ({y = [], timestamps, series, startDate, endDate, clust
                 },
                 axisLabel: {
                     color: '#ffffff',
-                    opacity: '0.5'
                 },
                 min: startDate,
                 max: endDate,
@@ -188,37 +193,11 @@ let ScoreChartTemplate = ({y = [], timestamps, series, startDate, endDate, clust
                 yAxisIndex: index,
             })),
         ],
-        visualMap: {
-            dimension: 3,
-            seriesIndex : 0,
-            // type: 'continuous',
-            top: 20,
-            right: 20,
-            pieces: [
-                {
-                    value: 0,
-                    color: "#00d27a",
-                    label: "0"
-                },
-                {
-                    value: 1,
-                    color: "#f5803e",
-                    label: "1"
-                },
-                {
-                    value: 2,
-                    color: "#e63757",
-                    label: "2"
-                }
-            ],
-            outOfRange: {
-                color: "black"
-            }
-        },
     }
 }
 
 export default function LinePlot({ startDate, endDate, timestamps, series, dataClusterIndex, sensors, style}){
+    const classes = useStyles();
     let clusterIndex = useMemo(() => {
         if (dataClusterIndex === undefined) {
           return Object.entries(series)[0][1].map(() => -1)
@@ -255,25 +234,27 @@ export default function LinePlot({ startDate, endDate, timestamps, series, dataC
 
     return(
         <>
-        <EChartsReact
-            notMerge={true}
-            lazyUpdate={false}
-            option={
-                ScoreChartTemplate({
-                    // timestamp: machine?machine[`${scoreType}s`].map(health => health.timestamp):0,
-                    y: [...sensorCheck], 
-                    timestamps,
-                    clusterIndex,
-                    series,
-                    startDate, 
-                    endDate
-                })
-            }
-            style={style}
-            // onEvents={{
-            //     "datazoom": updateViewport
-            // }}
-        />
+        <Grid item xs={12} sm={12} md={12} lg={12} className={classes.blackBackground}>
+            <EChartsReact
+                notMerge={true}
+                lazyUpdate={false}
+                option={
+                    ScoreChartTemplate({
+                        // timestamp: machine?machine[`${scoreType}s`].map(health => health.timestamp):0,
+                        y: [...sensorCheck], 
+                        timestamps,
+                        clusterIndex,
+                        series,
+                        startDate, 
+                        endDate
+                    })
+                }
+                style={style}
+                // onEvents={{
+                //     "datazoom": updateViewport
+                // }}
+            />
+        </Grid>
         </>
 
     )
