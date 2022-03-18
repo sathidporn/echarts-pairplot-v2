@@ -403,7 +403,7 @@ function App() {
                           Add special sensor
                         </AccordionSummary>
                         <AccordionDetails className={classes.accordionDetail}>
-                          <AddFeatureSensor sensorsObj={sensorsObj} onAddFeatureSensor={onAddFeatureSensor} ></AddFeatureSensor>
+                          <AddFeatureSensor sensorsObj={sensorsObj.filter(sensor=>sensor.status !== "unavailable")} onAddFeatureSensor={onAddFeatureSensor} ></AddFeatureSensor>
                         </AccordionDetails>
                       </Accordion>
                       </Grid>

@@ -42,16 +42,24 @@ export default function AddFeatureSensor({ sensorsObj, onAddFeatureSensor=()=>{}
         }
     }, [processType, setProcessType, setDerivedSensors, setConstant, setSpecialTag])
 
-    // const editSensorName = useCallback(() => {
-    //     setEditName(!editName)
-    // },[editName, setEditName])
-
     let [specialSensorList, setSpecialSensorList] = useState([])
     let [specialSensors, setSpecialSensors] = useState([])
 
     const onReadSensorListFile = useCallback((list) => {
-        setSpecialSensorList(list.filter(sensor=>sensor.SPECIAL_TAG !== ""))
-    },[setSpecialSensorList])
+        setSpecialSensors(list.filter(sensor=>sensor.SPECIAL_TAG !== "").map(sensor => {
+            return {
+                specialTag: sensor.SPECIAL_TAG,
+                specialName: sensor.SPECIAL_NAME,
+                derivedFromTag: sensor.DERIVED_FROM_TAG,
+                derivedFromName: sensor.DERIVE_FROM_NAME,
+                calType: sensor.CAL_TYPE,
+                subType: sensor.SUB_TYPE,
+                fromUnit: sensor.FROM_UNIT,
+                toUnit: sensor.TO_UNIT, 
+                factor: sensor.FACTOR,
+            }
+        }))
+    },[setSpecialSensors])
 
     const onAddSensor = useCallback((curSensor) => {
         let maxSensors = maximumSensorSelection({calType, processType})
@@ -78,18 +86,22 @@ export default function AddFeatureSensor({ sensorsObj, onAddFeatureSensor=()=>{}
         setDerivedSensors([])
         setSpecialName("")
 
-        let updateSpecialSensors = specialSensorList
+        let updateSpecialSensors = specialSensors
         for(let i=0; i<derivedSensors.length; i++){
-            let objNew = {status: "new", SPECIAL_TAG: specialTag, SPECIAL_NAME: specialName, DERIVED_FROM_TAG: derivedSensors[i].tag, DERIVE_FROM_NAME: derivedSensors[i].name, CAL_TYPE: calType, SUB_TYPE: "", FROM_UNIT: "", TO_UNIT: "", FACTOR: constant}
+            let objNew = {status: "new", specialTag: specialTag, specialName: specialName, derivedFromTag: derivedSensors[i].tag, derivedFromName: derivedSensors[i].name, calType: calType, subType: "", fromUnit: "", toUnit: "", factor: constant}
             updateSpecialSensors.push(objNew)
         }
-        setSpecialSensorList(updateSpecialSensors)
-    },[derivedSensors, calType, processType, constant, specialTag, specialName, specialSensorList, setSpecialSensorList, onAddFeatureSensor])
+        setSpecialSensors(updateSpecialSensors)
+    },[derivedSensors, calType, processType, constant, specialTag, specialName, specialSensors, setSpecialSensors, onAddFeatureSensor])
 
     const onRemoveSpecialSensor= useCallback((tag) => {
-        // let updateSpecialSensors = specialSensorList.filter(sensor=> sensor.SPECIAL_TAG !== tag)
-        // setSpecialSensorList(updateSpecialSensors)
-    }, [specialSensorList, setSpecialSensorList])
+        let updateSpecialSensors = specialSensors.filter(sensor=> sensor.specialTag !== tag)
+        setSpecialSensors(updateSpecialSensors)
+    }, [specialSensors, setSpecialSensors])
+
+    const onCustomizeSensors = useCallback((updateSpecialSensors) => {
+        setSpecialSensors(updateSpecialSensors)
+    },[setSpecialSensors])
 
     return(
         <>
@@ -325,7 +337,7 @@ export default function AddFeatureSensor({ sensorsObj, onAddFeatureSensor=()=>{}
             </Grid>
 
             <Grid item xs={12} sm={12} md={12} lg={12} align="right">
-                <SensorCustomize sensors={specialSensorList} specialSensor={true} onRemoveSpecialSensor={onRemoveSpecialSensor}></SensorCustomize>
+                <SensorCustomize sensors={specialSensors} specialSensor={true} onCustomizeSensors={onCustomizeSensors} onRemoveSpecialSensor={onRemoveSpecialSensor}></SensorCustomize>
             </Grid>
         </Grid>
         </>
