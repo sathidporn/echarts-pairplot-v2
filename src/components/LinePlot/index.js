@@ -3,7 +3,7 @@ import {useMemo} from "react"
 
 const axisOffset = 35
 
-let ScoreChartTemplate = ({y = [], timeseriesAxis, series, startDate, endDate, clusterIndex}) => {
+let ScoreChartTemplate = ({y = [], timestamps, series, startDate, endDate, clusterIndex}) => {
     // console.log("y",y)
     let yAxis 
     if (y && y.length > 0) {
@@ -152,7 +152,7 @@ let ScoreChartTemplate = ({y = [], timeseriesAxis, series, startDate, endDate, c
                 },
                 min: startDate,
                 max: endDate,
-                data: timeseriesAxis,
+                data: timestamps,
             },
         ],
         yAxis,
@@ -218,7 +218,7 @@ let ScoreChartTemplate = ({y = [], timeseriesAxis, series, startDate, endDate, c
     }
 }
 
-export default function LinePlot({ startDate, endDate, timeseriesAxis, series, dataClusterIndex, sensors, style}){
+export default function LinePlot({ startDate, endDate, timestamps, series, dataClusterIndex, sensors, style}){
     let clusterIndex = useMemo(() => {
         if (dataClusterIndex === undefined) {
           return Object.entries(series)[0][1].map(() => -1)
@@ -238,7 +238,7 @@ export default function LinePlot({ startDate, endDate, timeseriesAxis, series, d
                         id: `${sensor}`,
                         dimensions: [{name: "timestamp", type: "time"}, {name: "value", type: "float"}, {name: "cluster", type: "int"}],
                         source: series[sensor].reduce((target, key, index) => {
-                            target[index] = {"timestamp": timeseriesAxis[index], "value": key,  "cluster": clusterIndex[index]}
+                            target[index] = {"timestamp": timestamps[index], "value": key,  "cluster": clusterIndex[index]}
                             return target
                         }, []) 
 
@@ -249,7 +249,7 @@ export default function LinePlot({ startDate, endDate, timeseriesAxis, series, d
             // }    
         }
         return sensorCheck
-    }, [sensors, series, timeseriesAxis, clusterIndex])
+    }, [sensors, series, timestamps, clusterIndex])
 
     // console.log("sensorCheck",sensorCheck, clusterIndex)
 
@@ -262,7 +262,7 @@ export default function LinePlot({ startDate, endDate, timeseriesAxis, series, d
                 ScoreChartTemplate({
                     // timestamp: machine?machine[`${scoreType}s`].map(health => health.timestamp):0,
                     y: [...sensorCheck], 
-                    timeseriesAxis,
+                    timestamps,
                     clusterIndex,
                     series,
                     startDate, 

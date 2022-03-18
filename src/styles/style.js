@@ -6,16 +6,23 @@ const FONT_SIZE_BUTTON = "0.8rem"
 const FONT_SIZE_ICON = "1.5rem"
 
 export const style = makeStyles((theme) => ({
-    background: {
-        backgroundColor: '#242f39',
+    backdrop: {
+        zIndex: 9999,
+        color: '#ffffff',
     },
-    accordion: {
+    flexEnd: {
+        '&.container': {
+            justifyContent: 'flex-end '
+        }
+    },
+    background: {
         backgroundColor: '#242f39',
     },
     toolbox: {
         backgroundColor: '#242f39',
         overflowY: 'auto', 
-        height: '100vh'
+        height: '100vh',
+        color: '#ffffff'
     },
     sensorBox: {
         backgroundColor: '#242f39',
@@ -24,11 +31,70 @@ export const style = makeStyles((theme) => ({
         minHeight: '2vh',
         maxHeight: '20vh',
     },
+    stepper: {
+        '&.MuiStepIcon-root':{
+            fontSize: "1.5rem",
+            color: 'white',
+            '&.MuiSvgIcon-root': {
+                color: '#454c54'
+            },
+        },
+        '&.MuiStepIcon-text':{
+            fontSize: "0.8rem",
+            color: 'white',
+        },
+        '&.Mui-active': {
+           '&.MuiSvgIcon-root': {
+            color: '#51b4ec'
+           },
+           '&.MuiStepIcon-root': {
+            color: '#51b4ec'
+           }
+        },
+        '&.Mui-completed': {
+            color: '#454c54'
+        },
+    },
+    stepContent: {
+        backgroundColor: '#454c54',
+        borderRadius: 20,
+        padding:10,
+        minHeight: '5vh'
+    },
+    activeIcon: {
+        '&.Mui-active': {
+            '&.MuiSvgIcon-root': {
+                color: '#51b4ec'
+            },
+            '&.MuiStepIcon-root': {
+            color: '#51b4ec'
+            }
+        } 
+    },
+    completedIcon: {
+        '&.Mui-completed': {
+            '&.MuiSvgIcon-root': {
+                color: '#51b4ec'
+            },
+            '&.MuiStepIcon-root': {
+            color: '#51b4ec'
+            }
+        }   
+    },
+    accordion: {
+        '&.MuiAccordion-root': {
+            backgroundColor: '#454c54',
+            color: '#ffffff',
+        },
+        '&.MuiAccordion-rounded': {
+            borderRadius: 20
+        }
+    },
     accordionSummary: {
         '&.MuiAccordionSummary-root': {
             backgroundColor: '#454c54',
-            color: '#ffffff'
-
+            color: '#ffffff',
+            borderRadius: 20
         }
     },
     accordionSummaryExpanded: {
@@ -44,12 +110,16 @@ export const style = makeStyles((theme) => ({
         }
     },
     accordionIcon: {
-        color: '#ffffff',
+        color: '#51b4ec',
         fontSize: FONT_SIZE_ICON
     },
     accordionIconExpanded: {
         color: '#51b4ec',
         fontSize: FONT_SIZE_ICON
+    },
+    dialog: {
+        backgroundColor: "#242f39",
+        color: "#ffffff"
     },
     input: {
         backgroundColor: '#51b4ec',
@@ -64,26 +134,70 @@ export const style = makeStyles((theme) => ({
         position: 'absolute',
         zIndex: -1,
     },
-    button: {
+    defaultButton: {
         '&.MuiButton-root': {
+            borderRadius: 10,
             backgroundColor: '#51b4ec',
             fontSize: FONT_SIZE_BUTTON,
             color: '#000a14',
-            height: 20,
+            height: 25,
+            minWidth: '6vw',
             '&:hover': {
                 backgroundColor: '#51b4ec',
                 color: '#ffffff',
             },
         }
     },
+    confirmButton: {
+        '&.MuiButton-root': {
+            borderRadius: 10,
+            backgroundColor: '#35a040',
+            fontSize: FONT_SIZE_BUTTON,
+            color: '#ffffff',
+            height: 25,
+            minWidth: '6vw',
+            '&:hover': {
+                backgroundColor: '#35a040',
+                color: '#ffffff',
+            },
+        }
+    },
+    continueButton: {
+        '&.MuiButton-root': {
+            borderRadius: 10,
+            backgroundColor: '#004f96',
+            fontSize: FONT_SIZE_BUTTON,
+            color: '#ffffff',
+            height: 30,
+            minWidth: '6vw',
+            '&:hover': {
+                backgroundColor: '#004f96',
+                color: '#ffffff',
+            },
+        }
+    },
+    backButton: {
+        '&.MuiButton-root': {
+            borderRadius: 10,
+            backgroundColor: '#454c54',
+            fontSize: FONT_SIZE_BUTTON,
+            color: '#ffffff',
+            height: 30,
+            minWidth: '6vw',
+            '&:hover': {
+                backgroundColor: '#454c54',
+                color: '#ffffff',
+            },
+        }
+    },
     tableContainer: {
        '&.MuiTableContainer-root': {
-            overflowY: 'auto', 
+            // overflowY: 'auto', 
             overflowX: 'auto', 
             maxHeight: '50vh',
             minWidth: '20vw',
             backgroundColor: '#242f39',
-            borderRadius: 5,
+            borderRadius: 10,
        }
     },
     tableHead: {
@@ -137,7 +251,13 @@ export const style = makeStyles((theme) => ({
             fontSize: FONT_SIZE_CONTENT,
         }
     },
-    headerText: {
+    headerTextWhite: {
+        '&.MuiTypography-root': {
+            color: '#ffffff',
+            fontSize: FONT_SIZE_HEAD,
+        }
+    },
+    headerTextBlue: {
         '&.MuiTypography-root': {
             color: '#51b4ec',
             fontSize: FONT_SIZE_HEAD,
@@ -149,12 +269,18 @@ export const style = makeStyles((theme) => ({
             fontSize: FONT_SIZE_CONTENT,
         }
     },
+    contentTextBlack: {
+        '&.MuiTypography-root': {
+            color: '#000a14',
+            fontSize: FONT_SIZE_CONTENT,
+        }
+    },
     textField: {
         color: "#ffffff",
         height: 30,
         borderColor: '#51b4ec',
         '&.MuiFormControl-root ': {
-            minWidth: "-webkit-fill-available",
+            // minWidth: "-webkit-fill-available",
             borderColor: '#51b4ec',
         },
         '&.MuiOutlinedInput-root': {
@@ -170,7 +296,7 @@ export const style = makeStyles((theme) => ({
                 color: '#ffffff',
             },
             '&:hover fieldset': {
-                borderColor: '#51b4ec',
+                borderColor: '#ffffff',
                 color: '#ffffff',
             },
             '&:disabled': {

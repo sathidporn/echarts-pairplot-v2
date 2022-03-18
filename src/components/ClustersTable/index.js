@@ -1,7 +1,7 @@
 import React from 'react'
 import { useCallback, useReducer, useState } from 'react'
 import { style } from '../../styles/style'
-import { Table, TableContainer, TableHead, TableRow, TableCell, TableBody, Button, TextField, FormControlLabel, Radio, IconButton, RadioGroup } from '@mui/material'
+import { Table, TableContainer, TableHead, TableRow, TableCell, TableBody, Button, TextField, FormControlLabel, Radio, IconButton, RadioGroup, Typography } from '@mui/material'
 import CancelIcon from '@mui/icons-material/Cancel'
 const useStyles = style
 
@@ -85,86 +85,88 @@ export default function ClustersTable({clusters, activeClusterIndex, dataCluster
   // </table>
 
 <TableContainer className={classes.tableContainer} >
-<Table size="small" stickyHeader>
-  <TableHead>
+  <Table size="small" stickyHeader>
+    <TableHead>
+      <TableRow>
+        <TableCell align="left" className={classes.tableCell} sx={{ minWidth: 5 }}></TableCell>
+        <TableCell align="left" className={classes.tableCell}>Name</TableCell>
+        <TableCell align="left" className={classes.tableCell}>Color</TableCell>
+        {/* <TableCell align="left" className={classes.tableCell}>Data points indices</TableCell> */}
+        <TableCell align="left" className={classes.tableCell}></TableCell>
+      </TableRow>
+    </TableHead>
+    <TableBody>
+    {clusters?.length > 0 && clusters.map(({id, color}, index) => (
+      <TableRow key={id}>
+        <TableCell align="left" className={classes.tableCell} sx={{ minWidth: 5 }}>
+          <RadioGroup aria-label="gender" value={index} onChange={() => activeChangeHandler(index)}>
+            <FormControlLabel 
+                    control={<Radio style={{color:"#51b4ec"}} size="small" />} 
+                    label=""
+                    checked={index === activeClusterIndex}
+            />
+          </RadioGroup>
+        </TableCell>
+        <TableCell align="left" className={classes.tableCell}>
+          <TextField
+            fullWidth
+            className={classes.textField}
+            rows={1}
+            autoFocus={index === focus} 
+            type="text" 
+            value={id} 
+            InputLabelProps={{
+                shrink: true,
+                className: classes.textField
+            }}
+            InputProps={{
+                classes:{
+                  root: classes.textField,
+                  disabled: classes.textField
+                }
+            }}
+            variant="outlined"
+            onChange={e => onIdChange(e, index)}
+            tabIndex={0}
+          />
+        </TableCell>
+        <TableCell align="left" className={classes.tableCell}>
+          <TextField
+            fullWidth
+            className={classes.textField}
+            rows={1}
+            type="color"
+            value={color}
+            InputLabelProps={{
+                shrink: true,
+                className: classes.textField
+            }}
+            InputProps={{
+                classes:{
+                  root: classes.textField,
+                  disabled: classes.textField
+                }
+            }}
+            variant="outlined"
+            onChange={e => onColorChange(e, index)}
+            tabIndex={0}
+          />
+        </TableCell>
+        {/* <TableCell align="left" className={classes.tableCell}>{Object.entries(dataClusterIndex).filter(([_, clusterIndex]) => clusterIndex === index).map(([i]) => i).join(",")}</TableCell> */}
+        <TableCell align="left" className={classes.tableCell}>
+          <IconButton onClick={() => deleteHandler(index)} >
+            <CancelIcon style={{fontSize:'1rem', color:"#f04461", borderRadius:5}}></CancelIcon>
+          </IconButton>
+        </TableCell>
+      </TableRow>
+    ))} 
     <TableRow>
-      <TableCell align="left" className={classes.tableCell}></TableCell>
-      <TableCell align="left" className={classes.tableCell}>Name</TableCell>
-      <TableCell align="left" className={classes.tableCell}>Color</TableCell>
-      {/* <TableCell align="left" className={classes.tableCell}>Data points indices</TableCell> */}
-      <TableCell align="left" className={classes.tableCell}></TableCell>
-    </TableRow>
-  </TableHead>
-  <TableBody>
-  {clusters?.length > 0 && clusters.map(({id, color}, index) => (
-    <TableRow key={id}>
-      <TableCell align="left" className={classes.tableCell}>
-      <RadioGroup aria-label="gender" value={index} onChange={() => activeChangeHandler(index)}>
-        <FormControlLabel 
-                control={<Radio style={{color:"#51b4ec"}} size="small" />} 
-                label=""
-                checked={index === activeClusterIndex}
-        />
-      </RadioGroup>
-      </TableCell>
-      <TableCell align="left" className={classes.tableCell}>
-        <TextField
-          fullWidth
-          className={classes.textField}
-          rows={1}
-          autoFocus={index === focus} 
-          type="text" 
-          value={id} 
-          InputLabelProps={{
-              shrink: true,
-              className: classes.textField
-          }}
-          InputProps={{
-              classes:{
-                root: classes.textField,
-                disabled: classes.textField
-              }
-          }}
-          variant="outlined"
-          onChange={e => onIdChange(e, index)}
-          tabIndex={0}
-      />
-      </TableCell>
-      <TableCell align="left" className={classes.tableCell}>
-        <TextField
-          fullWidth
-          className={classes.textField}
-          rows={1}
-          type="color"
-          value={color}
-          InputLabelProps={{
-              shrink: true,
-              className: classes.textField
-          }}
-          InputProps={{
-              classes:{
-                root: classes.textField,
-                disabled: classes.textField
-              }
-          }}
-          variant="outlined"
-          onChange={e => onColorChange(e, index)}
-          tabIndex={0}
-        />
-      </TableCell>
-      {/* <TableCell align="left" className={classes.tableCell}>{Object.entries(dataClusterIndex).filter(([_, clusterIndex]) => clusterIndex === index).map(([i]) => i).join(",")}</TableCell> */}
-      <TableCell align="left" className={classes.tableCell}>
-        <IconButton onClick={() => deleteHandler(index)} >
-          <CancelIcon style={{fontSize:'1rem', color:"#f04461", borderRadius:5}}></CancelIcon>
-        </IconButton>
+      <TableCell align="center" colSpan={4} style={{cursor: 'pointer'}} onClick={addClusterHandler} className={classes.tableCell}>
+        <Button className={classes.defaultButton}><Typography className={classes.contentTextBlack}>Add more cluster</Typography></Button>
       </TableCell>
     </TableRow>
-  ))} 
-  <TableRow>
-    <TableCell align="center" colSpan={4} style={{cursor: 'pointer'}} onClick={addClusterHandler}><Button className={classes.button}>Add more cluster</Button></TableCell>
-  </TableRow>
-  </TableBody>
-</Table>
+    </TableBody>
+  </Table>
 </TableContainer>
 )
 }

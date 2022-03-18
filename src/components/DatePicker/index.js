@@ -6,7 +6,7 @@ import { style } from '../../styles/style'
 const useStyles = style
 const MAX_PERIOD = 24
 
-export default function DatePicker({ startSeries, endSeries, onFilteredByDate=()=>{} }){
+export default function DatePicker({ startSeries, endSeries, onPickedDate=()=>{} }){
     const classes = useStyles();
     let [startDate, setStartDate] = useState(new Date(startSeries))
     let [endDate, setEndDate] = useState(new Date(endSeries))
@@ -57,7 +57,7 @@ export default function DatePicker({ startSeries, endSeries, onFilteredByDate=()
                         startDate.setSeconds(0)
                         startDate.setMilliseconds(0)
                         setStartDate(startDate)
-                        onFilteredByDate(startDate, endDate)
+                        onPickedDate(startDate, endDate)
                         // setStartDate(new Date(e.target.value))
                         // onFilteredByDate(new Date(e.target.value), endDate)
                     }}
@@ -90,7 +90,7 @@ export default function DatePicker({ startSeries, endSeries, onFilteredByDate=()
                         endDate.setSeconds(59)
                         endDate.setMilliseconds(999)
                         setEndDate(endDate)
-                        onFilteredByDate(startDate, endDate)
+                        onPickedDate(startDate, endDate)
                     }}
                 />
             </form> 

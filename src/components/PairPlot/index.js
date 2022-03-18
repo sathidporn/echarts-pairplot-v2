@@ -1,13 +1,13 @@
 import EChartsReact from "echarts-for-react"
-import { useMemo } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 const histogramBarCount = 40
 
 const offset = 5
 const gap = 3
 
-export default function PairPlot({series, timeseriesAxis, clusters, dataClusterIndex, style, onBrushActivate = () => {}, onBrushDeactivate = () => {}, onSelected = () => {}}) {
-  console.log("pairplot",dataClusterIndex)
-  // console.log("categoriesColor",categoriesColor, categories)
+export default function PairPlot({series, timestamps, clusters, dataClusterIndex, style, onBrushActivate = () => {}, onBrushDeactivate = () => {}, onSelected = () => {}}) {
+  // console.log("pairplot",dataClusterIndex, series)
+  let chartRef = useRef()
   let clusterIndex = useMemo(() => {
     if (dataClusterIndex === undefined) {
       return Object.entries(series)[0][1].map(() => -1)
@@ -142,7 +142,7 @@ export default function PairPlot({series, timeseriesAxis, clusters, dataClusterI
       xAxis.push(buildXAxis(i === 0?"timeseries":undefined, i === 0, "time"))
       yAxis.push(buildYAxis(seriesNames[i], 'value', true))
       brushLink.push(index)
-      seriesOption.push(buildScatterSeries("timeseries", seriesNames[i], dataIndex => timeseriesAxis[dataIndex]))
+      seriesOption.push(buildScatterSeries("timeseries", seriesNames[i], dataIndex => timestamps[dataIndex]))
       
       index++
     }
@@ -151,7 +151,7 @@ export default function PairPlot({series, timeseriesAxis, clusters, dataClusterI
         dimensions: [...Object.keys(series), "timeseries", "clusterIndex"],
         source: {
           ...series,
-          timeseries: timeseriesAxis,
+          timeseries: timestamps,
           clusterIndex
         },
       },
@@ -169,6 +169,7 @@ export default function PairPlot({series, timeseriesAxis, clusters, dataClusterI
         show: true,
       },
       tooltip: {},
+      animation: true,
       visualMap: [{
         type: 'piecewise',
         right: '10%',
@@ -183,7 +184,10 @@ export default function PairPlot({series, timeseriesAxis, clusters, dataClusterI
         showLabel: false
       }]
     }
-  }, [clusterIndex, clusters, series, timeseriesAxis])
+  }, [clusterIndex, clusters, series, timestamps])
+
+  let [brushActive, setBrushActive] = useState(false)
+
   const eventsHandler = useMemo(() => ({
     'brushselected': (params) => {
       let {batch} = params
@@ -199,10 +203,31 @@ export default function PairPlot({series, timeseriesAxis, clusters, dataClusterI
     'globalcursortaken': params => {
       if (typeof params?.brushOption?.brushType === "boolean") {
         onBrushDeactivate()
+        setBrushActive(false)
       } else if (typeof params?.brushOption?.brushType === "string") {
         onBrushActivate()
+        setBrushActive(true)
       }
     }
-  }), [onBrushActivate, onBrushDeactivate, onSelected])
-  return <EChartsReact style={style} option={option} notMerge={false} onEvents={eventsHandler} />
+  }), [onBrushActivate, onBrushDeactivate, onSelected, setBrushActive])
+
+  // useEffect(() => {
+  //   let chart = chartRef.current.getEchartsInstance()
+  //   console.log("chart",chart)
+  //   if(brushActive === false){
+  //     console.log("brushActive",brushActive)
+  //     chart.setOption(option, {
+  //       notMerge: true,
+  //       lazyUpdate: false,
+  //     })
+  //   }else{
+  //     console.log("brushActive",brushActive)
+  //     chart.setOption(option, {
+  //       notMerge: false,
+  //       lazyUpdate: false,
+  //     })
+  //   }
+  // }, [brushActive])
+
+  return <EChartsReact style={style} ref={e => chartRef.current = e} option={option} notMerge={!brushActive} lazyUpdate={false} onEvents={eventsHandler} />
 }

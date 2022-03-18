@@ -1,52 +1,57 @@
 import React, { useCallback, useState } from 'react';
 import Grid from '@mui/material/Grid'
-import { Select, Typography, MenuItem, TextField, Button } from '@mui/material';
+import { Select, Typography, MenuItem, TextField, Button, Box } from '@mui/material';
 import ArrowDropDownCircleIcon from '@mui/icons-material/ArrowDropDownCircle';
 import { style } from '../../styles/style'
 const useStyles = style
 
-export default function ClusterRange({ checkedSensors, timestampsAxis, series, onBrushActivate = () => {}, onTestClusterRange = () => {}}){
+export default function IndicationSensor({ sensors, filteredTimestamps, series, onBrushActivate = () => {}, onIndicationSensor = () => {}, onFilterByIndicator = () => {}, indexCluster=false}){
     let classes = useStyles();
-    let [operator, setOperator] = useState("inRange")
-    let [sensor, setSensor] = useState(checkedSensors[0])
+    let [operator, setOperator] = useState("select")
+    let [sensor, setSensor] = useState("select")
     let [value1, setValue1] = useState()
     let [value2, setValue2] = useState()
-    console.log("sensor",checkedSensors)
 
-
-    const onAddClusterRange = useCallback(() => {
-        let valuesArr = []
-        for (let i = 0; i < timestampsAxis.length; i++) {
-            if(operator === "inRange"){
-                if (series[sensor][i] >= value1 && series[sensor][i] <= value2) {
-                    valuesArr = [...valuesArr, i]
-                }
-            }else if (operator === "equal"){
-                if (series[sensor][i] === value1) {
-                    valuesArr = [...valuesArr, i]
-                }
-            }else if(operator === "moreThan"){
-                if (series[sensor][i] > value1) {
-                    valuesArr = [...valuesArr, i]
-                }
-            }else if(operator === "moreThanEqual"){
-                if (series[sensor][i] >= value1){
-                    valuesArr = [...valuesArr, i]
-                }
-            }else if(operator === "lessThan"){
-                if (series[sensor][i] < value1) {
-                    valuesArr = [...valuesArr, i]
-                }
-            }else if(operator === "lessThanEqual"){
-                if (series[sensor][i] <= value1){
-                    valuesArr = [...valuesArr, i]
+    const onAddIndicationSensor = useCallback(() => {
+        if(indexCluster) {
+            let valuesArr = []
+            for (let i = 0; i < filteredTimestamps.length; i++) {
+                if(operator === "inRange"){
+                    if (series[sensor][i] >= value1 && series[sensor][i] <= value2) {
+                        valuesArr = [...valuesArr, i]
+                    }
+                }else if (operator === "equal"){
+                    if (series[sensor][i] === value1) {
+                        valuesArr = [...valuesArr, i]
+                    }
+                }else if(operator === "moreThan"){
+                    if (series[sensor][i] > value1) {
+                        valuesArr = [...valuesArr, i]
+                    }
+                }else if(operator === "moreThanEqual"){
+                    if (series[sensor][i] >= value1){
+                        valuesArr = [...valuesArr, i]
+                    }
+                }else if(operator === "lessThan"){
+                    if (series[sensor][i] < value1) {
+                        valuesArr = [...valuesArr, i]
+                    }
+                }else if(operator === "lessThanEqual"){
+                    if (series[sensor][i] <= value1){
+                        valuesArr = [...valuesArr, i]
+                    }
                 }
             }
+            // setDataClusterIndex(clusterIndexArr)
+            onIndicationSensor(valuesArr)
+            onBrushActivate()
+
+        }else{
+            onFilterByIndicator(sensor, operator, value1, value2)
         }
-        // setDataClusterIndex(clusterIndexArr)
-        onTestClusterRange(valuesArr)
-        onBrushActivate()
-    },[sensor, operator, value1, value2, series, timestampsAxis, onBrushActivate, onTestClusterRange])
+
+    },[sensor, operator, value1, value2, series, filteredTimestamps, indexCluster, onBrushActivate, onIndicationSensor, onFilterByIndicator])
+
     return(
         <Grid item container xs={12} sm={12} md={12} lg={12} spacing={1}>
             <Grid item xs={12} sm={12} md={12} lg={12}>
@@ -74,9 +79,10 @@ export default function ClusterRange({ checkedSensors, timestampsAxis, series, o
                             }} 
                             onChange={(e)=>setSensor(e.target.value)}    
                         >
-                            {checkedSensors.map((sensor) => {
+                            <MenuItem value={"select"} className={classes.menuItem}>Select sensor</MenuItem>
+                            {sensors.map((sensor) => {
                                 return (
-                                <MenuItem value={sensor} className={classes.menuItem}>{sensor}</MenuItem>
+                                <MenuItem key={sensor.tag !== undefined ? sensor.tag : sensor} value={sensor.tag !== undefined ? sensor.tag : sensor} className={classes.menuItem}>{sensor.tag !== undefined ? sensor.tag : sensor} </MenuItem>
                                 )
                             })}
                         </Select>
@@ -92,7 +98,6 @@ export default function ClusterRange({ checkedSensors, timestampsAxis, series, o
                         <Select
                             value={operator}
                             IconComponent = {ArrowDropDownCircleIcon}
-                            // value={diffType}
                             autoFocus={true}
                             inputProps={{
                                 classes: {
@@ -108,6 +113,7 @@ export default function ClusterRange({ checkedSensors, timestampsAxis, series, o
                             }} 
                             onChange={(e)=>setOperator(e.target.value)}    
                         >
+                            <MenuItem value={"select"}className={classes.menuItem}>Select operator</MenuItem>
                             <MenuItem key="inRange" value="inRange" className={classes.menuItem}>In Range</MenuItem>
                             <MenuItem key="equal" value="equal" className={classes.menuItem}>Equal</MenuItem>
                             <MenuItem key="moreThan" value="moreThan" className={classes.menuItem}>More than</MenuItem>
@@ -179,8 +185,10 @@ export default function ClusterRange({ checkedSensors, timestampsAxis, series, o
                         </>
                         }
                     </Grid>
-                    <Grid item xs={12} sm={12} md={12} lg={12}>
-                        <Button onClick={onAddClusterRange} className={classes.button}>Add condition</Button>
+                    <Grid item xs={12} sm={12} md={12} lg={12} align="right">
+                        <Button onClick={onAddIndicationSensor} className={classes.confirmButton}>
+                            <Typography className={classes.contentTextWhite}>{indexCluster ? `Brush` : `Filter Data`}</Typography>
+                        </Button>
                     </Grid>
                 </Grid>
             </Grid>

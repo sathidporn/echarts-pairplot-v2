@@ -1,5 +1,5 @@
 const average = (array) => array.reduce((a, b) => a + b) / array.length
-export function samplingData({valuesArr, type}){
+export function generateSamplingData({valuesArr, type}){
     let value
     if(type === "mean"){
         value = average(valuesArr)
