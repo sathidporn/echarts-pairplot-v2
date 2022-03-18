@@ -34,14 +34,26 @@ export default function SensorPicker({ sensors, checkedSensors, raw, timestampsI
   },[checkedSensors, sensors, onPickedSensors])
 
   const onReadSensorListFile = useCallback((list) => {
+    // let updateSensors = []
+    // sensors.map((sensor, i) => {
+    //   let index = list.findIndex(obj => obj.SENSOR_TAG === sensor.tag)
+    //   if (index !== -1) {
+    //     let newObj = {status: "available", tag: sensor.tag, checked: sensor.checked, name: list[index].SENSOR_NAME, description: list[index].SENSOR_DESCRIPTION, type: list[index].SENSOR_TYPE, unit: list[index].SENSOR_UNIT}
+    //     updateSensors.push(newObj)
+    //   }else{
+    //     updateSensors = [...updateSensors.slice(0, i), { ...updateSensors[i], status: "unavailable", tag: sensor.tag, checked: sensor.checked, name: sensor.name, description: sensor.description, type: sensor.type, unit: sensor.unit }, ...updateSensors.slice(i + 1)]
+    //   }
+    //   return []
+    // })
+
     let updateSensors = []
-    sensors.map((sensor, i) => {
-      let index = list.findIndex(obj => obj.SENSOR_TAG === sensor.tag)
+    list.filter(sensor => sensor.SENSOR_TAG !== "").map((sensor, i) => {
+      let index = sensors.findIndex(obj => obj.tag === sensor.SENSOR_TAG)
       if (index !== -1) {
-        let newObj = {status: "available", tag: sensor.tag, checked: sensor.checked, name: list[index].SENSOR_NAME, description: list[index].SENSOR_DESCRIPTION, type: list[index].SENSOR_TYPE, unit: list[index].SENSOR_UNIT}
+        let newObj = {status: "available", tag: sensors[index].tag, checked: sensors[index].checked, name: sensor.SENSOR_NAME, description: sensor.SENSOR_DESCRIPTION, type: sensor.SENSOR_TYPE, unit: sensor.SENSOR_UNIT}
         updateSensors.push(newObj)
       }else{
-        updateSensors = [...updateSensors.slice(0, i), { ...updateSensors[i], status: "unavailable", tag: sensor.tag, checked: sensor.checked, name: sensor.name, description: sensor.description, type: sensor.type, unit: sensor.unit }, ...updateSensors.slice(i + 1)]
+        updateSensors = [...updateSensors.slice(0, i), { ...updateSensors[i], status: "unavailable", tag: sensor.SENSOR_TAG, checked: false, name: sensor.SENSOR_NAME, description: sensor.SENSOR_DESCRIPTION, type: sensor.SENSOR_TYPE, unit: sensor.SENSOR_UNIT }, ...updateSensors.slice(i + 1)]
       }
       return []
     })
@@ -53,7 +65,11 @@ export default function SensorPicker({ sensors, checkedSensors, raw, timestampsI
     onUpDateSensors(updateSensors)
   },[onUpDateSensors])
 
-  // const onRemoveSpecialSensor = useCallback((tag) => {})
+  const onRemoveSpecialSensor= useCallback((tag) => {
+    console.log("test",tag)
+    let updateSensors = sensors.filter(sensor=> sensor.tag !== tag)
+    onUpDateSensors(updateSensors)
+  }, [sensors, onUpDateSensors])
 
 
   return (
@@ -86,10 +102,9 @@ export default function SensorPicker({ sensors, checkedSensors, raw, timestampsI
                   >
                     <TableCell component="th" scope="row" className={classes.tableCell}>
                       <FormControlLabel 
-                          control={<><Checkbox style={{color:"#51b4ec"}} size="small" checked={sensor.checked} onChange={(e)=> toggleSensors(sensor.tag,e.target.checked)} /> </>} 
+                          control={<><Checkbox style={{color:"#51b4ec"}} size="small" checked={sensor.checked} disabled={sensor.status === "unavailable" ? true : false}onChange={(e)=> toggleSensors(sensor.tag,e.target.checked)} /> </>} 
                           label={<Typography className={classes.formControlLabel}>{sensor.tag}</Typography>}
                           className={classes.formControlLabel}
-                          disabled={sensor.status === "unavailable"}
                       />
                     </TableCell>
                     <TableCell align="left" className={classes.tableCell}>
@@ -118,7 +133,7 @@ export default function SensorPicker({ sensors, checkedSensors, raw, timestampsI
           </TableContainer>
         </Grid>
         <Grid item xs={12} sm={12} md={12} lg={12} align="right">
-          <SensorCustomize sensors={sensors} onCustomizeSensors={onCustomizeSensors}></SensorCustomize>
+          <SensorCustomize sensors={sensors} onCustomizeSensors={onCustomizeSensors} onRemoveSpecialSensor={onRemoveSpecialSensor}></SensorCustomize>
         </Grid>
       </Grid>
     </div>
