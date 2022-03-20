@@ -11,16 +11,14 @@ let ScoreChartTemplate = ({y = [], timestamps, series, startDate, endDate, clust
     let yAxis 
     if (y && y.length > 0) {
         yAxis = [{
-            name: y[0].name,
             type: "value",
-            // config scale 
             scale: true,
-            // show: showMachine,
+            name: y[0].name,
             nameLocation: "middle",
             nameTextStyle: {
                 color: '#ffffff'
             },
-            nameGap: 50,
+            nameGap: 25,
             splitLine: {
                 lineStyle: {
                     color: '#ffffff',
@@ -33,7 +31,8 @@ let ScoreChartTemplate = ({y = [], timestamps, series, startDate, endDate, clust
                 }
             },
             axisLabel: {
-                color: '#ffffff'
+                show: true,
+                color: '#ffffff',
             },
             axisPointer: {
                 show: true,
@@ -41,23 +40,27 @@ let ScoreChartTemplate = ({y = [], timestamps, series, startDate, endDate, clust
                     formatter: function (params) {
                         return  params.value.toFixed(2)
                     },
-                    backgroundColor: "#242f39"
+                    backgroundColor: "#242f39",
+                    color: '#ffffff',
+                    width:30,
+                    fontSize: 12,
                 }
+            },
+            minorTick: {
+                show: true
             },
         },
         ...(y.slice(1,).map(({ name, color }, index) => ({
-            // name,
             type: "value",
-            // config scale 
             scale: true,
+            name,
+            nameLocation: "middle",
+            nameTextStyle: {
+                color: '#ffffff'
+            },
+            nameGap: 30,
             position: "right",
             offset: index * axisOffset,
-            nameLocation: "middle",
-            color: '#242f39',
-            nameTextStyle: {
-                color: '#242f39'
-            },
-            nameGap: 25,
             splitLine: {
                 lineStyle: {
                     color: 'white',
@@ -65,15 +68,16 @@ let ScoreChartTemplate = ({y = [], timestamps, series, startDate, endDate, clust
                 }
             },
             axisLabel: {
-                color: '#ffffff'
+                show: true,
+                color: '#ffffff',
             },
             axisPointer: {
                 label: {
                     formatter: function (params) { 
                         return  params.value.toFixed(2)
                     },
-                    backgroundColor: color,
-                    color: '#242f39',
+                    backgroundColor: '#242f39',
+                    color: '#ffffff',
                     width:30,
                     fontSize: 12,
                     padding: [
@@ -83,6 +87,9 @@ let ScoreChartTemplate = ({y = [], timestamps, series, startDate, endDate, clust
                         3, // left
                     ]
                 },
+            },
+            minorTick: {
+                show: true
             },
         })))
         ]

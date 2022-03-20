@@ -106,6 +106,16 @@ export default function PairPlot({series, timestamps, clusters, dataClusterIndex
         yAxisIndex: index,
         color: '#5470c6',
         tooltip: {
+          backgroundColor: '#242f39',
+          // trigger: 'axis',
+          // axisPointer: {
+          //     type: 'cross'
+          // },
+          textStyle:{
+              color: '#ffffff',
+              fontFamily: 'Roboto' ,
+              fontSize: 12
+          },
           formatter: params => {
             return `${params.marker}: x=${xFormatter(params.dataIndex)}, y=${series[yName][params.dataIndex].toFixed(2)}`
           }
@@ -150,6 +160,16 @@ export default function PairPlot({series, timestamps, clusters, dataClusterIndex
             xAxisIndex: index,
             yAxisIndex: index,
             tooltip: {
+              backgroundColor: '#242f39',
+              // trigger: 'axis',
+              // axisPointer: {
+              //     type: 'cross'
+              // },
+              textStyle:{
+                  color: '#ffffff',
+                  fontFamily: 'Roboto' ,
+                  fontSize: 12
+              },
               formatter: params => {
                 return `${params.data[1].toFixed(2)}: ${params.data[0].toFixed(0)} points`
               }
