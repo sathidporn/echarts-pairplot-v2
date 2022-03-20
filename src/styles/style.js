@@ -17,6 +17,9 @@ export const style = makeStyles((theme) => ({
     },
     background: {
         backgroundColor: '#242f39',
+        '&.MuiPaper-root':{
+            backgroundColor: '#242f39',
+        },
     },
     blackBackground: {
         backgroundColor: '#000a14',

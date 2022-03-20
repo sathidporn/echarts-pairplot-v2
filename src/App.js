@@ -21,7 +21,7 @@ import SensorPicker from './components/SensorPicker'
 import DatePicker from './components/DatePicker';
 import PlotTypePicker from './components/PlotTypePicker';
 import ImportData from './components/ImportData';
-import AddFeatureSensor from './components/AddFeatureSensor';
+import AddSpecialSensor from './components/AddSpecialSensor';
 import SamplingPicker from './components/SamplingPicker';
 // import { KDEPlot } from './components/KDEPlot';
 
@@ -329,15 +329,15 @@ function App() {
   //   return tf.tensor(selectedData)
   // }, [checkedSensors, content])
 
-  const onAddFeatureSensor = useCallback((featureSensor) => {
-    // add new feature sensor to raw
-    let featureSensorObj = {}
-    let featureSensorData = generateSpecialSensor({filteredSensors, featureSensor})
-    featureSensorObj[`${featureSensor.tag}`] = featureSensorData
-    let updateFilteredSensors = Object.assign(featureSensorObj, filteredSensors)
+  const onAddSpecialSensor = useCallback((specialSensor) => {
+    // add new special sensor to raw
+    let specialSensorObj = {}
+    let specialSensorData = generateSpecialSensor({filteredSensors, specialSensor})
+    specialSensorObj[`${specialSensor.tag}`] = specialSensorData
+    let updateFilteredSensors = Object.assign(specialSensorObj, filteredSensors)
     setFilteredSensors(updateFilteredSensors)
-    setSensorsObj([...sensorsObj, {status: "new", tag: `${featureSensor.tag}`, checked: false, name: `${featureSensor.name}`, description: "", type: "", unit: "", method: `${featureSensor.calType}`, component: ""}])
-    console.log("Feature",featureSensorObj)
+    setSensorsObj([...sensorsObj, {status: "new", tag: `${specialSensor.tag}`, checked: false, name: `${specialSensor.name}`, description: "", type: "", unit: "", method: `${specialSensor.calType}`, component: ""}])
+    console.log("Special",specialSensorObj)
   },[filteredSensors, sensorsObj, setFilteredSensors, setSensorsObj])
 
   const onUpDateSensors = useCallback((updateSensors) => {
@@ -395,7 +395,7 @@ function App() {
                     <Grid item container xs={12} sm={12} md={12} lg={12} direction="row" justifyContent="space-between" spacing={0}>
                       <Grid item xs={12} sm={12} md={12} lg={12} className={classes.stepContent}>
                         <DatePicker startSeries={raw['TimeStamp'][0]} endSeries={raw['TimeStamp'][raw['TimeStamp']?.length-2]} onPickedDate={onPickedDate} ></DatePicker>
-                        <SensorPicker sensors={sensorsObj} checkedSensors={checkedSensors} raw={raw} timestampsIndex={timestampsIndex}  onPickedSensors={onPickedSensors} onUpDateSensors={onUpDateSensors}></SensorPicker>
+                        <SensorPicker sensors={sensorsObj.filter(sensor=>sensor.status !== "unavailable")} checkedSensors={checkedSensors} raw={raw} timestampsIndex={timestampsIndex}  onPickedSensors={onPickedSensors} onUpDateSensors={onUpDateSensors}></SensorPicker>
                       </Grid>
                       <Grid item xs={12} sm={12} md={12} lg={12} style={{paddingTop: 10}}>
                       <Accordion square={false} className={classes.accordion}>
@@ -403,7 +403,7 @@ function App() {
                           Add special sensor
                         </AccordionSummary>
                         <AccordionDetails className={classes.accordionDetail}>
-                          <AddFeatureSensor sensorsObj={sensorsObj.filter(sensor=>sensor.status !== "unavailable")} onAddFeatureSensor={onAddFeatureSensor} ></AddFeatureSensor>
+                          <AddSpecialSensor sensorsObj={sensorsObj.filter(sensor=>sensor.status !== "unavailable")} onAddSpecialSensor={onAddSpecialSensor} ></AddSpecialSensor>
                         </AccordionDetails>
                       </Accordion>
                       </Grid>
@@ -420,7 +420,7 @@ function App() {
                             sx={{ mt: 1, mr: 1 }}
                             className={classes.continueButton}
                           >
-                            {index === steps.length - 1 ? 'Finish' : 'Continue'}
+                            {index === steps.length - 1 ? 'Reset' : 'Continue'}
                           </Button>
                         </Grid>
                         <Grid item xs={12} sm={4} md={4} lg={4}>
@@ -441,10 +441,10 @@ function App() {
             </Stepper>
 
             {activeStep === steps.length && (
-              <Paper square elevation={0} sx={{ p: 3 }}>
-                <Typography>All steps completed - you&apos;re finished</Typography>
-                <Button onClick={handleReset} sx={{ mt: 1, mr: 1 }}>
-                  Reset
+              <Paper square elevation={0} sx={{ p: 3 }} className={classes.background}>
+                <Typography className={classes.contentTextWhite}>All steps completed - you&apos;re finished</Typography>
+                <Button onClick={handleReset} sx={{ mt: 1, mr: 1 }} className={classes.defaultButton}>
+                  Reset All
                 </Button>
               </Paper>
             )}
@@ -470,25 +470,28 @@ function App() {
       </Grid>
 
       <Grid item xs={9} sm={9} md={9} lg={9} className={classes.blackBackground}>
-        {series &&
-        <>
-        {plotType === "scatter" &&
-        <PairPlot style={{maxWidth: '80vw', height: '100vh'}} timestamps={filteredTimestamps} series={series} clusters={clusters} dataClusterIndex={dataClusterIndex} onBrushActivate={brushActivateHandler} onBrushDeactivate={brushDeactivateHandler} onSelected={onSelected} />
-        }
-        {plotType === "line" &&
-        <LinePlot style={{maxWidth: '80vw', height: '100vh'}} timestamps={filteredTimestamps} series={series} startDate={startDate} endDate={endDate} sensors={checkedSensors} clusters={clusters} dataClusterIndex={dataClusterIndex}></LinePlot>
-        }
-        {/* {plotType === "kde" &&
-          <div style={{
-          // display: 'flex',
-          width: '100vw',
-          height: '100vh',
-          flexDirection: 'row'
-          }}>
-            <KDEPlot style={{flexGrow: 1}} tags={checkedSensors} gridSize={64} data={kdeData} ></KDEPlot>
-          </div>
-        } */}
-        </>
+        {series !== undefined ? (
+          <>
+          {plotType === "scatter" &&
+          <PairPlot style={{maxWidth: '80vw', height: '100vh'}} timestamps={filteredTimestamps} series={series} clusters={clusters} dataClusterIndex={dataClusterIndex} onBrushActivate={brushActivateHandler} onBrushDeactivate={brushDeactivateHandler} onSelected={onSelected} />
+          }
+          {plotType === "line" &&
+          <LinePlot style={{maxWidth: '80vw', height: '100vh'}} timestamps={filteredTimestamps} series={series} startDate={startDate} endDate={endDate} sensors={checkedSensors} clusters={clusters} dataClusterIndex={dataClusterIndex}></LinePlot>
+          }
+          {/* {plotType === "kde" &&
+            <div style={{
+            // display: 'flex',
+            width: '100vw',
+            height: '100vh',
+            flexDirection: 'row'
+            }}>
+              <KDEPlot style={{flexGrow: 1}} tags={checkedSensors} gridSize={64} data={kdeData} ></KDEPlot>
+            </div>
+          } */}
+          </>
+          ):(
+            <Typography style={{color: '#ffffff'}}>No data</Typography>
+          )
         }
       </Grid>
     </Grid> 

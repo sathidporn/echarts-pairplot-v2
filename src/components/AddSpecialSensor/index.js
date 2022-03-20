@@ -12,7 +12,7 @@ import { generateSensorTag, maximumSensorSelection } from '../../utils/calculate
 
 const useStyles = style
 
-export default function AddFeatureSensor({ sensorsObj, onAddFeatureSensor=()=>{}}){
+export default function AddSpecialSensor({ sensorsObj, onAddSpecialSensor=()=>{}}){
     const classes = useStyles()
     
     // let [editName, setEditName] = useState(false)
@@ -82,7 +82,7 @@ export default function AddFeatureSensor({ sensorsObj, onAddFeatureSensor=()=>{}
     const onGenerateSensor = useCallback(() => {
         // let objNewSensor = {tag: specialTag, name: "", derived: derivedSensors, calType: calType, subType: subType, fromUnit: "", toUnit: "", factor: ""}
         let objNewSensor = {sensor: derivedSensors, tag: specialTag, name: specialName, calType: calType, processType: processType, constant: constant}
-        onAddFeatureSensor(objNewSensor)
+        onAddSpecialSensor(objNewSensor)
         setDerivedSensors([])
         setSpecialName("")
 
@@ -92,7 +92,7 @@ export default function AddFeatureSensor({ sensorsObj, onAddFeatureSensor=()=>{}
             updateSpecialSensors.push(objNew)
         }
         setSpecialSensors(updateSpecialSensors)
-    },[derivedSensors, calType, processType, constant, specialTag, specialName, specialSensors, setSpecialSensors, onAddFeatureSensor])
+    },[derivedSensors, calType, processType, constant, specialTag, specialName, specialSensors, setSpecialSensors, onAddSpecialSensor])
 
     const onRemoveSpecialSensor= useCallback((tag) => {
         let updateSpecialSensors = specialSensors.filter(sensor=> sensor.specialTag !== tag)
