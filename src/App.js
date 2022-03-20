@@ -23,15 +23,15 @@ import PlotTypePicker from './components/PlotTypePicker';
 import ImportData from './components/ImportData';
 import AddFeatureSensor from './components/AddFeatureSensor';
 import SamplingPicker from './components/SamplingPicker';
-import { KDEPlot } from './components/KDEPlot';
+// import { KDEPlot } from './components/KDEPlot';
 
 import { generateSamplingData } from './utils/data_sampling';
 import { generateSpecialSensor } from './utils/calculate_sensor';
 import { cleansingSensors, cleansingTimestamps } from './utils/data_cleansing';
 import { style } from './styles/style';
 
-import * as tf from '@tensorflow/tfjs'
-require('@tensorflow/tfjs-backend-webgl')
+// import * as tf from '@tensorflow/tfjs'
+// require('@tensorflow/tfjs-backend-webgl')
 
 
 const useStyles = style
@@ -323,11 +323,11 @@ function App() {
     console.log("PickDate",startDate, endDate, updatedSeries)
   }, [checkedSensors, series, filteredTimestamps, setSeries, setStartDate, setEndDate, updateDataClusterIndex])
 
-  const kdeData = useMemo(() => {
-    let selectedData = content.map(row => Object.entries(row).filter(([key]) => checkedSensors.indexOf(key) !== -1).map(([_, value]) => value))
-    console.log("selected",selectedData)
-    return tf.tensor(selectedData)
-  }, [checkedSensors, content])
+  // const kdeData = useMemo(() => {
+  //   let selectedData = content.map(row => Object.entries(row).filter(([key]) => checkedSensors.indexOf(key) !== -1).map(([_, value]) => value))
+  //   console.log("selected",selectedData)
+  //   return tf.tensor(selectedData)
+  // }, [checkedSensors, content])
 
   const onAddFeatureSensor = useCallback((featureSensor) => {
     // add new feature sensor to raw
@@ -478,7 +478,7 @@ function App() {
         {plotType === "line" &&
         <LinePlot style={{maxWidth: '80vw', height: '100vh'}} timestamps={filteredTimestamps} series={series} startDate={startDate} endDate={endDate} sensors={checkedSensors} clusters={clusters} dataClusterIndex={dataClusterIndex}></LinePlot>
         }
-        {plotType === "kde" &&
+        {/* {plotType === "kde" &&
           <div style={{
           // display: 'flex',
           width: '100vw',
@@ -487,7 +487,7 @@ function App() {
           }}>
             <KDEPlot style={{flexGrow: 1}} tags={checkedSensors} gridSize={64} data={kdeData} ></KDEPlot>
           </div>
-        }
+        } */}
         </>
         }
       </Grid>
