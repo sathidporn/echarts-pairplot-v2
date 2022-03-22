@@ -36,7 +36,6 @@ export default function ImportSensorList({ onReadSensorListFile=()=>{}, specialF
     }, [setContent, setLoading, setFileName])
 
     const onSyncFile = useCallback(() => {
-        console.log("content",content)
         onReadSensorListFile(content)
     }, [content, onReadSensorListFile])
 

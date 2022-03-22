@@ -21,6 +21,7 @@ import SensorPicker from './components/SensorPicker'
 import DatePicker from './components/DatePicker';
 import PlotTypePicker from './components/PlotTypePicker';
 import ImportData from './components/ImportData';
+import ImportSensorList from './components/ImportSensorList';
 import AddSpecialSensor from './components/AddSpecialSensor';
 import SamplingPicker from './components/SamplingPicker';
 // import { KDEPlot } from './components/KDEPlot';
@@ -62,26 +63,16 @@ const steps = [
     description: `User can filtering data use indicator sensor`,
   },
   {
+    label: 'Import sensor file',
+    description: ``,
+  },
+  {
     label: 'Select sensor',
     description: `Select sensor and date to plot graph`,
   },
 ];
 
 function App() {
-  // let series = useMemo(() => {
-  //   let temp = {}
-  //   for (let [key, value] of Object.entries(seriesConfigs)) {
-  //     temp[key] = generateRandomSeries(value)
-  //   }
-  //   return temp
-  // }, [])
-  // let timeseries = useMemo(() => {
-  //   return generateSequence({n: 256})
-  // }, [])
-  // console.log("series",series)
-  // console.log("timeseries",timeseries)
-
-  // series from csv file
   const classes = useStyles();
   const [activeStep, setActiveStep] = React.useState(0);
 
@@ -101,7 +92,6 @@ function App() {
   let [timestampsIndex, setTimestampsIndex] = useState()
   let [content, setContent] = useState([])
 
-  let [timestampsAxis, setTimestampsAxis] = useState()
   let [samplingData, setSamplingData] = useState()
   let [samplingTimestamp, setSamplingTimestamp] = useState()
   let [filteredSensors, setFilteredSensors] = useState()
@@ -109,14 +99,12 @@ function App() {
 
   let [checkedSensors, setCheckedSensors] = useState([])
   let [sensorsObj, setSensorsObj] = useState()
+  let [specialSensors, setSpecialSensors] = useState([])
   let [series, setSeries] = useState()
 
   let [startDate, setStartDate] = useState()
   let [endDate, setEndDate] = useState()
   let [filterProcess, setFilterProcess] = useState({tag: undefined, operator: undefined, firstValue: undefined, secondValue: undefined})
-
-  // let [samplingType, setSamplingType] = useState()
-  // let [filterProcess, setFilterProcess] = useState({tag: undefined, operator: undefined, value1: undefined, value2: undefined})
 
   const [clusters, setClusters] = useState([defaultCluster])
   const clustersChangeHandler = useCallback(clusters => {
@@ -176,12 +164,12 @@ function App() {
     setPlotType(type)
   },[setPlotType])
 
+  // Get raw data
   const onRawDataHandler = useCallback((columns, raw, data, timestampsIndex, timestamps) => {
     setRaw(raw)
     setContent(data)
     setTimestampsIndex(timestampsIndex)
     setSamplingTimestamp(timestamps)
-    // setTimestampsAxis(timestampsAxis)
     let sensorsArray = []
     let sensors = {}
     for (let sensor of columns) {
@@ -195,6 +183,80 @@ function App() {
     console.log("Import",columns, raw, timestamps)
   }, [setRaw, setContent, setTimestampsIndex, setSamplingTimestamp, setSensorsObj, setSeries])
 
+  const onReadSensorListFile = useCallback((list) => {
+    let updateSensors = []
+    list.filter(sensor => sensor.SENSOR_TAG !== "").map((sensor, i) => {
+      let index = sensorsObj.findIndex(obj => obj.tag === sensor.SENSOR_TAG)
+      if (index !== -1) {
+        let newObj = {status: "available", tag: sensorsObj[index].tag, checked: sensorsObj[index].checked, name: sensor.SENSOR_NAME, description: sensor.SENSOR_DESCRIPTION, type: sensor.SENSOR_TYPE, unit: sensor.SENSOR_UNIT}
+        updateSensors.push(newObj)
+      }else{
+        updateSensors = [...updateSensors.slice(0, i), { ...updateSensors[i], status: "unavailable", tag: sensor.SENSOR_TAG, checked: false, name: sensor.SENSOR_NAME, description: sensor.SENSOR_DESCRIPTION, type: sensor.SENSOR_TYPE, unit: sensor.SENSOR_UNIT }, ...updateSensors.slice(i + 1)]
+      }
+      return []
+    })
+    setSensorsObj(updateSensors)
+  },[sensorsObj, setSensorsObj])
+
+   // Generate special sensor data when import sensor file & special sensor file
+  const onGenerateSpecialSensor = useCallback((specialSensors) => {
+    let sensors = sensorsObj.filter(sensor=>sensor.status === "unavailable")
+    let updateFilteredSensors = filteredSensors
+    let updateSensors = sensorsObj
+    sensors.map((sensor) => {
+      let filterSensor  = specialSensors.filter(s=>s.specialTag === sensor.tag)
+      let derivedSensors = []
+      filterSensor.map((sensor) => {
+        derivedSensors.push({tag: sensor.derivedFromTag})
+        return derivedSensors
+      })
+      let specialSensor = {sensor: derivedSensors, tag: sensor.tag, name: sensor.name, calType: filterSensor[0].calType, subType: filterSensor[0].subType, processType: filterSensor[0].factor === "" ? "sensor" : "constant", constant: false}
+      let specialSensorObj = {}
+      let specialSensorData = generateSpecialSensor({filteredSensors: updateFilteredSensors, specialSensor})
+      specialSensorObj[`${specialSensor.tag}`] = specialSensorData
+      updateFilteredSensors = Object.assign(specialSensorObj, updateFilteredSensors)
+
+      let index = sensorsObj.findIndex(obj => obj.tag === sensor.tag)
+      if (index !== -1 &&  updateFilteredSensors[sensor.tag].length > 0) {
+        updateSensors = [...updateSensors.slice(0, index), { ...updateSensors[index], status: "available"}, ...updateSensors.slice(index + 1)]
+      }
+      return updateFilteredSensors
+    })
+    setFilteredSensors(updateFilteredSensors)
+    setSensorsObj(updateSensors)
+    console.log("Generate",updateFilteredSensors, updateSensors)
+  },[filteredSensors, sensorsObj, setFilteredSensors, setSensorsObj])
+
+  const onReadSpecialSensorListFile = useCallback((list) => {
+    setSpecialSensors(list.filter(sensor=>sensor.SPECIAL_TAG !== "").map(sensor => {
+        return {
+            specialTag: sensor.SPECIAL_TAG,
+            specialName: sensor.SPECIAL_NAME,
+            derivedFromTag: sensor.DERIVED_FROM_TAG,
+            derivedFromName: sensor.DERIVE_FROM_NAME,
+            calType: sensor.CAL_TYPE,
+            subType: sensor.SUB_TYPE,
+            fromUnit: sensor.FROM_UNIT,
+            toUnit: sensor.TO_UNIT, 
+            factor: sensor.FACTOR,
+        }
+    }))
+    onGenerateSpecialSensor(list.filter(sensor=>sensor.SPECIAL_TAG !== "").map(sensor => {
+        return {
+            specialTag: sensor.SPECIAL_TAG,
+            specialName: sensor.SPECIAL_NAME,
+            derivedFromTag: sensor.DERIVED_FROM_TAG,
+            derivedFromName: sensor.DERIVE_FROM_NAME,
+            calType: sensor.CAL_TYPE,
+            subType: sensor.SUB_TYPE,
+            fromUnit: sensor.FROM_UNIT,
+            toUnit: sensor.TO_UNIT, 
+            factor: sensor.FACTOR,
+        }
+    }))
+  },[setSpecialSensors, onGenerateSpecialSensor])
+
+  // Make raw data to sampling data by type
   const onSamplingData = useCallback((type) => {
     let updateSamplingData = {}
       sensorsObj.map((sensor) => {
@@ -215,7 +277,6 @@ function App() {
         return values
       })
       setSamplingData(updateSamplingData)
- 
       // update filteredSensors, filteredTimestamps, series and timestamps when sampling type changed
       if(checkedSensors.length > 0){
         let updateTimestamps = cleansingTimestamps({ tag: filterProcess.tag, operator: filterProcess.operator, value1: filterProcess.firstValue, value2: filterProcess.secondValue, samplingData: updateSamplingData, samplingTimestamp})
@@ -237,6 +298,7 @@ function App() {
     console.log("Sampling",updateSamplingData)
   },[checkedSensors, sensorsObj, timestampsIndex, raw, filterProcess, samplingTimestamp, setSamplingData, setSeries])
 
+  // Filter data by indicator sensor
   const onFilterByIndicator = useCallback((tag, operator, value1, value2) => {
     console.log("Cleansing/sampling",samplingData,samplingTimestamp)
     let updateTimestamps = cleansingTimestamps({tag, operator, value1, value2, samplingData, samplingTimestamp})
@@ -255,13 +317,14 @@ function App() {
         setSeries(updateSeries)
         updateDataClusterIndex(Object.values(updateSeries)[0].map(() => -1)) 
       }
-      else{
-        setSeries(undefined)
-      }  
+      // else{
+      //   setSeries([])
+      // }  
     }
     console.log("Cleansing",updateTimestamps,updateSensors)
-  }, [sensorsObj, checkedSensors, samplingData, samplingTimestamp, setFilteredSensors, setFilteredTimestamps, setFilterProcess, setSeries])
+  }, [series, sensorsObj, checkedSensors, samplingData, samplingTimestamp, setFilteredSensors, setFilteredTimestamps, setFilterProcess, setSeries])
 
+  // Add sensor when picked
   const onPickedSensors = useCallback((tag, checkedSensors, newSensorsObj ) => {
     // add new sensor series 
     let addNewSeries = {}
@@ -291,6 +354,7 @@ function App() {
     console.log("PickSensor",updateSeries)
   },[filteredSensors, series, setSeries, updateDataClusterIndex, setCheckedSensors, setSensorsObj])
 
+  // Filter data when picked date
   const onPickedDate = useCallback((startDate, endDate) => {
     setStartDate(startDate)
     setEndDate(endDate)
@@ -323,12 +387,7 @@ function App() {
     console.log("PickDate",startDate, endDate, updatedSeries)
   }, [checkedSensors, series, filteredTimestamps, setSeries, setStartDate, setEndDate, updateDataClusterIndex])
 
-  // const kdeData = useMemo(() => {
-  //   let selectedData = content.map(row => Object.entries(row).filter(([key]) => checkedSensors.indexOf(key) !== -1).map(([_, value]) => value))
-  //   console.log("selected",selectedData)
-  //   return tf.tensor(selectedData)
-  // }, [checkedSensors, content])
-
+  // Add special sensor
   const onAddSpecialSensor = useCallback((specialSensor) => {
     // add new special sensor to raw
     let specialSensorObj = {}
@@ -340,9 +399,26 @@ function App() {
     console.log("Special",specialSensorObj)
   },[filteredSensors, sensorsObj, setFilteredSensors, setSensorsObj])
 
+  const onRemoveSpecialSensor = useCallback((tag) => {
+    let updateSensors = sensorsObj.filter(sensor=> sensor.tag !== tag)
+    let updateSpecialSensors = specialSensors.filter(sensor=> sensor.specialTag !== tag)
+    setSensorsObj(updateSensors)
+    setSpecialSensors(updateSpecialSensors)
+  }, [sensorsObj, specialSensors, setSensorsObj, setSpecialSensors])
+
   const onUpDateSensors = useCallback((updateSensors) => {
     setSensorsObj(updateSensors)
   }, [setSensorsObj])
+
+  const onUpdateSpecialSensors = useCallback((updateSpecialSensors) => {
+    setSpecialSensors(updateSpecialSensors)
+  }, [setSpecialSensors])
+
+  // const kdeData = useMemo(() => {
+  //   let selectedData = content.map(row => Object.entries(row).filter(([key]) => checkedSensors.indexOf(key) !== -1).map(([_, value]) => value))
+  //   console.log("selected",selectedData)
+  //   return tf.tensor(selectedData)
+  // }, [checkedSensors, content])
 
 // end
 
@@ -380,7 +456,7 @@ function App() {
                       <ImportData onRawDataHandler={onRawDataHandler}></ImportData>
                     </Grid>
                     }
-                    {index === 1 &&
+                    {index === 1 && raw && 
                     <Grid item xs={12} sm={12} md={12} lg={12} className={classes.stepContent}>
                       <SamplingPicker sensorsObj={sensorsObj} raw={raw} timestampsIndex={timestampsIndex} onSamplingData={onSamplingData}></SamplingPicker>
                     </Grid>
@@ -392,10 +468,18 @@ function App() {
                     }
                     {index === 3 && filteredSensors &&
                     <>
+                    <Grid item xs={12} sm={12} md={12} lg={12} className={classes.stepContent}>
+                      <ImportSensorList specialFile={false} onReadSensorListFile={onReadSensorListFile}></ImportSensorList>
+                      <ImportSensorList specialFile={true} onReadSensorListFile={onReadSpecialSensorListFile}></ImportSensorList>
+                    </Grid>
+                    </>
+                    }
+                    {index === 4 && filteredSensors &&
+                    <>
                     <Grid item container xs={12} sm={12} md={12} lg={12} direction="row" justifyContent="space-between" spacing={0}>
                       <Grid item xs={12} sm={12} md={12} lg={12} className={classes.stepContent}>
                         <DatePicker startSeries={raw['TimeStamp'][0]} endSeries={raw['TimeStamp'][raw['TimeStamp']?.length-2]} onPickedDate={onPickedDate} ></DatePicker>
-                        <SensorPicker sensors={sensorsObj.filter(sensor=>sensor.status !== "unavailable")} checkedSensors={checkedSensors} raw={raw} timestampsIndex={timestampsIndex}  onPickedSensors={onPickedSensors} onUpDateSensors={onUpDateSensors}></SensorPicker>
+                        <SensorPicker sensors={sensorsObj} checkedSensors={checkedSensors} raw={raw} timestampsIndex={timestampsIndex}  onPickedSensors={onPickedSensors} onUpDateSensors={onUpDateSensors} onRemoveSpecialSensor={onRemoveSpecialSensor}></SensorPicker>
                       </Grid>
                       <Grid item xs={12} sm={12} md={12} lg={12} style={{paddingTop: 10}}>
                       <Accordion square={false} className={classes.accordion}>
@@ -403,7 +487,7 @@ function App() {
                           Add special sensor
                         </AccordionSummary>
                         <AccordionDetails className={classes.accordionDetail}>
-                          <AddSpecialSensor sensorsObj={sensorsObj.filter(sensor=>sensor.status !== "unavailable")} onAddSpecialSensor={onAddSpecialSensor} ></AddSpecialSensor>
+                          <AddSpecialSensor sensorsObj={sensorsObj.filter(sensor=>sensor.status !== "unavailable")} specialSensors={specialSensors} onAddSpecialSensor={onAddSpecialSensor} onGenerateSpecialSensor={onGenerateSpecialSensor} onUpDateSensors={onUpDateSensors} onUpdateSpecialSensors={onUpdateSpecialSensors} onRemoveSpecialSensor={onRemoveSpecialSensor}></AddSpecialSensor>
                         </AccordionDetails>
                       </Accordion>
                       </Grid>
@@ -450,6 +534,9 @@ function App() {
             )}
           </Box>
 
+          <Grid item xs={12} sm={12} md={12} lg={12} style={{padding: 10}}>
+            <PlotTypePicker onSelectedType={onSelectedType}></PlotTypePicker>
+          </Grid>
           {series && plotType === "scatter" &&      
           <Grid item xs={12} sm={12} md={12} lg={12} style={{padding: 10}}>
             <Grid item container xs={12} sm={12} md={12} lg={12} className={classes.stepContent} >
@@ -462,9 +549,6 @@ function App() {
             </Grid>
           </Grid>
           }
-          <Grid item xs={12} sm={12} md={12} lg={12} style={{padding: 10}}>
-            <PlotTypePicker onSelectedType={onSelectedType}></PlotTypePicker>
-          </Grid>
         </Grid>
       {/* </div> */}
       </Grid>
@@ -490,7 +574,9 @@ function App() {
           } */}
           </>
           ):(
-            <Typography style={{color: '#ffffff'}}>No data</Typography>
+            <Grid item lg={12} alignSelf="center" alignContent="center" alignItems="center">
+              <Typography style={{color: '#ffffff'}}>No data</Typography>
+            </Grid>
           )
         }
       </Grid>

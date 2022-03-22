@@ -51,7 +51,7 @@ export const style = makeStyles((theme) => ({
         backgroundColor: '#242f39',
         borderRadius: 10,
         overflowY: 'auto',
-        minHeight: '2vh',
+        minHeight: '3vh',
         maxHeight: '20vh',
     },
     stepper: {
