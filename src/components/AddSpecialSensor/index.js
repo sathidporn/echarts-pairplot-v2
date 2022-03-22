@@ -19,11 +19,8 @@ const calculationList = [{value:"select", name: "Select calculation"}, {value:"A
 export default function AddSpecialSensor({ sensorsObj, specialSensors, onAddSpecialSensor=()=>{}, onUpdateSpecialSensors=()=>{},  onRemoveSpecialSensor = () => {}}){
     const classes = useStyles()
     
-    // let [editName, setEditName] = useState(false)
-
     let [derivedSensors, setDerivedSensors] = useState([])
     let [calType, setCalType] = useState("select")
-    let [processType, setProcessType] = useState("sensor")
     let [constantState, setConstantState] = useState(false)
     let [constant, setConstant] = useState()
     let [specialTag, setSpecialTag] = useState("")
@@ -41,15 +38,6 @@ export default function AddSpecialSensor({ sensorsObj, specialSensors, onAddSpec
             setMaxSensors(maximumSensorSelection({calType: type, constant: false}))
         }
     }, [derivedSensors, calType, setCalType, setSpecialTag, setMaxSensors, setConstantState])
-
-    const handleChangeProcessType = useCallback((type) => {
-        if(type !== processType){
-            setProcessType(type)
-            setDerivedSensors([])
-            setConstant(undefined)
-            setSpecialTag("")
-        }
-    }, [processType, setProcessType, setDerivedSensors, setConstant, setSpecialTag])
 
     const onAddConstant = useCallback(() => {
         setConstant(undefined)
