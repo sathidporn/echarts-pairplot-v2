@@ -210,7 +210,7 @@ function App() {
         derivedSensors.push({tag: sensor.derivedFromTag})
         return derivedSensors
       })
-      let specialSensor = {sensor: derivedSensors, tag: sensor.tag, name: sensor.name, calType: filterSensor[0].calType, subType: filterSensor[0].subType, processType: filterSensor[0].factor === "" ? "sensor" : "constant", constant: false}
+      let specialSensor = {sensor: derivedSensors, tag: sensor.tag, name: sensor.name, calType: filterSensor[0].calType, subType: filterSensor[0].subType, constant: filterSensor[0].factor}
       let specialSensorObj = {}
       let specialSensorData = generateSpecialSensor({filteredSensors: updateFilteredSensors, specialSensor})
       specialSensorObj[`${specialSensor.tag}`] = specialSensorData
@@ -322,7 +322,7 @@ function App() {
       // }  
     }
     console.log("Cleansing",updateTimestamps,updateSensors)
-  }, [series, sensorsObj, checkedSensors, samplingData, samplingTimestamp, setFilteredSensors, setFilteredTimestamps, setFilterProcess, setSeries])
+  }, [sensorsObj, checkedSensors, samplingData, samplingTimestamp, setFilteredSensors, setFilteredTimestamps, setFilterProcess, setSeries])
 
   // Add sensor when picked
   const onPickedSensors = useCallback((tag, checkedSensors, newSensorsObj ) => {

@@ -2,7 +2,7 @@
 export function generateSpecialSensor({filteredSensors, specialSensor}){
     // start -> ADD / max 10 sensor 
     if(specialSensor.calType === "ADD"){
-      if(specialSensor.constant === false){
+      if(specialSensor.constant === undefined){
         let avg = []
         for(let i=0; i<specialSensor.sensor.length; i++){
           if(i===0){
@@ -16,7 +16,7 @@ export function generateSpecialSensor({filteredSensors, specialSensor}){
           }
         }
         return avg
-      }else if(specialSensor.constant === true){
+      }else if(specialSensor.constant !== undefined){
         let avg = filteredSensors[specialSensor.sensor[0].tag].map(function (num, idx) {
           return num + specialSensor.constant
         })
@@ -25,13 +25,12 @@ export function generateSpecialSensor({filteredSensors, specialSensor}){
 
     // start -> abs ABSDIFF  / max 2 sensor 
     }else if(specialSensor.calType === "ABSDIFF"){
-      if(specialSensor.constant === false){
-        console.log("test",specialSensor.sensor[1].tag)
+      if(specialSensor.constant === undefined){
         let ABSDIFF = filteredSensors[specialSensor.sensor[0].tag].map(function (num, idx) {
           return Math.abs(num - filteredSensors[specialSensor.sensor[1].tag][idx])
         })
         return ABSDIFF
-      }else if(specialSensor.constant === true){
+      }else if(specialSensor.constant !== undefined){
         let ABSDIFF = filteredSensors[specialSensor.sensor[0].tag].map(function (num, idx) {
           return Math.abs(num - specialSensor.constant)
         })
@@ -40,12 +39,12 @@ export function generateSpecialSensor({filteredSensors, specialSensor}){
       
     // start -> MUL / max 10 sensor
     }else if(specialSensor.calType === "MUL"){
-      // if(specialSensor.constant === false){
+      // if(specialSensor.constant === undefined){
       //   let mul = filteredSensors[specialSensor.sensor[0]].map(function (num, idx) {
       //     return num * filteredSensors[specialSensor.sensor[1]][idx];
       //   })
       //   return mul
-      // }else if(specialSensor.constant === true){
+      // }else if(specialSensor.constant !== undefined){
       //   let mul = filteredSensors[specialSensor.sensor[0]].map(function (num, idx) {
       //     return num * specialSensor.constant
       //   })
@@ -63,7 +62,7 @@ export function generateSpecialSensor({filteredSensors, specialSensor}){
           })
         }
       }
-      if(specialSensor.constant === true){
+      if(specialSensor.constant !== undefined){
         mul = mul.map(function (num, idx) {
           return num * specialSensor.constant
         })
@@ -71,12 +70,12 @@ export function generateSpecialSensor({filteredSensors, specialSensor}){
 
     // start -> DIV / max 2 sensor
     }else if(specialSensor.calType === "DIV"){
-      if(specialSensor.constant === false){
+      if(specialSensor.constant === undefined){
         let div = filteredSensors[specialSensor.sensor[0].tag].map(function (num, idx) {
           return num /filteredSensors[specialSensor.sensor[1].tag][idx]
         })
         return div
-      }else if(specialSensor.constant === true){
+      }else if(specialSensor.constant !== undefined){
         let div =  filteredSensors[specialSensor.sensor[0].tag].map(function (num, idx) {
           return num / specialSensor.constant
         })
@@ -133,9 +132,13 @@ export function maximumSensorSelection({calType, constant}){
       maxSensors = 1
   }else if(calType === 'AVG' && constant === false){
       maxSensors = 10
-  }else {
-    console.error("maximumSensorSelection: calType is not define")
+  }else if(calType === 'AVG' && constant === true){
+    maxSensors = 0
+  }else if(calType === 'select') {
+      maxSensors = 0
+      console.error("maximumSensorSelection: calType is not define")
   }
+  console.log("maxSensors",calType,constant,maxSensors)
   return maxSensors
 }
 

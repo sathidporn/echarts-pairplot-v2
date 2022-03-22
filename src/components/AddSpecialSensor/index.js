@@ -14,7 +14,7 @@ import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 
 const useStyles = style
 
-const calculationList = [{value:"ADD", name: "Add"}, {value:"ABSDIFF", name: "Absolute Diff"}, {value:"MUL", name: "Multiply"}, {value:"DIV", name: "Divide"}, {value:"AVG", name: "Average"}]     
+const calculationList = [{value:"select", name: "Select calculation"}, {value:"ADD", name: "Add"}, {value:"ABSDIFF", name: "Absolute Diff"}, {value:"MUL", name: "Multiply"}, {value:"DIV", name: "Divide"}, {value:"AVG", name: "Average"}]     
 
 export default function AddSpecialSensor({ sensorsObj, specialSensors, onAddSpecialSensor=()=>{}, onUpdateSpecialSensors=()=>{},  onRemoveSpecialSensor = () => {}}){
     const classes = useStyles()
@@ -22,7 +22,7 @@ export default function AddSpecialSensor({ sensorsObj, specialSensors, onAddSpec
     // let [editName, setEditName] = useState(false)
 
     let [derivedSensors, setDerivedSensors] = useState([])
-    let [calType, setCalType] = useState("ADD")
+    let [calType, setCalType] = useState("select")
     let [processType, setProcessType] = useState("sensor")
     let [constantState, setConstantState] = useState(false)
     let [constant, setConstant] = useState()
@@ -38,9 +38,9 @@ export default function AddSpecialSensor({ sensorsObj, specialSensors, onAddSpec
             setConstantState(false)
             let name = generateSensorTag({derivedSensors, calType: type})
             setSpecialTag(name)
-            setMaxSensors(maximumSensorSelection({calType, constant: constantState}))
+            setMaxSensors(maximumSensorSelection({calType: type, constant: false}))
         }
-    }, [derivedSensors, calType, constantState, setCalType, setSpecialTag, setMaxSensors, setConstantState])
+    }, [derivedSensors, calType, setCalType, setSpecialTag, setMaxSensors, setConstantState])
 
     const handleChangeProcessType = useCallback((type) => {
         if(type !== processType){
@@ -64,7 +64,7 @@ export default function AddSpecialSensor({ sensorsObj, specialSensors, onAddSpec
     },[calType, setConstant, setConstantState, setMaxSensors])
 
     const onAddSensor = useCallback((curSensor) => {
-        // let maxSensors = maximumSensorSelection({calType, constant: constantState})
+        // let maxSensors = ({calType, constant: constantState})
         let index = derivedSensors.findIndex(sensor => sensor.tag === curSensor.tag)
         if(derivedSensors.length < maxSensors && index === -1){
             let newSensorList = [ ...derivedSensors, curSensor]
@@ -83,7 +83,7 @@ export default function AddSpecialSensor({ sensorsObj, specialSensors, onAddSpec
 
     const onGenerateSensor = useCallback(() => {
         // let objNewSensor = {tag: specialTag, name: "", derived: derivedSensors, calType: calType, subType: subType, fromUnit: "", toUnit: "", factor: ""}
-        let objNewSensor = {sensor: derivedSensors, tag: specialTag, name: specialName, calType: calType, processType: processType, constant: constant}
+        let objNewSensor = {sensor: derivedSensors, tag: specialTag, name: specialName, calType: calType, constant: constant}
         onAddSpecialSensor(objNewSensor)
         setDerivedSensors([])
         setSpecialName("")
@@ -94,13 +94,11 @@ export default function AddSpecialSensor({ sensorsObj, specialSensors, onAddSpec
             updateSpecialSensors.push(objNew)
         }
         onUpdateSpecialSensors(updateSpecialSensors)
-    },[derivedSensors, calType, processType, constant, specialTag, specialName, specialSensors, onUpdateSpecialSensors, onAddSpecialSensor])
+    },[derivedSensors, calType, constant, specialTag, specialName, specialSensors, onUpdateSpecialSensors, onAddSpecialSensor])
 
     const onCustomizeSensors = useCallback((updateSpecialSensors) => {
         onUpdateSpecialSensors(updateSpecialSensors)
     },[onUpdateSpecialSensors])
-
-    console.log("add",calType,maxSensors,constantState,constant,sensorsObj.filter(sensor=> !derivedSensors.includes(sensor.tag),derivedSensors))
 
     return(
         <>
@@ -112,9 +110,6 @@ export default function AddSpecialSensor({ sensorsObj, specialSensors, onAddSpec
                 <Grid item xs={9} sm={9} md={9} lg={9}>
                     <SelectorItem id={'calType'} value={calType} items={calculationList} onChange={(value) => handleChangeCalType(value)}></SelectorItem>
                 </Grid>
-                {/* <Grid item xs={6} sm={6} md={6} lg={6}>
-                    <SelectorItem id={'processType'} value={processType} items={[{value:"sensor", name: "By Sensor"}, {value:"constant", name: "By Constant"}]} onChange={(value) => handleChangeProcessType(value)}></SelectorItem>
-                </Grid> */}
             </Grid>
 
             {/* {derivedSensors.length > 0 &&
@@ -144,62 +139,61 @@ export default function AddSpecialSensor({ sensorsObj, specialSensors, onAddSpec
                 })}
                 </Grid>
             </Grid>
-            <Grid item xs={12} sm={12} md={12} lg={12} align="left">
-                {/* {processType === "constant" && */}
-                    <Grid item container xs={12} sm={12} md={12} lg={12} align="left" >
-                        {constantState === false &&
-                        <>
-                        <Grid item xs={3} sm={3} md={3} lg={3}>
-                        </Grid>
-                        <Grid xs={9} sm={9} md={9} lg={9} alignContent="right" alignItems="right" alignSelf="right">
-                            <Button className={classes.defaultButton} onClick={()=>onAddConstant()}>
-                                <AddCircleOutlineIcon className={classes.blackIcon}></AddCircleOutlineIcon>
-                                <Typography className={classes.contentTextBlack}>Add Constant</Typography>
-                            </Button>
-                        </Grid>
-                        </>
-                        }
-                        {constantState === true &&
-                        <>
-                        <Grid item xs={3} sm={3} md={3} lg={3}>
-                            <Typography className={classes.blueText}>CONSTANT : </Typography>
-                        </Grid>
-                        <Grid item xs={6} sm={6} md={6} lg={6}>
-                            <TextFieldItem id={`constant`} type="number" value={constant} onChange={(value) => setConstant(value)}></TextFieldItem>
-                        </Grid>
-                        <Grid item xs={3} sm={3} md={3} lg={3}>
-                            <IconButton onClick={()=>onRemoveConstant()}>
-                                <CancelIcon style={{fontSize:'1rem', color:"#f04461", borderRadius:5}}></CancelIcon>
-                            </IconButton>
-                        </Grid>
-                        </>
-                        }
-                    </Grid>
-                {/* } */}
-            </Grid>
-            <Grid item xs={12} sm={12} md={12} lg={12} align="left">
-                <Grid item container xs={12} sm={12} md={12} lg={12} align="left">
-                    <Grid item xs={3} sm={3} md={3} lg={3}>
-                        <Typography className={classes.blueText}>TAG : </Typography>
-                    </Grid>
-                    <Grid item xs={9} sm={9} md={9} lg={9}>
-                        <Tooltip title={specialTag} placement="top">
-                            <TextFieldItem id={`specialTag`} type="text" value={specialTag} onChange={(value) => setSpecialTag(value)}></TextFieldItem>
-                        </Tooltip>
-                    </Grid>
+
+            <Grid item container xs={12} sm={12} md={12} lg={12} align="left" >
+                {constantState === false &&
+                <>
+                <Grid item xs={3} sm={3} md={3} lg={3}>
                 </Grid>
-                <Grid item container xs={12} sm={12} md={12} lg={12} align="left">
-                    <Grid item xs={3} sm={3} md={3} lg={3}>
-                        <Typography className={classes.blueText}>NAME : </Typography>
-                    </Grid>
-                    <Grid item xs={9} sm={9} md={9} lg={9}>
-                        <Tooltip title={specialTag} placement="top">
-                            <TextFieldItem id={`specialName`} type="text"  value={specialName} onChange={(value) => setSpecialName(value)}></TextFieldItem>
-                        </Tooltip>
-                    </Grid>
+                <Grid xs={9} sm={9} md={9} lg={9} alignContent="right" alignItems="right" alignSelf="right">
+                    <Button className={classes.defaultButton} onClick={()=>onAddConstant()}>
+                        <AddCircleOutlineIcon className={classes.blackIcon}></AddCircleOutlineIcon>
+                        <Typography className={classes.contentTextBlack}>Constant</Typography>
+                    </Button>
+                </Grid>
+                </>
+                }
+                {constantState === true &&
+                <>
+                <Grid item xs={3} sm={3} md={3} lg={3}>
+                    <Typography className={classes.blueText}>CONSTANT : </Typography>
+                </Grid>
+                <Grid item xs={6} sm={6} md={6} lg={6}>
+                    <TextFieldItem id={`constant`} type="number" value={constant} onChange={(value) => setConstant(value)}></TextFieldItem>
+                </Grid>
+                <Grid item xs={3} sm={3} md={3} lg={3}>
+                    <IconButton onClick={()=>onRemoveConstant()}>
+                        <CancelIcon style={{fontSize:'1rem', color:"#f04461", borderRadius:5}}></CancelIcon>
+                    </IconButton>
+                </Grid>
+                </>
+                }
+            </Grid>
+  
+            
+            <Grid item container xs={12} sm={12} md={12} lg={12} align="left">
+                <Grid item xs={3} sm={3} md={3} lg={3}>
+                    <Typography className={classes.blueText}>TAG : </Typography>
+                </Grid>
+                <Grid item xs={9} sm={9} md={9} lg={9}>
+                    <Tooltip title={specialTag} placement="top">
+                        <TextFieldItem id={`specialTag`} type="text" value={specialTag} onChange={(value) => setSpecialTag(value)}></TextFieldItem>
+                    </Tooltip>
                 </Grid>
             </Grid>
-            <Grid item xs={12} sm={12} md={12} lg={12}>
+
+            <Grid item container xs={12} sm={12} md={12} lg={12} align="left">
+                <Grid item xs={3} sm={3} md={3} lg={3}>
+                    <Typography className={classes.blueText}>NAME : </Typography>
+                </Grid>
+                <Grid item xs={9} sm={9} md={9} lg={9}>
+                    <Tooltip title={specialTag} placement="top">
+                        <TextFieldItem id={`specialName`} type="text"  value={specialName} onChange={(value) => setSpecialName(value)}></TextFieldItem>
+                    </Tooltip>
+                </Grid>
+            </Grid>
+            
+            <Grid item xs={12} sm={12} md={12} lg={12} align="right">
                 <Button onClick={()=>onGenerateSensor()} className={classes.confirmButton}>
                     <AddCircleOutlineIcon className={classes.whiteIcon}></AddCircleOutlineIcon>
                     <Typography className={classes.contentTextWhite}>Add Special Sensor</Typography>
@@ -218,7 +212,7 @@ export default function AddSpecialSensor({ sensorsObj, specialSensors, onAddSpec
                         </TableRow>
                         </TableHead>
                         <TableBody>
-                        {sensorsObj.filter(sensor=> !derivedSensors.includes(sensor.tag)).map((sensor) => {
+                        {sensorsObj.filter(sensor=> derivedSensors.indexOf(sensor.tag) === -1).map((sensor) => {
                             return(
                             <TableRow
                                 key={sensor.tag}
