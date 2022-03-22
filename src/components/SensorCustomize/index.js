@@ -10,6 +10,7 @@ import { TableContainer, Table, TableHead, TableBody, TableRow, TableCell } from
 import { Tooltip, IconButton } from '@mui/material';
 import CancelIcon from '@mui/icons-material/Cancel'
 import TextFieldItem from '../TextFieldItem'
+import TableViewIcon from '@mui/icons-material/TableView';
 
 import { style } from '../../styles/style';
 const useStyles = style
@@ -29,7 +30,14 @@ export default function SensorCustomize({sensors, onCustomizeSensors, specialSen
     };
 
     const onChange = useCallback((tag, field, value) => {
-        let index = sensors.findIndex(sensor => sensor.tag === tag)
+        let index
+        if(specialSensor === false){
+            index = sensors.findIndex(sensor => sensor.tag === tag)  
+        }else{
+            index = sensors.findIndex(sensor => sensor.specialTag === tag)  
+        }
+        
+        console.log("index",index,tag,sensors)
         if (index !== -1) {
             if(field === "name"){
                 onCustomizeSensors([...sensors.slice(0, index), { ...sensors[index], name: value }, ...sensors.slice(index + 1)])
@@ -59,11 +67,12 @@ export default function SensorCustomize({sensors, onCustomizeSensors, specialSen
                 onCustomizeSensors([...sensors.slice(0, index), { ...sensors[index], factor: value }, ...sensors.slice(index + 1)])
             }           
         }
-    },[sensors, onCustomizeSensors])
+    },[sensors, specialSensor, onCustomizeSensors])
 
     return(
         <>
         <Button variant="outlined" className={classes.defaultButton} onClick={handleClickOpen}>
+            <TableViewIcon className={classes.blackIcon}></TableViewIcon>
             <Typography className={classes.contentTextBlack}>View file</Typography>
         </Button>
         <Dialog
@@ -80,7 +89,7 @@ export default function SensorCustomize({sensors, onCustomizeSensors, specialSen
                     <Table size="small" stickyHeader>
                         <TableHead>
                         {!specialSensor &&
-                        <TableRow>
+                        <TableRow key={"sensor"}>
                             <TableCell className={classes.tableCell}></TableCell>
                             <TableCell align="left" className={classes.tableCell}>SENSOR_TAG</TableCell>
                             <TableCell align="left" className={classes.tableCell}>SENSOR_NAME</TableCell>
@@ -92,7 +101,7 @@ export default function SensorCustomize({sensors, onCustomizeSensors, specialSen
                         </TableRow>
                         }
                         {specialSensor &&
-                        <TableRow>
+                        <TableRow key={"special-sensor"}>
                             <TableCell className={classes.tableCell}></TableCell>
                             <TableCell align="left" className={classes.tableCell}>SPECIAL_TAG</TableCell>
                             <TableCell align="left" className={classes.tableCell}>SPECIAL_NAME</TableCell>
@@ -133,22 +142,22 @@ export default function SensorCustomize({sensors, onCustomizeSensors, specialSen
                                     {sensor.tag}
                                 </TableCell>
                                 <TableCell align="left" className={classes.tableCell}>
-                                    <TextFieldItem id={`${sensor.tag}-name`} value={sensor.name} onChange={(value) => onChange(sensor.tag, "name", value)}></TextFieldItem>
+                                    <TextFieldItem id={`${sensor.tag}-name`} type="text" value={sensor.name} onChange={(value) => onChange(sensor.tag, "name", value)}></TextFieldItem>
                                 </TableCell>
                                 <TableCell align="left" className={classes.tableCell}>
-                                    <TextFieldItem id={`${sensor.tag}-description`} value={sensor.description} onChange={(value) => onChange(sensor.tag, "description", value)}></TextFieldItem>
+                                    <TextFieldItem id={`${sensor.tag}-description`} type="text" value={sensor.description} onChange={(value) => onChange(sensor.tag, "description", value)}></TextFieldItem>
                                 </TableCell>
                                 <TableCell align="left" className={classes.tableCell}>
-                                    <TextFieldItem id={`${sensor.tag}-type`} value={sensor.type} onChange={(value) => onChange(sensor.tag, "type", value)}></TextFieldItem>
+                                    <TextFieldItem id={`${sensor.tag}-type`} type="text" value={sensor.type} onChange={(value) => onChange(sensor.tag, "type", value)}></TextFieldItem>
                                 </TableCell>
                                 <TableCell align="left" className={classes.tableCell}>
-                                    <TextFieldItem id={`${sensor.tag}-unit`} value={sensor.unit} onChange={(value) => onChange(sensor.tag, "unit", value)}></TextFieldItem>
+                                    <TextFieldItem id={`${sensor.tag}-unit`} type="text" value={sensor.unit} onChange={(value) => onChange(sensor.tag, "unit", value)}></TextFieldItem>
                                 </TableCell>
                                 <TableCell align="left" className={classes.tableCell}>
-                                    <TextFieldItem id={`${sensor.tag}-method`} value={sensor.method}></TextFieldItem>
+                                    <TextFieldItem id={`${sensor.tag}-method`} type="text" value={sensor.method}></TextFieldItem>
                                 </TableCell>
                                 <TableCell align="left" className={classes.tableCell}>
-                                    <TextFieldItem id={`${sensor.tag}-component`} value={sensor.component} onChange={(value) => onChange(sensor.tag, "component", value)}></TextFieldItem>
+                                    <TextFieldItem id={`${sensor.tag}-component`} type="text" value={sensor.component} onChange={(value) => onChange(sensor.tag, "component", value)}></TextFieldItem>
                                 </TableCell>
                             </TableRow>
                             )
@@ -184,28 +193,28 @@ export default function SensorCustomize({sensors, onCustomizeSensors, specialSen
                                     {sensor.specialTag}
                                 </TableCell>
                                 <TableCell align="left" className={classes.tableCell}>
-                                    <TextFieldItem id={`${sensor.specialTag}-specialName`} value={sensor.specialName} onChange={(value) => onChange(sensor.tag, "specialName", value)}></TextFieldItem>
+                                    <TextFieldItem id={`${sensor.specialTag}-specialName`} type="text" value={sensor.specialName} onChange={(value) => onChange(sensor.specialTag, "specialName", value)}></TextFieldItem>
                                 </TableCell>
                                 <TableCell align="left" className={classes.tableCell}>
-                                    <TextFieldItem id={`${sensor.specialTag}-derivedFromTag`} value={sensor.derivedFromTag} onChange={(value) => onChange(sensor.tag, "derivedFromTag", value)}></TextFieldItem>
+                                    <TextFieldItem id={`${sensor.specialTag}-derivedFromTag`} type="text" value={sensor.derivedFromTag} onChange={(value) => onChange(sensor.specialTag, "derivedFromTag", value)}></TextFieldItem>
                                 </TableCell>
                                 <TableCell align="left" className={classes.tableCell}>
-                                    <TextFieldItem id={`${sensor.specialTag}-derivedFromName`} value={sensor.derivedFromName} onChange={(value) => onChange(sensor.tag, "derivedFromName", value)}></TextFieldItem>
+                                    <TextFieldItem id={`${sensor.specialTag}-derivedFromName`} type="text" value={sensor.derivedFromName} onChange={(value) => onChange(sensor.specialTag, "derivedFromName", value)}></TextFieldItem>
                                 </TableCell>
                                 <TableCell align="left" className={classes.tableCell}>
-                                    <TextFieldItem id={`${sensor.specialTag}-calType`} value={sensor.calType} onChange={(value) => onChange(sensor.tag, "calType", value)}></TextFieldItem>
+                                    <TextFieldItem id={`${sensor.specialTag}-calType`} type="text" value={sensor.calType} onChange={(value) => onChange(sensor.specialTag, "calType", value)}></TextFieldItem>
                                 </TableCell>
                                 <TableCell align="left" className={classes.tableCell}>
-                                    <TextFieldItem id={`${sensor.specialTag}-subType`} value={sensor.subType} onChange={(value) => onChange(sensor.tag, "subType", value)}></TextFieldItem>
+                                    <TextFieldItem id={`${sensor.specialTag}-subType`} type="text" value={sensor.subType} onChange={(value) => onChange(sensor.specialTag, "subType", value)}></TextFieldItem>
                                 </TableCell>
                                 <TableCell align="left" className={classes.tableCell}>
-                                    <TextFieldItem id={`${sensor.specialTag}-fromUnit`} value={sensor.fromUnit} onChange={(value) => onChange(sensor.tag, "fromUnit", value)}></TextFieldItem>
+                                    <TextFieldItem id={`${sensor.specialTag}-fromUnit`} type="text" value={sensor.fromUnit} onChange={(value) => onChange(sensor.specialTag, "fromUnit", value)}></TextFieldItem>
                                 </TableCell>
                                 <TableCell align="left" className={classes.tableCell}>
-                                    <TextFieldItem id={`${sensor.specialTag}-toUnit`} value={sensor.toUnit} onChange={(value) => onChange(sensor.tag, "toUnit", value)}></TextFieldItem>
+                                    <TextFieldItem id={`${sensor.specialTag}-toUnit`} type="text" value={sensor.toUnit} onChange={(value) => onChange(sensor.specialTag, "toUnit", value)}></TextFieldItem>
                                 </TableCell>
                                 <TableCell align="left" className={classes.tableCell}>
-                                    <TextFieldItem id={`${sensor.specialTag}-factor`} value={sensor.factor} onChange={(value) => onChange(sensor.tag, "factor", value)}></TextFieldItem>
+                                    <TextFieldItem id={`${sensor.specialTag}-factor`} type="text" value={sensor.factor} onChange={(value) => onChange(sensor.specialTag, "factor", value)}></TextFieldItem>
                                 </TableCell>
                             </TableRow>
                             )

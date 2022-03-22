@@ -3,6 +3,7 @@ import { useCallback, useReducer, useState } from 'react'
 import { style } from '../../styles/style'
 import { Table, TableContainer, TableHead, TableRow, TableCell, TableBody, Button, TextField, FormControlLabel, Radio, IconButton, RadioGroup, Typography } from '@mui/material'
 import CancelIcon from '@mui/icons-material/Cancel'
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 const useStyles = style
 
 export default function ClustersTable({clusters, activeClusterIndex, dataClusterIndex, onChange, onActiveChange}) {
@@ -162,7 +163,10 @@ export default function ClustersTable({clusters, activeClusterIndex, dataCluster
     ))} 
     <TableRow>
       <TableCell align="center" colSpan={4} style={{cursor: 'pointer'}} onClick={addClusterHandler} className={classes.tableCell}>
-        <Button className={classes.defaultButton}><Typography className={classes.contentTextBlack}>Add more cluster</Typography></Button>
+        <Button className={classes.confirmButton}>
+          <AddCircleOutlineIcon className={classes.whiteIcon}></AddCircleOutlineIcon>
+          <Typography className={classes.contentTextWhite}>Add more cluster</Typography>
+        </Button>
       </TableCell>
     </TableRow>
     </TableBody>

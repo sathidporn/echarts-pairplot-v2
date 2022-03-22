@@ -4,18 +4,14 @@ import Grid from '@mui/material/Grid'
 import { Checkbox, Typography } from '@mui/material';
 import { Table, TableContainer, TableHead, TableBody, TableRow, TableCell } from '@mui/material';
 import { FormControlLabel } from '@mui/material';
-import { useCallback, useState } from 'react';
-import ImportSensorList from '../ImportSensorList';
+import { useCallback } from 'react';
 import SensorCustomize from '../SensorCustomize';
-
-// import ArrowDropDownCircleIcon from '@mui/icons-material/ArrowDropDownCircle';
 import { style } from '../../styles/style';
 const useStyles = style
 
 
-export default function SensorPicker({ sensors, checkedSensors, raw, timestampsIndex, customize=false,  onPickedSensors = () => {}, onUpDateSensors = () => {}}) {
+export default function SensorPicker({ sensors, checkedSensors, onPickedSensors = () => {}, onUpDateSensors = () => {}, onRemoveSpecialSensor = () => {}}) {
   const classes = useStyles();
-  let [sensorList, setSensorList] = useState()
   const toggleSensors = useCallback ((tag,checked) => {
     let newSensors
     let newSensorsObj
@@ -33,51 +29,17 @@ export default function SensorPicker({ sensors, checkedSensors, raw, timestampsI
 
   },[checkedSensors, sensors, onPickedSensors])
 
-  const onReadSensorListFile = useCallback((list) => {
-    // let updateSensors = []
-    // sensors.map((sensor, i) => {
-    //   let index = list.findIndex(obj => obj.SENSOR_TAG === sensor.tag)
-    //   if (index !== -1) {
-    //     let newObj = {status: "available", tag: sensor.tag, checked: sensor.checked, name: list[index].SENSOR_NAME, description: list[index].SENSOR_DESCRIPTION, type: list[index].SENSOR_TYPE, unit: list[index].SENSOR_UNIT}
-    //     updateSensors.push(newObj)
-    //   }else{
-    //     updateSensors = [...updateSensors.slice(0, i), { ...updateSensors[i], status: "unavailable", tag: sensor.tag, checked: sensor.checked, name: sensor.name, description: sensor.description, type: sensor.type, unit: sensor.unit }, ...updateSensors.slice(i + 1)]
-    //   }
-    //   return []
-    // })
-
-    let updateSensors = []
-    list.filter(sensor => sensor.SENSOR_TAG !== "").map((sensor, i) => {
-      let index = sensors.findIndex(obj => obj.tag === sensor.SENSOR_TAG)
-      if (index !== -1) {
-        let newObj = {status: "available", tag: sensors[index].tag, checked: sensors[index].checked, name: sensor.SENSOR_NAME, description: sensor.SENSOR_DESCRIPTION, type: sensor.SENSOR_TYPE, unit: sensor.SENSOR_UNIT}
-        updateSensors.push(newObj)
-      }else{
-        updateSensors = [...updateSensors.slice(0, i), { ...updateSensors[i], status: "unavailable", tag: sensor.SENSOR_TAG, checked: false, name: sensor.SENSOR_NAME, description: sensor.SENSOR_DESCRIPTION, type: sensor.SENSOR_TYPE, unit: sensor.SENSOR_UNIT }, ...updateSensors.slice(i + 1)]
-      }
-      return []
-    })
-    onUpDateSensors(updateSensors)
-    setSensorList(list)
-  },[sensors, setSensorList, onUpDateSensors])
-
   const onCustomizeSensors = useCallback((updateSensors) => {
     onUpDateSensors(updateSensors)
   },[onUpDateSensors])
-
-  const onRemoveSpecialSensor= useCallback((tag) => {
-    console.log("test",tag)
-    let updateSensors = sensors.filter(sensor=> sensor.tag !== tag)
-    onUpDateSensors(updateSensors)
-  }, [sensors, onUpDateSensors])
 
 
   return (
     <div className="App">
       <Grid item container xs={12} sm={12} md={12} lg={12} spacing={1}>
-        <Grid item xs={12} sm={12} md={12} lg={12}>
+        {/* <Grid item xs={12} sm={12} md={12} lg={12}>
           <ImportSensorList onReadSensorListFile={onReadSensorListFile}></ImportSensorList>
-        </Grid>
+        </Grid> */}
         <Grid item xs={12} sm={12} md={12} lg={12}>
           <TableContainer className={classes.tableContainer} >
             <Table size="small" stickyHeader>
@@ -102,7 +64,7 @@ export default function SensorPicker({ sensors, checkedSensors, raw, timestampsI
                   >
                     <TableCell component="th" scope="row" className={classes.tableCell}>
                       <FormControlLabel 
-                          control={<><Checkbox style={{color:"#51b4ec"}} size="small" checked={sensor.checked} disabled={sensor.status === "unavailable" ? true : false}onChange={(e)=> toggleSensors(sensor.tag,e.target.checked)} /> </>} 
+                          control={<><Checkbox style={{color:"#51b4ec"}} size="small" checked={sensor.checked} disabled={sensor.status === "unavailable" ? true : false} onChange={(e)=> toggleSensors(sensor.tag,e.target.checked)} /> </>} 
                           label={<Typography className={classes.formControlLabel}>{sensor.tag}</Typography>}
                           className={classes.formControlLabel}
                       />

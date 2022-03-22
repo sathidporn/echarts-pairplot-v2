@@ -2,6 +2,8 @@ import React from 'react'
 import { useState, useCallback } from 'react';
 import { Button, Grid, Typography, Tooltip } from '@mui/material';
 import SpinnerWithBackdrop from '../Spinner';
+import FileDownloadIcon from '@mui/icons-material/FileDownload';
+import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
 
 import { style } from '../../styles/style';
 
@@ -19,9 +21,6 @@ export default function ImportData({ onRawDataHandler=()=>{}}) {
     let [loading, setLoading] = useState(false)
 
     // read csv file
-    // const showTableHandler = useCallback(() => {
-  
-    // }, [file, setContent, setLoading])
 
     const onReadFile = useCallback((target) => {
         // setFile(target.files[0])
@@ -104,6 +103,7 @@ export default function ImportData({ onRawDataHandler=()=>{}}) {
                     component="label"
                     className={classes.defaultButton}
                     >
+                    <InsertDriveFileIcon className={classes.blackIcon}></InsertDriveFileIcon>
                     {fileName ? (
                         <Typography className={classes.contentTextBlack}>{fileName.length > 10 ? `${fileName.slice(0,10)}...` : fileName}</Typography>
                     ):(
@@ -123,6 +123,7 @@ export default function ImportData({ onRawDataHandler=()=>{}}) {
             </Grid>
             <Grid item xs={12} sm={6} md={6} lg={6} algin="left">
                 <Button onClick={showTableHandler} className={classes.confirmButton}>
+                    <FileDownloadIcon className={classes.whiteIcon}></FileDownloadIcon>
                     <Typography className={classes.contentTextWhite}>Upload</Typography>
                 </Button>
             </Grid>

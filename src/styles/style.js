@@ -21,6 +21,23 @@ export const style = makeStyles((theme) => ({
             backgroundColor: '#242f39',
         },
     },
+    circularProgress: {
+        '&.MuiCircularProgress-root': {
+            color: '#ffffff'
+        }
+    },
+    blackIcon: {
+        '&.MuiSvgIcon-root': {
+            color: '#000a14',
+            fontSize: 'medium'
+        }
+    },
+    whiteIcon: {
+        '&.MuiSvgIcon-root': {
+            color: '#ffffff',
+            fontSize: 'medium'
+        }
+    },
     blackBackground: {
         backgroundColor: '#000a14',
     },
@@ -91,10 +108,20 @@ export const style = makeStyles((theme) => ({
         '&.MuiAccordion-root': {
             backgroundColor: '#454c54',
             color: '#ffffff',
+            borderTopLeftRadius: 20,
+            borderTopRightRadius: 20,
+            borderBottomLeftRadius: 20,
+            borderBottomRightRadius: 20,
+            '&.MuiPaper-root': {
+                borderTopLeftRadius: 20,
+                borderTopRightRadius: 20,
+                borderBottomLeftRadius: 20,
+                borderBottomRightRadius: 20,
+            }
         },
         '&.MuiAccordion-rounded': {
             borderRadius: 20
-        }
+        },
     },
     accordionSummary: {
         '&.MuiAccordionSummary-root': {
@@ -112,8 +139,9 @@ export const style = makeStyles((theme) => ({
     accordionDetail: {
         '&.MuiAccordionDetails-root': {
             backgroundColor: '#454c54',
-            color: '#ffffff'
-        }
+            color: '#ffffff',
+            borderRadius: 20,
+        },
     },
     accordionIcon: {
         color: '#51b4ec',
