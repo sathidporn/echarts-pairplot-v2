@@ -75,6 +75,8 @@ export default function AddSpecialSensor({ sensorsObj, specialSensors, onAddSpec
         onAddSpecialSensor(objNewSensor)
         setDerivedSensors([])
         setSpecialName("")
+        setSpecialTag("")
+        setCalType.apply("select")
 
         let updateSpecialSensors = specialSensors
         for(let i=0; i<derivedSensors.length; i++){

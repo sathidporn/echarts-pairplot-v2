@@ -2,6 +2,7 @@ import * as React from 'react';
 import { useCallback } from 'react';
 import { Grid, Typography } from '@mui/material';
 import Button from '@mui/material/Button';
+import Chip from '@mui/material/Chip'
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
@@ -124,22 +125,31 @@ export default function SensorCustomize({sensors, onCustomizeSensors, specialSen
                             sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                             >
                                 <TableCell component="th" scope="row" className={classes.tableCell}>
-                                {sensor.status === "new" &&
-                                <>
-                                    <Tooltip title={"remove from list"} placement="top">
-                                        <Typography className={classes.blueText}>
-                                            <IconButton  onClick={()=>onRemoveSpecialSensor(sensor.tag)}>
-                                                <CancelIcon style={{fontSize:'1rem', color:"#f04461", borderRadius:5}}></CancelIcon>
-                                            </IconButton>
-                                        </Typography>
-                                    </Tooltip>
-                                     <Typography className={classes.blueText}>new!</Typography>
-                                </>
-                                }
+                                    {sensor.status === "new" &&
+                                    <>
+                                    <Chip label="New!" variant="outlined" className={classes.chip} />
+                                    </>
+                                    }
                                 </TableCell>
                                
                                 <TableCell component="th" scope="row" className={classes.tableCell}>
-                                    {sensor.tag}
+                                    {sensor.status === "new" &&
+                                    <>
+                                    <Tooltip title={"remove from list"} placement="top">
+                                        <Typography className={classes.whiteText}>
+                                            <IconButton  onClick={()=>onRemoveSpecialSensor(sensor.tag)}>
+                                                <CancelIcon style={{fontSize:'1rem', color:"#f04461", borderRadius:5}}></CancelIcon>
+                                            </IconButton>
+                                            {sensor.tag}
+                                        </Typography>
+                                    </Tooltip>
+                                    </>
+                                    }
+                                    {sensor.status !== "new" &&
+                                    <>
+                                    {sensor.tag}           
+                                    </>
+                                    }
                                 </TableCell>
                                 <TableCell align="left" className={classes.tableCell}>
                                     <TextFieldItem id={`${sensor.tag}-name`} type="text" value={sensor.name} onChange={(value) => onChange(sensor.tag, "name", value)}></TextFieldItem>
@@ -175,22 +185,31 @@ export default function SensorCustomize({sensors, onCustomizeSensors, specialSen
                             >
                                 
                                 <TableCell component="th" scope="row" className={classes.tableCell}>
-                                {sensor.status === "new" &&
-                                <>
-                                    <Tooltip title={"remove from list"} placement="top">
-                                        <Typography className={classes.blueText}>
-                                            <IconButton onClick={()=>onRemoveSpecialSensor(sensor.specialTag)}>
-                                                <CancelIcon style={{fontSize:'1rem', color:"#f04461", borderRadius:5}}></CancelIcon>
-                                            </IconButton>
-                                        </Typography>
-                                    </Tooltip>
-                                    <Typography className={classes.blueText}>new!</Typography>
-                                </>
-                                }
+                                    {sensor.status === "new" &&
+                                        <>
+                                        <Chip label="New!" variant="outlined" className={classes.chip} />
+                                        </>
+                                    }
                                 </TableCell>
                                 
                                 <TableCell component="th" scope="row" className={classes.tableCell}>
-                                    {sensor.specialTag}
+                                    {sensor.status === "new" &&
+                                        <>
+                                        <Tooltip title={"remove from list"} placement="top">
+                                            <Typography className={classes.whiteText}>
+                                                <IconButton  onClick={()=>onRemoveSpecialSensor(sensor.tag)}>
+                                                    <CancelIcon style={{fontSize:'1rem', color:"#f04461", borderRadius:5}}></CancelIcon>
+                                                </IconButton>
+                                                {sensor.specialTag}
+                                            </Typography>
+                                        </Tooltip>
+                                        </>
+                                        }
+                                        {sensor.status !== "new" &&
+                                        <>
+                                        {sensor.specialTag}           
+                                        </>
+                                    }
                                 </TableCell>
                                 <TableCell align="left" className={classes.tableCell}>
                                     <TextFieldItem id={`${sensor.specialTag}-specialName`} type="text" value={sensor.specialName} onChange={(value) => onChange(sensor.specialTag, "specialName", value)}></TextFieldItem>

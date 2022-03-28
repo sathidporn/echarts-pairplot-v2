@@ -38,6 +38,15 @@ export const style = makeStyles((theme) => ({
             fontSize: 'medium'
         }
     },
+    chip: {
+        '&.MuiChip-root':{
+           borderColor: '#51b4ec' 
+        },
+        '&.MuiChip-outlined': {
+            borderColor: '#51b4ec',
+            color: '#ffffff'
+        }
+    },
     blackBackground: {
         backgroundColor: '#000a14',
     },
@@ -274,6 +283,12 @@ export const style = makeStyles((theme) => ({
             color: '#ffffff',
             fontSize: FONT_SIZE_CONTENT,
         },
+        '&.MuiTypography-root': {
+            color: '#ffffff',
+            fontSize: FONT_SIZE_CONTENT,
+        }
+    },
+    whiteText: {
         '&.MuiTypography-root': {
             color: '#ffffff',
             fontSize: FONT_SIZE_CONTENT,
