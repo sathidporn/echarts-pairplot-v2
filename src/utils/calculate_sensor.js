@@ -107,7 +107,7 @@ export function generateSpecialSensor({filteredSensors, specialSensor}){
       })
       return where
     }else{
-      console.error("generateSpecialSensor: calType is not define")
+      // console.error("generateSpecialSensor: calType is not define")
       return []
     }
 }
@@ -136,9 +136,8 @@ export function maximumSensorSelection({calType, constant}){
     maxSensors = 0
   }else if(calType === 'select') {
       maxSensors = 0
-      console.error("maximumSensorSelection: calType is not define")
+      // console.error("maximumSensorSelection: calType is not define")
   }
-  console.log("maxSensors",calType,constant,maxSensors)
   return maxSensors
 }
 
@@ -155,7 +154,7 @@ export function generateSensorTag({derivedSensors, calType}){
   }else if(calType === "AVG"){
       shortCal ="AVG"
   }else{
-    console.error("generateSensorName: calType is not define")
+    // console.error("generateSensorName: calType is not define")
   }
 
   let name = shortCal
