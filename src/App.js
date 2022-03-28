@@ -88,18 +88,29 @@ function App() {
     setActiveStep(0);
   };
   
+  // raw data from file
   let [raw, setRaw] = useState()
+  // unique index by 1 hour sampling rate
   let [timestampsIndex, setTimestampsIndex] = useState()
+  // raw data for kde plot
   let [content, setContent] = useState([])
 
+  // sampling all sensor data
   let [samplingData, setSamplingData] = useState()
+  // sampling all timestamps data
   let [samplingTimestamp, setSamplingTimestamp] = useState()
+  // filtered all sensor data
   let [filteredSensors, setFilteredSensors] = useState()
+  // filtered all timestamps data 
   let [filteredTimestamps, setFilteredTimestamps] = useState()
 
+  // selected sensors to plot
   let [checkedSensors, setCheckedSensors] = useState([])
+  // all sensor object
   let [sensorsObj, setSensorsObj] = useState()
+  // all special sensors
   let [specialSensors, setSpecialSensors] = useState([])
+  // filtered data only selected sensors
   let [series, setSeries] = useState()
 
   let [startDate, setStartDate] = useState()
@@ -145,7 +156,6 @@ function App() {
     series ? Object.values(series)[0].map(() => -1) : []
     // Object.values(series)[0].map(() => -1)
   )
-
   const brushActivateHandler = useCallback(() => {
     setBrushingMode(true)
   }, [setBrushingMode])
@@ -153,13 +163,13 @@ function App() {
     setBrushingMode(false)
   }, [setBrushingMode])
   const onSelected = useCallback(index => {
-    // console.log("index",index)
     updateDataClusterIndex(index)
   }, [updateDataClusterIndex])
 
-
   // start to filter series and timestamps by sensor and date
+
   let [plotType, setPlotType] = useState("scatter")
+
   const onSelectedType = useCallback((type) => {
     setPlotType(type)
   },[setPlotType])
@@ -172,6 +182,7 @@ function App() {
     setSamplingTimestamp(timestamps)
     let sensorsArray = []
     let sensors = {}
+    // Make sensor object
     for (let sensor of columns) {
       if(sensor!== "TimeStamp"){
         sensors[sensor] = {tag: sensor, checked: false, name: "", description: "", type: "", unit: "", method: "", component: ""}
@@ -183,8 +194,10 @@ function App() {
     console.log("Import",columns, raw, timestamps)
   }, [setRaw, setContent, setTimestampsIndex, setSamplingTimestamp, setSensorsObj, setSeries])
 
+  // Get sensor list file
   const onReadSensorListFile = useCallback((list) => {
     let updateSensors = []
+    // Make obj
     list.filter(sensor => sensor.SENSOR_TAG !== "").map((sensor, i) => {
       let index = sensorsObj.findIndex(obj => obj.tag === sensor.SENSOR_TAG)
       if (index !== -1) {
@@ -259,6 +272,7 @@ function App() {
   // Make raw data to sampling data by type
   const onSamplingData = useCallback((type) => {
     let updateSamplingData = {}
+      // loop to generate sampling data of each sensor
       sensorsObj.map((sensor) => {
         let values = []
         let result
@@ -277,6 +291,7 @@ function App() {
         return values
       })
       setSamplingData(updateSamplingData)
+
       // update filteredSensors, filteredTimestamps, series and timestamps when sampling type changed
       if(checkedSensors.length > 0){
         let updateTimestamps = cleansingTimestamps({ tag: filterProcess.tag, operator: filterProcess.operator, value1: filterProcess.firstValue, value2: filterProcess.secondValue, samplingData: updateSamplingData, samplingTimestamp})
@@ -292,7 +307,7 @@ function App() {
           updateDataClusterIndex(Object.values(updateSeries)[0].map(() => -1)) 
         }
         else{
-          setSeries(undefined)
+          window.alert("data null")
         }  
       }
     console.log("Sampling",updateSamplingData)
@@ -303,25 +318,29 @@ function App() {
     console.log("Cleansing/sampling",samplingData,samplingTimestamp)
     let updateTimestamps = cleansingTimestamps({tag, operator, value1, value2, samplingData, samplingTimestamp})
     let updateSensors = cleansingSensors({tag, operator, value1, value2, sensorsObj, samplingData, samplingTimestamp})
-    setFilteredTimestamps(updateTimestamps)
-    setFilteredSensors(updateSensors)
-    setFilterProcess({tag: tag, operator: operator, firstValue: value1, secondValue: value2})
 
-    // update series when filter process changed
-    if(checkedSensors.length > 0){
-      const updateSeries = Object.keys(updateSensors).filter(key => checkedSensors.includes(key)).reduce((obj, key) => {
-        obj[key] = updateSensors[key]
-        return obj
-      }, {})
-      if(Object.keys(updateSeries).length > 0){
-        setSeries(updateSeries)
-        updateDataClusterIndex(Object.values(updateSeries)[0].map(() => -1)) 
-      }
-      // else{
-      //   setSeries([])
-      // }  
+    if(Object.keys(updateSensors).length > 0){
+      setFilteredTimestamps(updateTimestamps)
+      setFilteredSensors(updateSensors)
+      setFilterProcess({tag: tag, operator: operator, firstValue: value1, secondValue: value2})
+
+      // update series when filter process changed
+      if(checkedSensors.length > 0){
+        const updateSeries = Object.keys(updateSensors).filter(key => checkedSensors.includes(key)).reduce((obj, key) => {
+          obj[key] = updateSensors[key]
+          return obj
+        }, {})
+        if(Object.keys(updateSeries).length > 0){
+          setSeries(updateSeries)
+          updateDataClusterIndex(Object.values(updateSeries)[0].map(() => -1)) 
+        }else{
+          window.alert("data null")
+        }
+      } 
     }
-    console.log("Cleansing",updateTimestamps,updateSensors)
+    else{
+      window.alert("data null")
+    }
   }, [sensorsObj, checkedSensors, samplingData, samplingTimestamp, setFilteredSensors, setFilteredTimestamps, setFilterProcess, setSeries])
 
   // Add sensor when picked
@@ -337,7 +356,8 @@ function App() {
         addNewSeries = Object.assign(series, newObj);
       }
     }
-    // update new series when picked sensor
+
+    // update new series when pick sensor
     const updateSeries = Object.keys(addNewSeries).filter(key => checkedSensors.includes(key)).reduce((obj, key) => {
       obj[key] = addNewSeries[key]
       return obj
@@ -345,9 +365,8 @@ function App() {
     if(Object.keys(updateSeries).length > 0){
       setSeries(updateSeries)
       updateDataClusterIndex(Object.values(updateSeries)[0].map(() => -1)) 
-    }
-    else{
-      setSeries(undefined)
+    }else{
+      window.alert("data null")
     }
     setCheckedSensors(checkedSensors)
     setSensorsObj(newSensorsObj)
@@ -366,7 +385,7 @@ function App() {
       }  
     }
     setFilteredTimestamps(updateTimestamps)
-    // update series of current sensor obj by start date and end date
+
     let updatedSeries = {}
     checkedSensors.map((sensor) => {
       let values = []
@@ -378,18 +397,18 @@ function App() {
       }
       return values 
     })
+    // update series by start date and end date
     if(Object.keys(updatedSeries).length > 0){
       setSeries(updatedSeries)
       updateDataClusterIndex(Object.values(updatedSeries)[0].map(() => -1)) 
     }else{
-      console.error("series null");
+      window.alert("data null")
     }
     console.log("PickDate",startDate, endDate, updatedSeries)
   }, [checkedSensors, series, filteredTimestamps, setSeries, setStartDate, setEndDate, updateDataClusterIndex])
 
-  // Add special sensor
+  // Add new special sensor
   const onAddSpecialSensor = useCallback((specialSensor) => {
-    // add new special sensor to raw
     let specialSensorObj = {}
     let specialSensorData = generateSpecialSensor({filteredSensors, specialSensor})
     specialSensorObj[`${specialSensor.tag}`] = specialSensorData
@@ -399,6 +418,7 @@ function App() {
     console.log("Special",specialSensorObj)
   },[filteredSensors, sensorsObj, setFilteredSensors, setSensorsObj])
 
+  // Remove new special sensor
   const onRemoveSpecialSensor = useCallback((tag) => {
     let updateSensors = sensorsObj.filter(sensor=> sensor.tag !== tag)
     let updateSpecialSensors = specialSensors.filter(sensor=> sensor.specialTag !== tag)
@@ -406,10 +426,12 @@ function App() {
     setSpecialSensors(updateSpecialSensors)
   }, [sensorsObj, specialSensors, setSensorsObj, setSpecialSensors])
 
+  // Update sensor obj from components
   const onUpDateSensors = useCallback((updateSensors) => {
     setSensorsObj(updateSensors)
   }, [setSensorsObj])
 
+  // Update special sensor from components
   const onUpdateSpecialSensors = useCallback((updateSpecialSensors) => {
     setSpecialSensors(updateSpecialSensors)
   }, [setSpecialSensors])
