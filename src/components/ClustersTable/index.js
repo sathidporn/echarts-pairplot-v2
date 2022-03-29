@@ -1,7 +1,7 @@
 import React from 'react'
 import { useCallback, useReducer, useState } from 'react'
 import { style } from '../../styles/style'
-import { Table, TableContainer, TableHead, TableRow, TableCell, TableBody, Button, TextField, FormControlLabel, Radio, IconButton, RadioGroup, Typography } from '@mui/material'
+import { Table, TableContainer, TableHead, TableRow, TableCell, TableBody, Button, TextField, FormControlLabel, Radio, IconButton, RadioGroup, Typography, Grid } from '@mui/material'
 import CancelIcon from '@mui/icons-material/Cancel'
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 const useStyles = style
@@ -61,116 +61,125 @@ export default function ClustersTable({clusters, activeClusterIndex, dataCluster
     }
   }, [onActiveChange])
   return(
-  // <table>
-  //   <thead>
-  //     <tr>
-  //       <td></td>
-  //       <td>Name</td>
-  //       <td>Color</td>
-  //       <td>Data points indices</td>
-  //       <td></td>
-  //     </tr>
-  //   </thead>
-  //   <tbody>
-  //     {clusters?.length > 0 && clusters.map(({id, color}, index) => (
-  //       <tr key={id}>
-  //         <td><input checked={index === activeClusterIndex} type="radio" name="active" value={index} onChange={() => activeChangeHandler(index)}/></td>
-  //         <td><input autoFocus={index === focus} type="text" value={id} onChange={e => onIdChange(e, index)} /></td>
-  //         <td><input type="color" value={color} onChange={e => onColorChange(e, index)} /></td>
-  //         <td>{Object.entries(dataClusterIndex).filter(([_, clusterIndex]) => clusterIndex === index).map(([i]) => i).join(",")}</td>
-  //         <td style={{cursor: "pointer", color: 'red'}} onClick={() => deleteHandler(index)}>X</td>
-  //       </tr>
-  //     ))}
-  //     <tr><td colSpan={4} style={{cursor: 'pointer'}} onClick={addClusterHandler}>Click to add more cluster</td></tr>
-  //   </tbody>
-  // </table>
+  <>
+  {/* <table>
+    <thead>
+      <tr>
+        <td></td>
+        <td>Name</td>
+        <td>Color</td>
+        <td>Data points indices</td>
+        <td></td>
+      </tr>
+    </thead>
+    <tbody>
+      {clusters?.length > 0 && clusters.map(({id, color}, index) => (
+        <tr key={id}>
+          <td><input checked={index === activeClusterIndex} type="radio" name="active" value={index} onChange={() => activeChangeHandler(index)}/></td>
+          <td><input autoFocus={index === focus} type="text" value={id} onChange={e => onIdChange(e, index)} /></td>
+          <td><input type="color" value={color} onChange={e => onColorChange(e, index)} /></td>
+          <td>{Object.entries(dataClusterIndex).filter(([_, clusterIndex]) => clusterIndex === index).map(([i]) => i).join(",")}</td>
+          <td style={{cursor: "pointer", color: 'red'}} onClick={() => deleteHandler(index)}>X</td>
+        </tr>
+      ))}
+      <tr><td colSpan={4} style={{cursor: 'pointer'}} onClick={addClusterHandler}>Click to add more cluster</td></tr>
+    </tbody>
+  </table> */}
+  <Grid item container xs={12} sm={12} md={12} lg={12} spacing={1}>
+    <Grid item xs={12} sm={12} md={12} lg={12} align="left">
+      Add Cluster
+    </Grid>
 
-<TableContainer className={classes.tableContainer} >
-  <Table size="small" stickyHeader>
-    <TableHead>
-      <TableRow>
-        <TableCell align="left" className={classes.tableCell}></TableCell>
-        <TableCell align="left" className={classes.tableCell}>Name</TableCell>
-        <TableCell align="left" className={classes.tableCell}>Color</TableCell>
-        {/* <TableCell align="left" className={classes.tableCell}>Data points indices</TableCell> */}
-        <TableCell align="left" className={classes.tableCell}></TableCell>
-      </TableRow>
-    </TableHead>
-    <TableBody>
-    {clusters?.length > 0 && clusters.map(({id, color}, index) => (
-      <TableRow key={id}>
-        <TableCell align="left" className={classes.tableCell}>
-          <RadioGroup aria-label="gender" value={index} onChange={() => activeChangeHandler(index)}>
-            <FormControlLabel 
-                    control={<Radio style={{color:"#51b4ec"}} size="small" />} 
-                    label=""
-                    checked={index === activeClusterIndex}
-            />
-          </RadioGroup>
-        </TableCell>
-        <TableCell align="left" className={classes.tableCell}>
-          <TextField
-            fullWidth
-            className={classes.textField}
-            rows={1}
-            autoFocus={index === focus} 
-            type="text" 
-            value={id} 
-            InputLabelProps={{
-                shrink: true,
-                className: classes.textField
-            }}
-            InputProps={{
-                classes:{
-                  root: classes.textField,
-                  disabled: classes.textField
-                }
-            }}
-            variant="outlined"
-            onChange={e => onIdChange(e, index)}
-            tabIndex={0}
-          />
-        </TableCell>
-        <TableCell align="left" className={classes.tableCell}>
-          <TextField
-            fullWidth
-            className={classes.textField}
-            rows={1}
-            type="color"
-            value={color}
-            InputLabelProps={{
-                shrink: true,
-                className: classes.textField
-            }}
-            InputProps={{
-                classes:{
-                  root: classes.textField,
-                  disabled: classes.textField
-                }
-            }}
-            variant="outlined"
-            onChange={e => onColorChange(e, index)}
-            tabIndex={0}
-          />
-        </TableCell>
-        {/* <TableCell align="left" className={classes.tableCell}>{Object.entries(dataClusterIndex).filter(([_, clusterIndex]) => clusterIndex === index).map(([i]) => i).join(",")}</TableCell> */}
-        <TableCell align="left" className={classes.tableCell}>
-          <IconButton onClick={() => deleteHandler(index)} >
-            <CancelIcon style={{fontSize:'1rem', color:"#f04461", borderRadius:5}}></CancelIcon>
-          </IconButton>
-        </TableCell>
-      </TableRow>
-    ))} 
-    <TableRow>
-      <TableCell align="center" colSpan={4} style={{cursor: 'pointer'}} onClick={addClusterHandler} className={classes.tableCell}>
-        <Button className={classes.defaultButton}>
-          <AddCircleOutlineIcon className={classes.whiteIcon}></AddCircleOutlineIcon>
-          <Typography className={classes.contentTextWhite}>Add more cluster</Typography>
-        </Button>
-      </TableCell>
-    </TableRow>
-    </TableBody>
-  </Table>
-</TableContainer>
+    <Grid item xs={12} sm={12} md={12} lg={12} align="left">
+    <TableContainer className={classes.tableContainer} >
+      <Table size="small" stickyHeader>
+        <TableHead>
+          <TableRow>
+            <TableCell align="left" className={classes.tableCell}></TableCell>
+            <TableCell align="left" className={classes.tableCell}>Name</TableCell>
+            <TableCell align="left" className={classes.tableCell}>Color</TableCell>
+            {/* <TableCell align="left" className={classes.tableCell}>Data points indices</TableCell> */}
+            <TableCell align="left" className={classes.tableCell}></TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+        {clusters?.length > 0 && clusters.map(({id, color}, index) => (
+          <TableRow key={id}>
+            <TableCell align="left" className={classes.tableCell}>
+              <RadioGroup aria-label="gender" value={index} onChange={() => activeChangeHandler(index)}>
+                <FormControlLabel 
+                        control={<Radio style={{color:"#51b4ec"}} size="small" />} 
+                        label=""
+                        checked={index === activeClusterIndex}
+                />
+              </RadioGroup>
+            </TableCell>
+            <TableCell align="left" className={classes.tableCell}>
+              <TextField
+                fullWidth
+                className={classes.textField}
+                rows={1}
+                autoFocus={index === focus} 
+                type="text" 
+                value={id} 
+                InputLabelProps={{
+                    shrink: true,
+                    className: classes.textField
+                }}
+                InputProps={{
+                    classes:{
+                      root: classes.textField,
+                      disabled: classes.textField
+                    }
+                }}
+                variant="outlined"
+                onChange={e => onIdChange(e, index)}
+                tabIndex={0}
+              />
+            </TableCell>
+            <TableCell align="left" className={classes.tableCell}>
+              <TextField
+                fullWidth
+                className={classes.textField}
+                rows={1}
+                type="color"
+                value={color}
+                InputLabelProps={{
+                    shrink: true,
+                    className: classes.textField
+                }}
+                InputProps={{
+                    classes:{
+                      root: classes.textField,
+                      disabled: classes.textField
+                    }
+                }}
+                variant="outlined"
+                onChange={e => onColorChange(e, index)}
+                tabIndex={0}
+              />
+            </TableCell>
+            {/* <TableCell align="left" className={classes.tableCell}>{Object.entries(dataClusterIndex).filter(([_, clusterIndex]) => clusterIndex === index).map(([i]) => i).join(",")}</TableCell> */}
+            <TableCell align="left" className={classes.tableCell}>
+              <IconButton onClick={() => deleteHandler(index)} >
+                <CancelIcon style={{fontSize:'1rem', color:"#f04461", borderRadius:5}}></CancelIcon>
+              </IconButton>
+            </TableCell>
+          </TableRow>
+        ))} 
+        <TableRow>
+          <TableCell align="center" colSpan={4} style={{cursor: 'pointer'}} onClick={addClusterHandler} className={classes.tableCell}>
+            <Button className={classes.defaultButton}>
+              <AddCircleOutlineIcon className={classes.whiteIcon}></AddCircleOutlineIcon>
+              <Typography className={classes.contentTextWhite}>Add more cluster</Typography>
+            </Button>
+          </TableCell>
+        </TableRow>
+        </TableBody>
+      </Table>
+    </TableContainer>
+    </Grid>
+  </Grid>
+</>
 )
 }
