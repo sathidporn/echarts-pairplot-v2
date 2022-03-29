@@ -160,10 +160,6 @@ export const style = makeStyles((theme) => ({
         color: '#51b4ec',
         fontSize: FONT_SIZE_ICON
     },
-    dialog: {
-        backgroundColor: "#242f39",
-        color: "#ffffff"
-    },
     input: {
         backgroundColor: '#51b4ec',
         color: '#ffffff',
@@ -474,6 +470,23 @@ export const style = makeStyles((theme) => ({
         "& label.Mui-focused": {
             color: '#51b4ec',
         },   
+    },
+    dialog: {
+        '&.MuiDialog-root': {
+            background: '#121c26',
+        },
+        '&.MuiDialogActions-root':{
+            minWidth: '20vw',
+            background: '#121c26',
+        },
+        '&.MuiDialogContent-root':{
+            minWidth: '20vw',
+            background: '#121c26',
+        },
+        '&.MuiDialogContentText-root':{
+            color: '#ffffff',
+        }
+        
     },
 
 
