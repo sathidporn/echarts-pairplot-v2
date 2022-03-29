@@ -39,17 +39,6 @@ export function generateSpecialSensor({filteredSensors, specialSensor}){
       
     // start -> MUL / max 10 sensor
     }else if(specialSensor.calType === "MUL"){
-      // if(specialSensor.constant === undefined){
-      //   let mul = filteredSensors[specialSensor.sensor[0]].map(function (num, idx) {
-      //     return num * filteredSensors[specialSensor.sensor[1]][idx];
-      //   })
-      //   return mul
-      // }else if(specialSensor.constant !== undefined){
-      //   let mul = filteredSensors[specialSensor.sensor[0]].map(function (num, idx) {
-      //     return num * specialSensor.constant
-      //   })
-      //   return mul
-      // }
       let mul = []
       for(let i=0; i<specialSensor.sensor.length; i++){
         if(i===0){

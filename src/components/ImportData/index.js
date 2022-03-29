@@ -50,10 +50,10 @@ export default function ImportData({ onRawDataHandler=()=>{}}) {
               setData(result.data.filter(row => Object.values(row).findIndex(Number.isNaN) === -1))
             }
         })
-    },[setContent, setLoading, setFileName])
+    },[setContent, setData, setLoading, setFileName])
 
     // make content to obj 
-    const showTableHandler = useCallback(() => {
+    const uploadFile = useCallback(() => {
         if(content?.length > 0){
             var raw = {}
             Object.keys(content[0]).map((element)=>{
@@ -122,7 +122,7 @@ export default function ImportData({ onRawDataHandler=()=>{}}) {
                 </Tooltip>
             </Grid>
             <Grid item xs={12} sm={6} md={6} lg={6} algin="left">
-                <Button onClick={showTableHandler} className={classes.confirmButton}>
+                <Button onClick={uploadFile} className={classes.confirmButton}>
                     <FileDownloadIcon className={classes.whiteIcon}></FileDownloadIcon>
                     <Typography className={classes.contentTextWhite}>Upload</Typography>
                 </Button>

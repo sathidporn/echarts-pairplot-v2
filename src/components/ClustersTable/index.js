@@ -89,7 +89,7 @@ export default function ClustersTable({clusters, activeClusterIndex, dataCluster
   <Table size="small" stickyHeader>
     <TableHead>
       <TableRow>
-        <TableCell align="left" className={classes.tableCell} sx={{ minWidth: 5 }}></TableCell>
+        <TableCell align="left" className={classes.tableCell}></TableCell>
         <TableCell align="left" className={classes.tableCell}>Name</TableCell>
         <TableCell align="left" className={classes.tableCell}>Color</TableCell>
         {/* <TableCell align="left" className={classes.tableCell}>Data points indices</TableCell> */}
@@ -99,7 +99,7 @@ export default function ClustersTable({clusters, activeClusterIndex, dataCluster
     <TableBody>
     {clusters?.length > 0 && clusters.map(({id, color}, index) => (
       <TableRow key={id}>
-        <TableCell align="left" className={classes.tableCell} sx={{ minWidth: 5 }}>
+        <TableCell align="left" className={classes.tableCell}>
           <RadioGroup aria-label="gender" value={index} onChange={() => activeChangeHandler(index)}>
             <FormControlLabel 
                     control={<Radio style={{color:"#51b4ec"}} size="small" />} 
@@ -163,7 +163,7 @@ export default function ClustersTable({clusters, activeClusterIndex, dataCluster
     ))} 
     <TableRow>
       <TableCell align="center" colSpan={4} style={{cursor: 'pointer'}} onClick={addClusterHandler} className={classes.tableCell}>
-        <Button className={classes.confirmButton}>
+        <Button className={classes.defaultButton}>
           <AddCircleOutlineIcon className={classes.whiteIcon}></AddCircleOutlineIcon>
           <Typography className={classes.contentTextWhite}>Add more cluster</Typography>
         </Button>

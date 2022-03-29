@@ -235,11 +235,11 @@ export const style = makeStyles((theme) => ({
     },
     tableContainer: {
        '&.MuiTableContainer-root': {
-            // overflowY: 'auto', 
-            overflowX: 'auto', 
-            maxHeight: '50vh',
+            overflowY: 'auto', 
+            overflowX: 'hidden', 
+            maxHeight: '30vh',
             minWidth: '20vw',
-            backgroundColor: '#242f39',
+            // backgroundColor: '#242f39',
             borderRadius: 10,
        }
     },
@@ -264,14 +264,17 @@ export const style = makeStyles((theme) => ({
             backgroundColor: '#242f39',
             color: '#ffffff',
             fontSize: FONT_SIZE_CONTENT,
+            minWidth: '1vw'
         },
         '&.MuiFormControlLabel-root': {
             color: '#ffffff',
             fontSize: FONT_SIZE_CONTENT,
+            minWidth: '1vw'
         },
         '&.MuiFormControlLabel-label': {
             color: '#ffffff',
             fontSize: FONT_SIZE_CONTENT,
+            minWidth: '1vw'
         }
     },
     formControlLabel: {
@@ -337,7 +340,7 @@ export const style = makeStyles((theme) => ({
             backgroundColor: '#242f39',
             fontSize: FONT_SIZE_CONTENT,
             paddingLeft: 20,
-            minWidth: '6vw',
+            minWidth: '5vw',
             borderColor: '#51b4ec',
             borderRadius: 10,
             '& fieldset': {

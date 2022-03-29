@@ -9,7 +9,6 @@ const offset = 5
 const gap = 3
 
 export default function PairPlot({series, timestamps, clusters, dataClusterIndex, style, onBrushActivate = () => {}, onBrushDeactivate = () => {}, onSelected = () => {}}) {
-  // console.log("pairplot",dataClusterIndex, series)
   const classes = useStyles();
   let chartRef = useRef()
   let clusterIndex = useMemo(() => {
@@ -234,12 +233,14 @@ export default function PairPlot({series, timestamps, clusters, dataClusterIndex
 
   const eventsHandler = useMemo(() => ({
     'brushselected': (params) => {
+      console.log("params",params)
       let {batch} = params
       if (batch?.length > 0) {
         let selectedIndex = batch[0].selected.find(({dataIndex}) => dataIndex.length > 0)
         if (selectedIndex !== undefined) {
           onSelected(selectedIndex.dataIndex)
-        } else {
+        } 
+        else {
           onSelected([])
         }
       }
@@ -272,6 +273,8 @@ export default function PairPlot({series, timestamps, clusters, dataClusterIndex
   //     })
   //   }
   // }, [brushActive])
+
+  console.log("pairplot",dataClusterIndex, brushActive)
 
   return (
     <>
