@@ -123,7 +123,7 @@ export default function AddSpecialSensor({ sensorsObj, specialSensors, onAddSpec
                                     {/* </Tooltip> */}
                                 </Typography>
                             </Tooltip>
-                            </Grid>
+                        </Grid>
                     </Grid>  
                     )
                 })}
@@ -135,7 +135,7 @@ export default function AddSpecialSensor({ sensorsObj, specialSensors, onAddSpec
                 <>
                 <Grid item xs={3} sm={3} md={3} lg={3}>
                 </Grid>
-                <Grid xs={9} sm={9} md={9} lg={9} alignContent="right" alignItems="right" alignSelf="right">
+                <Grid item xs={9} sm={9} md={9} lg={9} alignContent="right" alignItems="right" alignSelf="right">
                     <Button className={classes.defaultButton} onClick={()=>onAddConstant()}>
                         <AddCircleOutlineIcon className={classes.blackIcon}></AddCircleOutlineIcon>
                         <Typography className={classes.contentTextBlack}>Constant</Typography>
