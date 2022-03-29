@@ -13,6 +13,7 @@ export default function SelectorItem({id, value, items, onChange}){
         value={value}
         IconComponent = {ArrowDropDownCircleIcon}
         autoFocus={true}
+        error={value === "select"}
         inputProps={{
             classes: {
                 icon: classes.selector,
