@@ -33,12 +33,12 @@ export default function DialogMessage({message, open, handleCloseDialog = () => 
         }}
       >
         {/* <DialogTitle>{"Use Google's location service?"}</DialogTitle> */}
-        <DialogContent className={classes.dialog}>
-          <DialogContentText id="alert-dialog-slide-description" className={classes.dialog}>
+        <DialogContent className={classes.dialogMessage}>
+          <DialogContentText id="alert-dialog-slide-description" className={classes.dialogMessage}>
             {message}
           </DialogContentText>
         </DialogContent>
-        <DialogActions className={classes.dialog}>
+        <DialogActions className={classes.dialogMessage}>
           {/* <Button onClick={handleClose}>Disagree</Button> */}
           <Button onClick={handleCloseDialog} className={classes.defaultButton}>
             <Typography className={classes.whiteText}>OK</Typography>
