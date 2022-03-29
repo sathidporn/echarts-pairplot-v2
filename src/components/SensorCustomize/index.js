@@ -17,6 +17,8 @@ import { style } from '../../styles/style';
 const useStyles = style
 
 export default function SensorCustomize({sensors, onCustomizeSensors, specialSensor=false, onRemoveSpecialSensor = () => {} }){
+
+    console.log("sensors",sensors)
     const classes = useStyles();
     const [open, setOpen] = React.useState(false);
     const fullWidth = true
@@ -38,7 +40,6 @@ export default function SensorCustomize({sensors, onCustomizeSensors, specialSen
             index = sensors.findIndex(sensor => sensor.specialTag === tag)  
         }
         
-        console.log("index",index,tag,sensors)
         if (index !== -1) {
             if(field === "name"){
                 onCustomizeSensors([...sensors.slice(0, index), { ...sensors[index], name: value }, ...sensors.slice(index + 1)])
@@ -180,7 +181,7 @@ export default function SensorCustomize({sensors, onCustomizeSensors, specialSen
                         {sensors.map((sensor) => {
                             return(
                             <TableRow
-                            key={sensor.tag}
+                            key={sensor.specialTag}
                             sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                             >
                                 
@@ -197,7 +198,7 @@ export default function SensorCustomize({sensors, onCustomizeSensors, specialSen
                                         <>
                                         <Tooltip title={"remove from list"} placement="top">
                                             <Typography className={classes.whiteText}>
-                                                <IconButton  onClick={()=>onRemoveSpecialSensor(sensor.tag)}>
+                                                <IconButton  onClick={()=>onRemoveSpecialSensor(sensor.specialTag)}>
                                                     <CancelIcon style={{fontSize:'1rem', color:"#f04461", borderRadius:5}}></CancelIcon>
                                                 </IconButton>
                                                 {sensor.specialTag}
