@@ -472,6 +472,10 @@ export const style = makeStyles((theme) => ({
         },   
     },
     dialog: {
+        backgroundColor: "#242f39",
+        color: "#ffffff"
+    },
+    dialogMessage: {
         '&.MuiDialog-root': {
             background: '#121c26',
         },
