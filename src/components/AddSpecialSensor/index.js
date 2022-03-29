@@ -20,6 +20,7 @@ export default function AddSpecialSensor({ sensorsObj, specialSensors, onAddSpec
     const classes = useStyles()
     
     let [derivedSensors, setDerivedSensors] = useState([])
+    let [selected, setSelected] = useState([])
     let [calType, setCalType] = useState("select")
     let [constantState, setConstantState] = useState(false)
     let [constant, setConstant] = useState()
@@ -57,10 +58,11 @@ export default function AddSpecialSensor({ sensorsObj, specialSensors, onAddSpec
         if(derivedSensors.length < maxSensors && index === -1){
             let newSensorList = [ ...derivedSensors, curSensor]
             setDerivedSensors(newSensorList)
+            setSelected([...selected, curSensor.tag])
             let name = generateSensorTag({derivedSensors: newSensorList, calType})
             setSpecialTag(name)
         }
-    },[derivedSensors, maxSensors, calType, setDerivedSensors, setSpecialTag])
+    },[derivedSensors, maxSensors, calType, selected, setDerivedSensors, setSpecialTag, setSelected])
 
     const onRemoveSensor = useCallback((curSensor) => {
         let newSensorList = derivedSensors.filter(sensor=>sensor.tag !== curSensor.tag)
@@ -76,7 +78,8 @@ export default function AddSpecialSensor({ sensorsObj, specialSensors, onAddSpec
         setDerivedSensors([])
         setSpecialName("")
         setSpecialTag("")
-        setCalType.apply("select")
+        setCalType("select")
+        setConstantState(false)
 
         let updateSpecialSensors = specialSensors
         for(let i=0; i<derivedSensors.length; i++){
@@ -149,7 +152,7 @@ export default function AddSpecialSensor({ sensorsObj, specialSensors, onAddSpec
                     <Typography className={classes.blueText}>CONSTANT : </Typography>
                 </Grid>
                 <Grid item xs={6} sm={6} md={6} lg={6}>
-                    <TextFieldItem id={`constant`} type="number" value={constant} onChange={(value) => setConstant(value)}></TextFieldItem>
+                    <TextFieldItem id={`constant`} type="number" value={constant} onChange={(value) => setConstant(value)} defaultValue={false}></TextFieldItem>
                 </Grid>
                 <Grid item xs={3} sm={3} md={3} lg={3}>
                     <IconButton onClick={()=>onRemoveConstant()}>
@@ -167,7 +170,7 @@ export default function AddSpecialSensor({ sensorsObj, specialSensors, onAddSpec
                 </Grid>
                 <Grid item xs={9} sm={9} md={9} lg={9}>
                     <Tooltip title={specialTag} placement="top">
-                        <TextFieldItem id={`specialTag`} type="text" value={specialTag} onChange={(value) => setSpecialTag(value)}></TextFieldItem>
+                        <TextFieldItem id={`specialTag`} type="text" value={specialTag} onChange={(value) => setSpecialTag(value)} defaultValue={false}></TextFieldItem>
                     </Tooltip>
                 </Grid>
             </Grid>
@@ -202,7 +205,7 @@ export default function AddSpecialSensor({ sensorsObj, specialSensors, onAddSpec
                         </TableRow>
                         </TableHead>
                         <TableBody>
-                        {sensorsObj.filter(sensor=> derivedSensors.indexOf(sensor.tag) === -1).map((sensor) => {
+                        {sensorsObj.filter(sensor=> selected.indexOf(sensor.tag) === -1).map((sensor) => {
                             return(
                             <TableRow
                                 key={sensor.tag}
