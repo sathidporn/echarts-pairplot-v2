@@ -19,7 +19,7 @@ let operatorList = [
     {value: "lessThanEqual", name: "Less than equal"},
 ]
 
-export default function IndicationSensor({ sensors, filteredTimestamps, series, onBrushActivate = () => {}, onIndicationSensor = () => {}, onFilterByIndicator = () => {}, indexCluster=false}){
+export default function IndicationSensor({ sensors, filteredTimestamps, series, onBrushActivate = () => {}, onIndicationSensor = () => {}, onFilterByIndicator = () => {}, onClearBrushSelected = () => {}, indexCluster=false}){
     let classes = useStyles();
     let [operator, setOperator] = useState("select")
     let [sensor, setSensor] = useState("select")
@@ -136,7 +136,19 @@ export default function IndicationSensor({ sensors, filteredTimestamps, series, 
                         </>
                         }
                     </Grid>
-                    <Grid item xs={12} sm={12} md={12} lg={12} align="right">
+                </Grid>
+            </Grid>
+
+            {/* <Grid item xs={12} sm={12} md={12} lg={6} align="right"> */}
+                <Grid item container xs={12} sm={12} md={12} lg={12} style={{justifyContent: "flex-end"}}>
+                    {indexCluster &&
+                    <Grid item xs={12} sm={12} md={12} lg={6}>
+                        <Button onClick={onClearBrushSelected} className={classes.confirmButton}>
+                            <Typography className={classes.contentTextWhite}>Reset All</Typography>
+                        </Button>
+                    </Grid>
+                    } 
+                    <Grid item xs={12} sm={12} md={12} lg={6}>
                         <Button onClick={onAddIndicationSensor} className={classes.confirmButton}>
                             {indexCluster ? 
                             (<BrushIcon className={classes.whiteIcon}></BrushIcon>):(<FilterAltIcon className={classes.whiteIcon}></FilterAltIcon>)
@@ -145,7 +157,7 @@ export default function IndicationSensor({ sensors, filteredTimestamps, series, 
                         </Button>
                     </Grid>
                 </Grid>
-            </Grid>
+            {/* </Grid> */}
 
         </Grid> 
         

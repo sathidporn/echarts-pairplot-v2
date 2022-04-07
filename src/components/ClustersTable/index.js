@@ -8,7 +8,6 @@ const useStyles = style
 
 export default function ClustersTable({clusters, activeClusterIndex, dataClusterIndex, onChange, onActiveChange}) {
   const classes = useStyles()
-  
   const [seq, increment] = useReducer((prev) => {return prev + 1}, 0)
   const addClusterHandler = useCallback(() => {
     if (typeof onChange === "function") {
@@ -60,6 +59,12 @@ export default function ClustersTable({clusters, activeClusterIndex, dataCluster
       onActiveChange(index)
     }
   }, [onActiveChange])
+  const resetHandler = useCallback(() => {
+    if (window.confirm("Please confirm your delete request ?")) {
+      onChange([])
+
+    }
+  })
   return(
   <>
   {/* <table>
@@ -168,11 +173,22 @@ export default function ClustersTable({clusters, activeClusterIndex, dataCluster
           </TableRow>
         ))} 
         <TableRow>
-          <TableCell align="center" colSpan={4} style={{cursor: 'pointer'}} onClick={addClusterHandler} className={classes.tableCell}>
-            <Button className={classes.defaultButton}>
-              <AddCircleOutlineIcon className={classes.whiteIcon}></AddCircleOutlineIcon>
-              <Typography className={classes.contentTextWhite}>Add more cluster</Typography>
-            </Button>
+          <TableCell align="center" colSpan={4} style={{cursor: 'pointer'}} className={classes.tableCell}>
+            <Grid item container xs={12} sm={12} md={12} lg={12}>
+              <Grid item xs={12} sm={12} md={12} lg={6}>
+                <Button className={classes.defaultButton} onClick={addClusterHandler}>
+                  <AddCircleOutlineIcon className={classes.whiteIcon}></AddCircleOutlineIcon>
+                  <Typography className={classes.contentTextWhite}>Add more cluster</Typography>
+                </Button>
+              </Grid>
+              <Grid item xs={12} sm={12} md={12} lg={6}>
+                <Button className={classes.defaultButton} onClick={resetHandler}>
+                  {/* <AddCircleOutlineIcon className={classes.whiteIcon}></AddCircleOutlineIcon> */}
+                  <Typography className={classes.contentTextWhite}>Reset All</Typography>
+                </Button>
+              </Grid>
+            </Grid>
+
           </TableCell>
         </TableRow>
         </TableBody>
