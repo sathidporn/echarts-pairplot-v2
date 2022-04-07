@@ -1,6 +1,6 @@
 import './App.css';
 import * as React from 'react';
-import {useCallback, useReducer, useState, useMemo } from 'react'
+import {useCallback, useReducer, useState } from 'react'
 import { Accordion, AccordionDetails, AccordionSummary, Grid } from '@mui/material';
 import Box from '@mui/material/Box';
 import Stepper from '@mui/material/Stepper';
@@ -10,7 +10,7 @@ import StepContent from '@mui/material/StepContent';
 import Button from '@mui/material/Button';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+// import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 
 import PairPlot from './components/PairPlot';
@@ -21,7 +21,7 @@ import SensorPicker from './components/SensorPicker'
 import DatePicker from './components/DatePicker';
 import PlotTypePicker from './components/PlotTypePicker';
 import ImportData from './components/ImportData';
-import ImportSensorList from './components/ImportSensorList';
+// import ImportSensorList from './components/ImportSensorList';
 import AddSpecialSensor from './components/AddSpecialSensor';
 import SamplingPicker from './components/SamplingPicker';
 import DialogMessage from './components/DialogMessage';
@@ -63,10 +63,10 @@ const steps = [
     label: 'Filter data',
     description: `User can filtering data use indicator sensor`,
   },
-  {
-    label: 'Import sensor file',
-    description: ``,
-  },
+  // {
+  //   label: 'Import sensor file',
+  //   description: ``,
+  // },
   {
     label: 'Select sensor',
     description: `Select sensor and date to plot graph`,
@@ -133,7 +133,6 @@ function App() {
   const [brushingMode, setBrushingMode] = useState(false)
   const [dataClusterIndex, updateDataClusterIndex] = useReducer(
     (state, payload) => {
-      // console.log("updateDataClusterIndex", brushingMode, state, payload)
       if (brushingMode === false) return state
       let changed = false
       // First pass, reset all cluster index of current active cluster selection
@@ -165,8 +164,9 @@ function App() {
   const brushDeactivateHandler = useCallback(() => {
     setBrushingMode(false)
   }, [setBrushingMode])
+  
   const onSelected = useCallback(index => {
-    console.log("selected",index)
+    console.log("onSelected => ",index)
     updateDataClusterIndex(index)
   }, [updateDataClusterIndex])
 
@@ -206,30 +206,30 @@ function App() {
   }, [setRaw, setContent, setTimestampsIndex, setSamplingTimestamp, setSensorsObj, setSeries, setOpen, setMessage])
 
   // Get sensor list file
-  const onReadSensorListFile = useCallback((list) => {
-    let updateSensors = []
-    if(list !== undefined){
-      // Make obj
-      list.filter(sensor => sensor.SENSOR_TAG !== "").map((sensor, i) => {
-        let index = sensorsObj.findIndex(obj => obj.tag === sensor.SENSOR_TAG)
-        if (index !== -1) {
-          let newObj = {status: "available", tag: sensorsObj[index].tag, checked: sensorsObj[index].checked, name: sensor.SENSOR_NAME, description: sensor.SENSOR_DESCRIPTION, type: sensor.SENSOR_TYPE, unit: sensor.SENSOR_UNIT}
-          updateSensors.push(newObj)
-        }else{
-          updateSensors = [...updateSensors.slice(0, i), { ...updateSensors[i], status: "unavailable", tag: sensor.SENSOR_TAG, checked: false, name: sensor.SENSOR_NAME, description: sensor.SENSOR_DESCRIPTION, type: sensor.SENSOR_TYPE, unit: sensor.SENSOR_UNIT }, ...updateSensors.slice(i + 1)]
-        }
-        return []
-      })
-      setSensorsObj(updateSensors)
-      setOpen(true)
-      setMessage("Import sensor list file successful.")
-      console.log("onReadSensorListFile => ", list)
-    }else{
-      setOpen(true)
-      setMessage("Please try again to upload sensor list file.")
-      console.error("onReadSensorListFile => ", list)
-    }
-  },[sensorsObj, setSensorsObj, setOpen, setMessage])
+  // const onReadSensorListFile = useCallback((list) => {
+  //   let updateSensors = []
+  //   if(list !== undefined){
+  //     // Make obj
+  //     list.filter(sensor => sensor.SENSOR_TAG !== "").map((sensor, i) => {
+  //       let index = sensorsObj.findIndex(obj => obj.tag === sensor.SENSOR_TAG)
+  //       if (index !== -1) {
+  //         let newObj = {status: "available", tag: sensorsObj[index].tag, checked: sensorsObj[index].checked, name: sensor.SENSOR_NAME, description: sensor.SENSOR_DESCRIPTION, type: sensor.SENSOR_TYPE, unit: sensor.SENSOR_UNIT}
+  //         updateSensors.push(newObj)
+  //       }else{
+  //         updateSensors = [...updateSensors.slice(0, i), { ...updateSensors[i], status: "unavailable", tag: sensor.SENSOR_TAG, checked: false, name: sensor.SENSOR_NAME, description: sensor.SENSOR_DESCRIPTION, type: sensor.SENSOR_TYPE, unit: sensor.SENSOR_UNIT }, ...updateSensors.slice(i + 1)]
+  //       }
+  //       return []
+  //     })
+  //     setSensorsObj(updateSensors)
+  //     setOpen(true)
+  //     setMessage("Import sensor list file successful.")
+  //     console.log("onReadSensorListFile => ", list)
+  //   }else{
+  //     setOpen(true)
+  //     setMessage("Please try again to upload sensor list file.")
+  //     console.error("onReadSensorListFile => ", list)
+  //   }
+  // },[sensorsObj, setSensorsObj, setOpen, setMessage])
 
    // Generate special sensor data when import special sensor file
   const onGenerateSpecialSensor = useCallback((specialSensors) => {
@@ -261,32 +261,32 @@ function App() {
   },[filteredSensors, sensorsObj, setFilteredSensors, setSensorsObj])
 
   // Get special sensor file
-  const onReadSpecialSensorListFile = useCallback((list) => {
-    if(list !== undefined){
-      let specialList = list.filter(sensor=>sensor.SPECIAL_TAG !== "").map(sensor => {
-        return {
-            specialTag: sensor.SPECIAL_TAG,
-            specialName: sensor.SPECIAL_NAME,
-            derivedFromTag: sensor.DERIVED_FROM_TAG,
-            derivedFromName: sensor.DERIVE_FROM_NAME,
-            calType: sensor.CAL_TYPE,
-            subType: sensor.SUB_TYPE,
-            fromUnit: sensor.FROM_UNIT,
-            toUnit: sensor.TO_UNIT, 
-            factor: sensor.FACTOR,
-        }
-      })
-      setSpecialSensors(specialList)
-      onGenerateSpecialSensor(specialList)
-      setOpen(true)
-      setMessage("Import special sensor list successful.")
-      console.log("onReadSpecialSensorListFile => ", list)
-    }else{
-      setOpen(true)
-      setMessage("Please try again to upload special sensor list file.")
-      console.error("onReadSpecialSensorListFile => ", list)
-    }
-  },[setSpecialSensors, onGenerateSpecialSensor, setOpen, setMessage])
+  // const onReadSpecialSensorListFile = useCallback((list) => {
+  //   if(list !== undefined){
+  //     let specialList = list.filter(sensor=>sensor.SPECIAL_TAG !== "").map(sensor => {
+  //       return {
+  //           specialTag: sensor.SPECIAL_TAG,
+  //           specialName: sensor.SPECIAL_NAME,
+  //           derivedFromTag: sensor.DERIVED_FROM_TAG,
+  //           derivedFromName: sensor.DERIVE_FROM_NAME,
+  //           calType: sensor.CAL_TYPE,
+  //           subType: sensor.SUB_TYPE,
+  //           fromUnit: sensor.FROM_UNIT,
+  //           toUnit: sensor.TO_UNIT, 
+  //           factor: sensor.FACTOR,
+  //       }
+  //     })
+  //     setSpecialSensors(specialList)
+  //     onGenerateSpecialSensor(specialList)
+  //     setOpen(true)
+  //     setMessage("Import special sensor list successful.")
+  //     console.log("onReadSpecialSensorListFile => ", list)
+  //   }else{
+  //     setOpen(true)
+  //     setMessage("Please try again to upload special sensor list file.")
+  //     console.error("onReadSpecialSensorListFile => ", list)
+  //   }
+  // },[setSpecialSensors, onGenerateSpecialSensor, setOpen, setMessage])
 
   // Make raw data to sampling data by type
   const onSamplingData = useCallback((type) => {
@@ -490,6 +490,11 @@ function App() {
     setOpen(false)
   },[setOpen])
 
+  const onClearBrushSelected = useCallback(() => {
+    // setActiveClusterIndex(-1)
+    // updateDataClusterIndex([])
+  },[])
+
   // const kdeData = useMemo(() => {
   //   let selectedData = content.map(row => Object.entries(row).filter(([key]) => checkedSensors.indexOf(key) !== -1).map(([_, value]) => value))
   //   console.log("selected",selectedData)
@@ -542,15 +547,15 @@ function App() {
                       <IndicationSensor sensors={sensorsObj} indexCluster={false} onFilterByIndicator={onFilterByIndicator}></IndicationSensor>
                     </Grid>
                     }
-                    {index === 3 && filteredSensors &&
+                    {/* {index === 3 && filteredSensors &&
                     <>
                     <Grid item xs={12} sm={12} md={12} lg={12} className={classes.stepContent}>
                       <ImportSensorList specialFile={false} onReadSensorListFile={onReadSensorListFile}></ImportSensorList>
                       <ImportSensorList specialFile={true} onReadSensorListFile={onReadSpecialSensorListFile}></ImportSensorList>
                     </Grid>
                     </>
-                    }
-                    {index === 4 && filteredSensors &&
+                    } */}
+                    {index === 3 && filteredSensors &&
                     <>
                     <Grid item container xs={12} sm={12} md={12} lg={12} direction="row" justifyContent="space-between" spacing={0}>
                       <Grid item xs={12} sm={12} md={12} lg={12} className={classes.stepContent}>
@@ -620,7 +625,7 @@ function App() {
                 <ClustersTable clusters={clusters} onChange={clustersChangeHandler} activeClusterIndex={activeClusterIndex} onActiveChange={activeClusterChangeHandler} dataClusterIndex={dataClusterIndex} />
               </Grid>
               <Grid item xs={12} sm={12} md={12} lg={12} style={{padding: 10}}>
-                <IndicationSensor sensors={checkedSensors} filteredTimestamps={filteredTimestamps} series={series} onBrushActivate={brushActivateHandler} onIndicationSensor={onSelected} indexCluster={true}></IndicationSensor>
+                <IndicationSensor sensors={checkedSensors} filteredTimestamps={filteredTimestamps} series={series} onBrushActivate={brushActivateHandler} onIndicationSensor={onSelected}  onClearBrushSelected={onClearBrushSelected} indexCluster={true}></IndicationSensor>
               </Grid>
             </Grid>
           </Grid>
@@ -633,7 +638,7 @@ function App() {
         {series !== undefined ? (
           <>
           {plotType === "scatter" &&
-          <PairPlot style={{maxWidth: '80vw', height: '100vh'}} timestamps={filteredTimestamps} series={series} clusters={clusters} dataClusterIndex={dataClusterIndex} onBrushActivate={brushActivateHandler} onBrushDeactivate={brushDeactivateHandler} onSelected={onSelected} />
+          <PairPlot style={{maxWidth: '80vw', height: '100vh'}} timestamps={filteredTimestamps} series={series} clusters={clusters} dataClusterIndex={dataClusterIndex} brushingMode={brushingMode} onBrushActivate={brushActivateHandler} onBrushDeactivate={brushDeactivateHandler} onSelected={onSelected}/>
           }
           {plotType === "line" &&
           <LinePlot style={{maxWidth: '80vw', height: '100vh'}} timestamps={filteredTimestamps} series={series} startDate={startDate} endDate={endDate} sensors={checkedSensors} clusters={clusters} dataClusterIndex={dataClusterIndex}></LinePlot>

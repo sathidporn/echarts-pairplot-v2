@@ -1,22 +1,29 @@
-import EChartsReact from "echarts-for-react"
-import { useEffect, useMemo, useRef, useState } from "react"
+// import EChartsReact from "echarts-for-react"
+import { EchartsComponent } from "echarts-react-wrapper"
+import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { Grid } from "@mui/material"
 import { style } from "../../styles/style"
+import debounce from 'lodash.debounce'
 const useStyles = style
 const histogramBarCount = 40
 
 const offset = 5
 const gap = 3
 
-export default function PairPlot({series, timestamps, clusters, dataClusterIndex, style, onBrushActivate = () => {}, onBrushDeactivate = () => {}, onSelected = () => {}}) {
+export default function PairPlot({series, timestamps, clusters, dataClusterIndex, brushingMode, style, onBrushActivate = () => {}, onBrushDeactivate = () => {}, onSelected = () => {}}) {
   const classes = useStyles();
-  let chartRef = useRef()
+  // let chartRef = useRef()
+  const [echarts, setEcharts] = useState()
   let clusterIndex = useMemo(() => {
     if (dataClusterIndex === undefined) {
       return Object.entries(series)[0][1].map(() => -1)
     }
     return dataClusterIndex
   }, [dataClusterIndex, series])
+
+  const [xAxisActive, setXAxisActive] = useState()
+  const [yAxisActive, setYAxisActive] = useState()
+
   let option = useMemo(() => {
     let index = 0
     let grid = []
@@ -29,6 +36,7 @@ export default function PairPlot({series, timestamps, clusters, dataClusterIndex
     let categories = []
     for (let i = 0; i < clusters.length; i++) {
       categories.push(i)
+      // categories.push(clusters[i].id)
     }
     let categoriesColor = clusters.map(({color}) => color)
     const gridWidth = (100 - offset - gap) / (seriesCount + 1) - gap
@@ -48,15 +56,27 @@ export default function PairPlot({series, timestamps, clusters, dataClusterIndex
       return {
         name,
         nameTextStyle: {
-          color: "#ffffff"
+          color: "#ffffff",
+          fontWeight: xAxisActive === name ? 'bold' : 'normal',
+          backgroundColor: xAxisActive === name ? "#5470c6" : 'transparent',
+          borderRadius: 2
         },
         scale: true,
         type,
         position: 'top',
         gridIndex: index,
         axisLabel: {
-          show,
-          color: "#ffffff"
+          show: true,
+          showMinLabel: true,
+          showMaxLabel: true,
+          color: xAxisActive === name ? "#5470c6" : "#ffffff",
+        },
+        axisLine: {
+          show: true
+        },
+        axisTick: {
+          show: true,
+          inside: true
         },
         splitLine: {
           lineStyle: {
@@ -72,7 +92,11 @@ export default function PairPlot({series, timestamps, clusters, dataClusterIndex
       return {
         name,
         nameTextStyle: {
-          color: "#ffffff"
+          color: "#ffffff",
+          fontWeight: yAxisActive === name ? 'bold' : 'normal',
+          backgroundColor: yAxisActive === name ? "#5470c6" : 'transparent',
+          borderWidth: 50,
+          borderRadius: 2
         },
         scale: true,
         type,
@@ -82,7 +106,14 @@ export default function PairPlot({series, timestamps, clusters, dataClusterIndex
           show,
           showMinLabel: true,
           showMaxLabel: true,
-          color: "#ffffff"
+          color: yAxisActive === name ? "#5470c6" : "#ffffff",
+        },
+        axisLine: {
+          show
+        },
+        axisTick: {
+          show,
+          inside: true
         },
         splitLine: {
           lineStyle: {
@@ -91,7 +122,7 @@ export default function PairPlot({series, timestamps, clusters, dataClusterIndex
           }
         },
         nameLocation: 'center',
-        nameGap: 50,
+        nameGap: 30,
       }
     }
     function buildScatterSeries(xName, yName, xFormatter) {
@@ -107,16 +138,15 @@ export default function PairPlot({series, timestamps, clusters, dataClusterIndex
         tooltip: {
           backgroundColor: '#242f39',
           // trigger: 'axis',
-          // axisPointer: {
-          //     type: 'cross'
-          // },
           textStyle:{
               color: '#ffffff',
               fontFamily: 'Roboto' ,
-              fontSize: 12
+              fontSize: 15,
+              width: 20
           },
           formatter: params => {
-            return `${params.marker}: x=${xFormatter(params.dataIndex)}, y=${series[yName][params.dataIndex].toFixed(2)}`
+            // ${params.marker}
+            return `<p style={{align: "left"}}>[ X ] ${xName} : ${xFormatter(params.dataIndex)}</p>` +  `<p style={{align: "left"}}>[ Y ] ${yName} : ${series[yName][params.dataIndex].toFixed(2)}</p>`
           }
         },
       }
@@ -160,14 +190,10 @@ export default function PairPlot({series, timestamps, clusters, dataClusterIndex
             yAxisIndex: index,
             tooltip: {
               backgroundColor: '#242f39',
-              // trigger: 'axis',
-              // axisPointer: {
-              //     type: 'cross'
-              // },
               textStyle:{
                   color: '#ffffff',
                   fontFamily: 'Roboto' ,
-                  fontSize: 12
+                  fontSize: 15
               },
               formatter: params => {
                 return `${params.data[1].toFixed(2)}: ${params.data[0].toFixed(0)} points`
@@ -198,6 +224,10 @@ export default function PairPlot({series, timestamps, clusters, dataClusterIndex
           clusterIndex
         },
       },
+      legend: {
+        show: true,
+        icon: 'circle'
+      },
       grid,
       xAxis,
       yAxis,
@@ -212,74 +242,123 @@ export default function PairPlot({series, timestamps, clusters, dataClusterIndex
         show: true,
       },
       tooltip: {},
-      animation: true,
+      animation: false,
       visualMap: [{
         type: 'piecewise',
         right: '10%',
         orient: 'horizontal',
         categories,
+        showLabel: true,
+        itemSymbol: 'circle',
+        textStyle: {
+          color: "#ffffff"
+        },
         inRange: {
           color: categoriesColor
         },
         outOfRange: {
           color: '#5470c6'
         },
-        showLabel: false
       }]
     }
-  }, [clusterIndex, clusters, series, timestamps])
+  }, [clusterIndex, clusters, series, timestamps, xAxisActive, yAxisActive])
 
-  let [brushActive, setBrushActive] = useState(false)
+  // let [brushActive, setBrushActive] = useState(false)
 
-  const eventsHandler = useMemo(() => ({
-    'brushselected': (params) => {
-      console.log("params",params)
-      let {batch} = params
-      if (batch?.length > 0) {
-        let selectedIndex = batch[0].selected.find(({dataIndex}) => dataIndex.length > 0)
-        if (selectedIndex !== undefined) {
-          onSelected(selectedIndex.dataIndex)
-        } 
-        else {
-          onSelected([])
+  // const onAxisActive = useCallback((params) => {
+  //   if(params !== undefined){
+  //     if(params.dimensionNames[params.encode.x] !== xAxisActive){
+  //       setXAxisActive(params.dimensionNames[params.encode.x])
+  //     }
+  //     if(params.dimensionNames[params.encode.y] !== yAxisActive){
+  //       setYAxisActive(params.dimensionNames[params.encode.y])
+  //     }
+  //   }else{
+  //     setXAxisActive()
+  //     setYAxisActive()
+  //   }
+  // },[setYAxisActive, setXAxisActive, xAxisActive, yAxisActive])
+
+
+  let updateMousemove = useMemo(() => debounce((params) => {
+    console.log("updateMousemove")
+    if(params.encode !== undefined){
+      // onAxisActive(params)
+        if(params.dimensionNames[params.encode.x] !== xAxisActive){
+          setXAxisActive(params.dimensionNames[params.encode.x])
         }
-      }
-    },
-    'globalcursortaken': params => {
-      if (typeof params?.brushOption?.brushType === "boolean") {
-        onBrushDeactivate()
-        setBrushActive(false)
-      } else if (typeof params?.brushOption?.brushType === "string") {
-        onBrushActivate()
-        setBrushActive(true)
+        if(params.dimensionNames[params.encode.y] !== yAxisActive){
+          setYAxisActive(params.dimensionNames[params.encode.y])
+        }
+    }
+  }, 100), [setYAxisActive, setXAxisActive, xAxisActive, yAxisActive]) 
+
+  let updateBrushSelected = useMemo(() => debounce((params) => {
+    console.log("updateBrushSelected")
+    let {batch} = params
+    if (batch?.length > 0) {
+      let selectedIndex = batch[0].selected.find(({dataIndex}) => dataIndex.length > 0)
+      if (selectedIndex !== undefined) {
+        onSelected(selectedIndex.dataIndex)
+      } else {
+        onSelected([])
       }
     }
-  }), [onBrushActivate, onBrushDeactivate, onSelected, setBrushActive])
+  }, 100), [onSelected])
 
-  // useEffect(() => {
-  //   let chart = chartRef.current.getEchartsInstance()
-  //   console.log("chart",chart)
-  //   if(brushActive === false){
-  //     console.log("brushActive",brushActive)
-  //     chart.setOption(option, {
-  //       notMerge: true,
-  //       lazyUpdate: false,
-  //     })
-  //   }else{
-  //     console.log("brushActive",brushActive)
-  //     chart.setOption(option, {
-  //       notMerge: false,
-  //       lazyUpdate: false,
-  //     })
-  //   }
-  // }, [brushActive])
+  let updateGlobalCursorTaken = useMemo(() => debounce((params) => {
+    console.log("updateGlobalCursorTaken")
+    if (typeof params?.brushOption?.brushType === "boolean") {
+      onBrushDeactivate()
+      echarts.setOption(option, {
+        notMerge: true,
+      })
+    } else if (typeof params?.brushOption?.brushType === "string") {
+      onBrushActivate()
+      echarts.setOption(option, {
+        notMerge: false,
+      })
+    }
+  }, 100), [onBrushActivate, onBrushDeactivate, echarts, option])
 
-  console.log("pairplot",dataClusterIndex, brushActive)
+
+  // const eventHandlers = useCallback(() => ({
+  //   mouseMove: (params, context) => {
+  //     updateMousemove(params)
+  //   },
+  //   brushSelected: (params, context) => {
+  //     updateBrushSelected(params)
+  //   },
+  //   globalCursorTaken:(params, context) => {
+  //     updateGlobalCursorTaken(params)
+  //   },
+  // }),[updateMousemove, updateBrushSelected, updateGlobalCursorTaken])
+
+  const eventHandler = useMemo(() => ({
+    mouseMove: updateMousemove,
+    brushSelected: updateBrushSelected,
+    globalCursorTaken:  updateGlobalCursorTaken
+  }), [updateMousemove, updateBrushSelected, updateGlobalCursorTaken])
+
 
   return (
     <>
     <Grid item xs={12} sm={12} md={12} lg={12} className={classes.blackBackground}>
-      <EChartsReact style={style} ref={e => chartRef.current = e} option={option} notMerge={!brushActive} lazyUpdate={false} onEvents={eventsHandler} />
+      <EchartsComponent
+        // ref={e => chartRef.current = e} 
+        onInit={instance => setEcharts(instance)}
+        style={style} 
+        option={option} 
+        notMerge={true}
+        // onEvents={eventsHandler} 
+        // onEvents={{
+        //   'mousemove':  updateMousemove,
+        //   'brushselected': updateBrushSelected,
+        //   'globalcursortaken': updateGlobalcursortaken
+        // }}
+        eventHandlers={eventHandler}
+        // eventHandlers={eventHandlers}
+      />
     </Grid>
     
     </>
