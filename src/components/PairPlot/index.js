@@ -278,6 +278,27 @@ export default function PairPlot({series, timestamps, clusters, dataClusterIndex
   //     setYAxisActive()
   //   }
   // },[setYAxisActive, setXAxisActive, xAxisActive, yAxisActive])
+  // if (echarts !== undefined) {
+  //   // perform some complex logic to generate option
+  //   echarts.setOption(option, {notMerge: true})
+  // }
+
+  useEffect(() => {
+    console.log("setOption")
+    if(echarts !== undefined){
+      if(brushingMode === true){
+        echarts.setOption(option, {
+          notMerge: false,
+          replaceMerge: ['grid', 'yAxis', 'xAxis']
+        })
+      }else{
+        echarts.setOption(option, {
+          notMerge: true,
+          replaceMerge: ['grid', 'yAxis', 'xAxis']
+        })
+      }
+    }
+  }, [brushingMode, echarts, option])
 
 
   let updateMousemove = useMemo(() => debounce((params) => {
@@ -310,16 +331,10 @@ export default function PairPlot({series, timestamps, clusters, dataClusterIndex
     console.log("updateGlobalCursorTaken")
     if (typeof params?.brushOption?.brushType === "boolean") {
       onBrushDeactivate()
-      echarts.setOption(option, {
-        notMerge: true,
-      })
     } else if (typeof params?.brushOption?.brushType === "string") {
       onBrushActivate()
-      echarts.setOption(option, {
-        notMerge: false,
-      })
     }
-  }, 100), [onBrushActivate, onBrushDeactivate, echarts, option])
+  }, 100), [onBrushActivate, onBrushDeactivate])
 
 
   // const eventHandlers = useCallback(() => ({
@@ -348,16 +363,18 @@ export default function PairPlot({series, timestamps, clusters, dataClusterIndex
         // ref={e => chartRef.current = e} 
         onInit={instance => setEcharts(instance)}
         style={style} 
-        option={option} 
-        notMerge={true}
+        // option={option} 
+        // notMerge={false}
+        // replaceMerge={["yAxis", "xAxis", "grid"]}
+        // notMerge={true}
         // onEvents={eventsHandler} 
         // onEvents={{
         //   'mousemove':  updateMousemove,
         //   'brushselected': updateBrushSelected,
         //   'globalcursortaken': updateGlobalcursortaken
         // }}
-        eventHandlers={eventHandler}
-        // eventHandlers={eventHandlers}
+        // eventHandlers={eventHandler}
+        eventsHandler={eventHandler}
       />
     </Grid>
     
