@@ -20,36 +20,39 @@ export default function ImportData({ onRawDataHandler=()=>{}}) {
     let [data, setData] = useState([])
     let [loading, setLoading] = useState(false)
 
+
     // read csv file
 
     const onReadFile = useCallback((target) => {
-        // setFile(target.files[0])
-        setFileName(target.files[0].name)
-        let reader = new FileReader()
-        reader.readAsText(target.files[0])
-        setLoading(true)
-        reader.onload = e => {
-            let csv = e.target.result
-            setContent(
-            papa.parse(csv, {
-                header: true
-            }).data
-            )
-            setLoading(false)
-        }  
-        parse(target, {
-            delimiter: ",",
-            header: true,
-            // worker: true,
-            transform(value, header) {
-              if (header === "TimeStamp") return new Date(value)
-              else return Number.parseFloat(value)
-            },
-            complete(result) {
-            //   setTags(result.meta.fields)
-              setData(result.data.filter(row => Object.values(row).findIndex(Number.isNaN) === -1))
-            }
-        })
+        if(target){
+            // setFile(target.files[0])
+            setFileName(target.files[0].name)
+            let reader = new FileReader()
+            reader.readAsText(target.files[0])
+            setLoading(true)
+            reader.onload = e => {
+                let csv = e.target.result
+                setContent(
+                papa.parse(csv, {
+                    header: true
+                }).data
+                )
+                setLoading(false)
+            }  
+            parse(target, {
+                delimiter: ",",
+                header: true,
+                // worker: true,
+                transform(value, header) {
+                if (header === "TimeStamp") return new Date(value)
+                else return Number.parseFloat(value)
+                },
+                complete(result) {
+                //   setTags(result.meta.fields)
+                setData(result.data.filter(row => Object.values(row).findIndex(Number.isNaN) === -1))
+                }
+            })
+        }
     },[setContent, setData, setLoading, setFileName])
 
     // make content to obj 
@@ -96,7 +99,10 @@ export default function ImportData({ onRawDataHandler=()=>{}}) {
             {/* <Grid item xs={12} sm={4} md={4} lg={4} algin="left">
                 <Typography className={classes.headerTextBlue}>Raw Data : </Typography>
             </Grid> */}
-            <Grid item xs={12} sm={6} md={6} lg={6} algin="left">
+            <Grid item xs={12} sm={4} md={4} lg={4} algin="left">
+                <Typography className={classes.headerText}>raw data : </Typography>
+            </Grid>
+            <Grid item xs={12} sm={4} md={4} lg={4} algin="left">
                 <Tooltip title={fileName ? fileName : ""}>
                 <Button
                     // variant="contained"
@@ -121,7 +127,7 @@ export default function ImportData({ onRawDataHandler=()=>{}}) {
                 </Button>
                 </Tooltip>
             </Grid>
-            <Grid item xs={12} sm={6} md={6} lg={6} algin="left">
+            <Grid item xs={12} sm={4} md={4} lg={4} algin="left">
                 <Button onClick={uploadFile} className={classes.confirmButton}>
                     <FileDownloadIcon className={classes.whiteIcon}></FileDownloadIcon>
                     <Typography className={classes.contentTextWhite}>Upload</Typography>
