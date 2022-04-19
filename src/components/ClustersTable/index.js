@@ -64,7 +64,7 @@ export default function ClustersTable({clusters, activeClusterIndex, dataCluster
       onChange([])
 
     }
-  })
+  },[onChange])
   return(
   <>
   {/* <table>
@@ -174,17 +174,17 @@ export default function ClustersTable({clusters, activeClusterIndex, dataCluster
         ))} 
         <TableRow>
           <TableCell align="center" colSpan={4} style={{cursor: 'pointer'}} className={classes.tableCell}>
-            <Grid item container xs={12} sm={12} md={12} lg={12}>
-              <Grid item xs={12} sm={12} md={12} lg={6}>
+            <Grid item container xs={12} sm={12} md={12} lg={12} spacing={1}>
+              <Grid item xs={12} sm={12} md={12} lg={12}>
                 <Button className={classes.defaultButton} onClick={addClusterHandler}>
                   <AddCircleOutlineIcon className={classes.whiteIcon}></AddCircleOutlineIcon>
-                  <Typography className={classes.contentTextWhite}>Add more cluster</Typography>
+                  <Typography className={classes.contentTextWhite}>Add cluster</Typography>
                 </Button>
               </Grid>
-              <Grid item xs={12} sm={12} md={12} lg={6}>
+              <Grid item xs={12} sm={12} md={12} lg={12}>
                 <Button className={classes.defaultButton} onClick={resetHandler}>
                   {/* <AddCircleOutlineIcon className={classes.whiteIcon}></AddCircleOutlineIcon> */}
-                  <Typography className={classes.contentTextWhite}>Reset All</Typography>
+                  <Typography className={classes.contentTextWhite}>Delete All</Typography>
                 </Button>
               </Grid>
             </Grid>

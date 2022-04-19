@@ -1,7 +1,8 @@
 import React from 'react'
 import { useState } from 'react'
 import { format, subMonths } from 'date-fns'
-import { Grid, TextField } from '@mui/material'
+import { Grid, TextField, Button, Typography } from '@mui/material'
+import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import { style } from '../../styles/style'
 const useStyles = style
 const MAX_PERIOD = 24
@@ -12,7 +13,7 @@ export default function DatePicker({ startSeries, endSeries, onPickedDate=()=>{}
     let [endDate, setEndDate] = useState(new Date(endSeries))
 
     return(
-        <Grid item container xs={12} sm={12} md={12} lg={12}>
+        <Grid item container xs={12} sm={12} md={12} lg={12} spacing={1}>
             {/* <input
                 type="date"
                 name="start date"
@@ -31,7 +32,7 @@ export default function DatePicker({ startSeries, endSeries, onPickedDate=()=>{}
                     // onFilteredByDate(new Date(e.target.value), endDate)
                 }}
             /> */}
-            <Grid item xs={6} sm={6} md={6} lg={6}>
+            <Grid item xs={4} sm={4} md={4} lg={4}>
             <form className={classes.container} noValidate>
                 <TextField
                     label="Start Date"
@@ -57,14 +58,14 @@ export default function DatePicker({ startSeries, endSeries, onPickedDate=()=>{}
                         startDate.setSeconds(0)
                         startDate.setMilliseconds(0)
                         setStartDate(startDate)
-                        onPickedDate(startDate, endDate)
+                        // onPickedDate(startDate, endDate)
                         // setStartDate(new Date(e.target.value))
                         // onFilteredByDate(new Date(e.target.value), endDate)
                     }}
                 />
             </form> 
             </Grid>
-            <Grid item xs={6} sm={6} md={6} lg={6}>
+            <Grid item xs={4} sm={4} md={4} lg={4}>
             <form className={classes.container} noValidate>
                 <TextField
                     label="End Date"
@@ -90,10 +91,16 @@ export default function DatePicker({ startSeries, endSeries, onPickedDate=()=>{}
                         endDate.setSeconds(59)
                         endDate.setMilliseconds(999)
                         setEndDate(endDate)
-                        onPickedDate(startDate, endDate)
+                        // onPickedDate(startDate, endDate)
                     }}
                 />
             </form> 
+            </Grid>
+            <Grid item xs={4} sm={4} md={4} lg={4} align="right">
+                <Button onClick={()=>onPickedDate(startDate, endDate)} className={classes.confirmButton}>
+                    <FilterAltIcon className={classes.whiteIcon}></FilterAltIcon>
+                    <Typography className={classes.contentTextWhite}>Filter Data</Typography>
+                </Button>
             </Grid>
         </Grid>
     )

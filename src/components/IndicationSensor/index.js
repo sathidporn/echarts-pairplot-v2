@@ -19,12 +19,17 @@ let operatorList = [
     {value: "lessThanEqual", name: "Less than equal"},
 ]
 
-export default function IndicationSensor({ sensors, filteredTimestamps, series, onBrushActivate = () => {}, onIndicationSensor = () => {}, onFilterByIndicator = () => {}, onClearBrushSelected = () => {}, indexCluster=false}){
+export default function IndicationSensor({ sensors, filteredTimestamps, series, onBrushActivate = () => {}, onBrushByIndicator = () => {}, onFilterByIndicator = () => {}, indexCluster=false}){
     let classes = useStyles();
     let [operator, setOperator] = useState("select")
     let [sensor, setSensor] = useState("select")
     let [value1, setValue1] = useState()
     let [value2, setValue2] = useState()
+
+    const onClearBrushSelected = useCallback(() => {
+        onBrushByIndicator([])
+        onBrushActivate()
+    },[onBrushByIndicator, onBrushActivate])
 
     const onAddIndicationSensor = useCallback(() => {
         if(indexCluster) {
@@ -57,17 +62,22 @@ export default function IndicationSensor({ sensors, filteredTimestamps, series, 
                 }
             }
             // setDataClusterIndex(clusterIndexArr)
-            onIndicationSensor(valuesArr)
+            onBrushByIndicator(valuesArr)
             onBrushActivate()
 
         }else{
             onFilterByIndicator(sensor, operator, value1, value2)
         }
 
-    },[sensor, operator, value1, value2, series, filteredTimestamps, indexCluster, onBrushActivate, onIndicationSensor, onFilterByIndicator])
+    },[sensor, operator, value1, value2, series, filteredTimestamps, indexCluster, onBrushActivate, onBrushByIndicator, onFilterByIndicator])
 
     return(
         <Grid item container xs={12} sm={12} md={12} lg={12} spacing={1}>
+            {indexCluster &&
+            <Grid item xs={12} sm={12} md={12} lg={12} align="left">
+                <Typography className={classes.headerTextWhite}>Brush cluster by condition</Typography> 
+            </Grid>
+            }
             <Grid item xs={12} sm={12} md={12} lg={12}>
                 <Grid item container xs={12} sm={12} md={12} lg={12} spacing={1}>
                     <Grid item xs={3} sm={3} md={3} lg={3} align="left">
@@ -140,15 +150,8 @@ export default function IndicationSensor({ sensors, filteredTimestamps, series, 
             </Grid>
 
             {/* <Grid item xs={12} sm={12} md={12} lg={6} align="right"> */}
-                <Grid item container xs={12} sm={12} md={12} lg={12} style={{justifyContent: "flex-end"}}>
-                    {indexCluster &&
-                    <Grid item xs={12} sm={12} md={12} lg={6}>
-                        <Button onClick={onClearBrushSelected} className={classes.confirmButton}>
-                            <Typography className={classes.contentTextWhite}>Reset All</Typography>
-                        </Button>
-                    </Grid>
-                    } 
-                    <Grid item xs={12} sm={12} md={12} lg={6}>
+                <Grid item container xs={12} sm={12} md={12} lg={12} justifyContent="flex-end">
+                    <Grid item xs={12} sm={12} md={12} lg={4}>
                         <Button onClick={onAddIndicationSensor} className={classes.confirmButton}>
                             {indexCluster ? 
                             (<BrushIcon className={classes.whiteIcon}></BrushIcon>):(<FilterAltIcon className={classes.whiteIcon}></FilterAltIcon>)
@@ -156,6 +159,13 @@ export default function IndicationSensor({ sensors, filteredTimestamps, series, 
                             <Typography className={classes.contentTextWhite}>{indexCluster ? `Brush` : `Filter Data`}</Typography>
                         </Button>
                     </Grid>
+                    {indexCluster &&
+                    <Grid item xs={12} sm={12} md={12} lg={6}>
+                        <Button onClick={onClearBrushSelected} className={classes.confirmButton}>
+                            <Typography className={classes.contentTextWhite}>Reset Brush</Typography>
+                        </Button>
+                    </Grid>
+                    } 
                 </Grid>
             {/* </Grid> */}
 
