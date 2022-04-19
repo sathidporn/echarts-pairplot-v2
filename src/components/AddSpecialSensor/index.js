@@ -73,20 +73,24 @@ export default function AddSpecialSensor({ sensorsObj, specialSensors, onAddSpec
 
     const onGenerateSensor = useCallback(() => {
         // let objNewSensor = {tag: specialTag, name: "", derived: derivedSensors, calType: calType, subType: subType, fromUnit: "", toUnit: "", factor: ""}
-        let objNewSensor = {sensor: derivedSensors, tag: specialTag, name: specialName, calType: calType, constant: constant}
-        onAddSpecialSensor(objNewSensor)
-        setDerivedSensors([])
-        setSpecialName("")
-        setSpecialTag("")
-        setCalType("select")
-        setConstantState(false)
+        if(derivedSensors && specialTag && specialName && calType && constant){
+            let objNewSensor = {sensor: derivedSensors, tag: specialTag, name: specialName, calType: calType, constant: constant}
+            onAddSpecialSensor(objNewSensor)
+            setDerivedSensors([])
+            setSpecialName("")
+            setSpecialTag("")
+            setCalType("select")
+            setConstantState(false)
 
-        let updateSpecialSensors = specialSensors
-        for(let i=0; i<derivedSensors.length; i++){
-            let objNew = {status: "new", specialTag: specialTag, specialName: specialName, derivedFromTag: derivedSensors[i].tag, derivedFromName: derivedSensors[i].name, calType: calType, subType: "", fromUnit: "", toUnit: "", factor: constant}
-            updateSpecialSensors.push(objNew)
+            let updateSpecialSensors = specialSensors
+            for(let i=0; i<derivedSensors.length; i++){
+                let objNew = {status: "new", specialTag: specialTag, specialName: specialName, derivedFromTag: derivedSensors[i].tag, derivedFromName: derivedSensors[i].name, calType: calType, subType: "", fromUnit: "", toUnit: "", factor: constant}
+                updateSpecialSensors.push(objNew)
+            }
+            onUpdateSpecialSensors(updateSpecialSensors)
+        }else{
+            onAddSpecialSensor(undefined)
         }
-        onUpdateSpecialSensors(updateSpecialSensors)
     },[derivedSensors, calType, constant, specialTag, specialName, specialSensors, onUpdateSpecialSensors, onAddSpecialSensor])
 
     const onCustomizeSensors = useCallback((updateSpecialSensors) => {
@@ -107,6 +111,43 @@ export default function AddSpecialSensor({ sensorsObj, specialSensors, onAddSpec
 
             {/* {derivedSensors.length > 0 &&
             <> */}
+
+            <Grid item xs={12} sm={12} md={12} lg={12}>
+                <TableContainer className={classes.tableContainer} >
+                    <Table size="small" stickyHeader aria-label="sticky table">
+                        <TableHead>
+                        <TableRow>
+                            <TableCell align="left" className={classes.tableCell}></TableCell>
+                            <TableCell className={classes.tableCell}>SENSOR_TAG</TableCell>
+                        </TableRow>
+                        </TableHead>
+                        <TableBody>
+                        {sensorsObj.filter(sensor=> selected.indexOf(sensor.tag) === -1).map((sensor) => {
+                            return(
+                            <TableRow
+                                key={sensor.tag}
+                                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                            >
+                                <TableCell align="left"  className={classes.tableCell}>
+                                    <Button onClick={()=>onAddSensor({tag: sensor.tag, name: sensor.name})} className={classes.defaultButton}>
+                                        <Typography className={classes.contentTextBlack}>Select</Typography>
+                                    </Button>
+                                </TableCell>
+                                <TableCell component="th" scope="row" className={classes.tableCell}>
+                                    <Typography className={classes.formControlLabel}>{sensor.tag}</Typography>
+                                </TableCell>
+                            </TableRow>
+                            )
+                        })}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+            </Grid>
+            
+            <Grid item xs={12} sm={12} md={12} lg={12} align="right">
+                <SensorCustomize sensors={specialSensors} specialSensor={true} onCustomizeSensors={onCustomizeSensors} onRemoveSpecialSensor={onRemoveSpecialSensor}></SensorCustomize>
+            </Grid>
+
             <Grid item container xs={12} sm={12} md={12} lg={12} align="left">
                 <Grid item xs={3} sm={3} md={3} lg={3}>
                     <Typography className={classes.blueText}>SENSOR : </Typography>
@@ -140,8 +181,8 @@ export default function AddSpecialSensor({ sensorsObj, specialSensors, onAddSpec
                 </Grid>
                 <Grid item xs={9} sm={9} md={9} lg={9} alignContent="right" alignItems="right" alignSelf="right">
                     <Button className={classes.defaultButton} onClick={()=>onAddConstant()}>
-                        <AddCircleOutlineIcon className={classes.blackIcon}></AddCircleOutlineIcon>
-                        <Typography className={classes.contentTextBlack}>Constant</Typography>
+                        {/* <AddCircleOutlineIcon className={classes.blackIcon}></AddCircleOutlineIcon> */}
+                        <Typography className={classes.contentTextBlack}> Add Constant</Typography>
                     </Button>
                 </Grid>
                 </>
@@ -162,8 +203,7 @@ export default function AddSpecialSensor({ sensorsObj, specialSensors, onAddSpec
                 </>
                 }
             </Grid>
-  
-            
+           
             <Grid item container xs={12} sm={12} md={12} lg={12} align="left">
                 <Grid item xs={3} sm={3} md={3} lg={3}>
                     <Typography className={classes.blueText}>TAG : </Typography>
@@ -194,42 +234,6 @@ export default function AddSpecialSensor({ sensorsObj, specialSensors, onAddSpec
             </Grid>
             {/* </>
             }  */}
- 
-            <Grid item xs={12} sm={12} md={12} lg={12}>
-                <TableContainer className={classes.tableContainer} >
-                    <Table size="small" stickyHeader aria-label="sticky table">
-                        <TableHead>
-                        <TableRow>
-                            <TableCell align="left" className={classes.tableCell}>Add</TableCell>
-                            <TableCell className={classes.tableCell}>Sensor</TableCell>
-                        </TableRow>
-                        </TableHead>
-                        <TableBody>
-                        {sensorsObj.filter(sensor=> selected.indexOf(sensor.tag) === -1).map((sensor) => {
-                            return(
-                            <TableRow
-                                key={sensor.tag}
-                                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                            >
-                                <TableCell align="left"  className={classes.tableCell}>
-                                    <Button onClick={()=>onAddSensor({tag: sensor.tag, name: sensor.name})} className={classes.defaultButton}>
-                                        <Typography className={classes.contentTextBlack}>Add</Typography>
-                                    </Button>
-                                </TableCell>
-                                <TableCell component="th" scope="row" className={classes.tableCell}>
-                                    <Typography className={classes.formControlLabel}>{sensor.tag}</Typography>
-                                </TableCell>
-                            </TableRow>
-                            )
-                        })}
-                        </TableBody>
-                    </Table>
-                </TableContainer>
-            </Grid>
-
-            <Grid item xs={12} sm={12} md={12} lg={12} align="right">
-                <SensorCustomize sensors={specialSensors} specialSensor={true} onCustomizeSensors={onCustomizeSensors} onRemoveSpecialSensor={onRemoveSpecialSensor}></SensorCustomize>
-            </Grid>
         </Grid>
         </>
     )
