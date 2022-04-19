@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useCallback } from 'react';
+import { useCallback, useState, createRef } from 'react';
 import { Grid, Typography } from '@mui/material';
 import Button from '@mui/material/Button';
 import Chip from '@mui/material/Chip'
@@ -12,17 +12,44 @@ import { Tooltip, IconButton } from '@mui/material';
 import CancelIcon from '@mui/icons-material/Cancel'
 import TextFieldItem from '../TextFieldItem'
 import TableViewIcon from '@mui/icons-material/TableView';
+import { CSVDownload, CSVLink } from 'react-csv'
+import ImportSensorList from '../ImportSensorList';
 
 import { style } from '../../styles/style';
 const useStyles = style
 
-export default function SensorCustomize({sensors, onCustomizeSensors, specialSensor=false, onRemoveSpecialSensor = () => {} }){
+let SENSOR_FILE_NAME = "sensor_list"
+let SENSOR_HEADERS = [
+    { label: "SENSOR_TAG", key: "tag" },
+    { label: "SENSOR_NAME", key: "name" },
+    { label: "SENSOR_DESCRIPTION", key: "description" },
+    { label: "SENSOR_TYPE", key: "type" },
+    { label: "SENSOR_UNIT", key: "unit" },
+    { label: "METHOD", key: "method" },
+    { label: "COMPONENT_ID", key: "component" },
+]
+let SPECIAL_FILE_NAME = "special_sensor_list"
+let SPECIAL_HEADERS = [
+    { label: "SPECIAL_TAG", key: "specialTag" },
+    { label: "SPECIAL_NAME", key: "specialName" },
+    { label: "DERIVED_FROM_TAG", key: "derivedFromTag" },
+    { label: "DERIVE_FROM_NAME", key: "derivedFromName" },
+    { label: "CAL_TYPE", key: "calType" },
+    { label: "SUB_TYPE", key: "subType" },
+    { label: "FROM_UNIT", key: "fromUnit" },
+    { label: "TO_UNIT", key: "toUnit" },
+    { label: "FACTOR", key: "factor" },
+]
 
-    console.log("sensors",sensors)
+export default function SensorCustomize({sensors, onCustomizeSensors, specialSensor=false, onRemoveSpecialSensor = () => {}}){
     const classes = useStyles();
-    const [open, setOpen] = React.useState(false);
+    const [open, setOpen] = useState(false);
     const fullWidth = true
     const maxWidth = 'lg'
+
+    console.log("sensors",sensors)
+
+    const csvLinkEl = createRef()
   
     const handleClickOpen = () => {
       setOpen(true);
@@ -71,6 +98,59 @@ export default function SensorCustomize({sensors, onCustomizeSensors, specialSen
         }
     },[sensors, specialSensor, onCustomizeSensors])
 
+    // Get sensor list file
+    const onReadSensorListFile = useCallback((list) => {
+        let updateSensors = []
+        if(list !== undefined){
+        // Make obj
+        list.filter(sensor => sensor.SENSOR_TAG !== "").map((sensor, i) => {
+            let index = sensors.findIndex(obj => obj.tag === sensor.SENSOR_TAG)
+            if (index !== -1) {
+            let newObj = {status: "available", tag: sensors[index].tag, checked: sensors[index].checked, name: sensor.SENSOR_NAME, description: sensor.SENSOR_DESCRIPTION, type: sensor.SENSOR_TYPE, unit: sensor.SENSOR_UNIT}
+            updateSensors.push(newObj)
+            }else{
+            updateSensors = [...updateSensors.slice(0, i), { ...updateSensors[i], status: "unavailable", tag: sensor.SENSOR_TAG, checked: false, name: sensor.SENSOR_NAME, description: sensor.SENSOR_DESCRIPTION, type: sensor.SENSOR_TYPE, unit: sensor.SENSOR_UNIT }, ...updateSensors.slice(i + 1)]
+            }
+            return updateSensors
+        })
+        onCustomizeSensors(updateSensors)
+        // setOpen(true)
+        // setMessage("Sensor list file has uploaded successful.")
+        console.log("onReadSensorListFile => ", updateSensors)
+        }else{
+        // setOpen(true)
+        // setMessage("Please try again to upload sensor list file.")
+        console.error("onReadSensorListFile => ", list)
+        }
+    },[sensors, onCustomizeSensors])
+
+      // Get special sensor file
+  const onReadSpecialSensorListFile = useCallback((list) => {
+    if(list !== undefined){
+      let specialList = list.filter(sensor=>sensor.SPECIAL_TAG !== "").map(sensor => {
+        return {
+            specialTag: sensor.SPECIAL_TAG,
+            specialName: sensor.SPECIAL_NAME,
+            derivedFromTag: sensor.DERIVED_FROM_TAG,
+            derivedFromName: sensor.DERIVE_FROM_NAME,
+            calType: sensor.CAL_TYPE,
+            subType: sensor.SUB_TYPE,
+            fromUnit: sensor.FROM_UNIT,
+            toUnit: sensor.TO_UNIT, 
+            factor: sensor.FACTOR,
+        }
+      })
+      onCustomizeSensors(specialList)
+      // setOpen(true)
+      // setMessage("Special sensor list has uploaded successful.")
+      console.log("onReadSpecialSensorListFile => ", list)
+    }else{
+      // setOpen(true)
+      // setMessage("Please try again to upload special sensor list file.")
+      console.error("onReadSpecialSensorListFile => ", list)
+    }
+  },[onCustomizeSensors])
+
     return(
         <>
         <Button variant="outlined" className={classes.defaultButton} onClick={handleClickOpen}>
@@ -86,6 +166,14 @@ export default function SensorCustomize({sensors, onCustomizeSensors, specialSen
             <DialogTitle className={classes.dialog}>{specialSensor ? "Special Sensor File" : "Sensor File"}</DialogTitle>
             <DialogContent className={classes.dialog}>
                 <Grid item container xs={12} sm={12} md={12} lg={12} spacing={1}>
+                    <Grid item xs={12} sm={12} md={12} lg={8}>
+                    {specialSensor === false &&
+                    <ImportSensorList specialFile={false} onReadSensorListFile={onReadSensorListFile}></ImportSensorList>
+                    }
+                    {specialSensor === true &&
+                    <ImportSensorList specialFile={true} onReadSensorListFile={onReadSpecialSensorListFile}></ImportSensorList>
+                    }
+                    </Grid>
                     <Grid item xs={12} sm={12} md={12} lg={12}>
                     <TableContainer className={classes.tableContainer} >
                     <Table size="small" stickyHeader>
@@ -197,12 +285,12 @@ export default function SensorCustomize({sensors, onCustomizeSensors, specialSen
                                     {sensor.status === "new" &&
                                         <>
                                         <Tooltip title={"remove from list"} placement="top">
-                                            <Typography className={classes.whiteText}>
-                                                <IconButton  onClick={()=>onRemoveSpecialSensor(sensor.specialTag)}>
-                                                    <CancelIcon style={{fontSize:'1rem', color:"#f04461", borderRadius:5}}></CancelIcon>
-                                                </IconButton>
+                                            <IconButton  onClick={()=>onRemoveSpecialSensor(sensor.specialTag)}>
+                                                <CancelIcon style={{fontSize:'1rem', color:"#f04461", borderRadius:5}}></CancelIcon>
+                                                <Typography className={classes.whiteText}>
                                                 {sensor.specialTag}
-                                            </Typography>
+                                                </Typography>
+                                            </IconButton>
                                         </Tooltip>
                                         </>
                                         }
@@ -248,6 +336,14 @@ export default function SensorCustomize({sensors, onCustomizeSensors, specialSen
   
             </DialogContent>
             <DialogActions className={classes.dialog}>
+                <Button className={classes.defaultButton}>
+                    {/* <Typography className={classes.contentTextBlack}>Download CSV</Typography>
+                    {download && */}
+                    <CSVLink ref={csvLinkEl} data={sensors} headers={specialSensor ? SPECIAL_HEADERS : SENSOR_HEADERS} filename={specialSensor ? SPECIAL_FILE_NAME : SENSOR_FILE_NAME}>   
+                    <Typography className={classes.contentTextBlack}>Download CSV</Typography>
+                    </CSVLink>
+                    {/* } */}
+                </Button>
                 <Button className={classes.defaultButton} onClick={handleClose}>
                     <Typography className={classes.contentTextBlack}>Close</Typography>
                 </Button>
