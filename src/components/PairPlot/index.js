@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { Grid } from "@mui/material"
 import { style } from "../../styles/style"
 import debounce from 'lodash.debounce'
+import { height } from "@mui/system"
 const useStyles = style
 const histogramBarCount = 40
 
@@ -26,7 +27,7 @@ export default function PairPlot({series, timestamps, clusters, dataClusterIndex
 
   let option = useMemo(() => {
 
-    console.log("option",clusterIndex, clusters, series, timestamps, xAxisActive, yAxisActive)
+    // console.log("option",clusterIndex, clusters, series, timestamps, xAxisActive, yAxisActive)
     let index = 0
     let grid = []
     let xAxis = []
@@ -34,6 +35,7 @@ export default function PairPlot({series, timestamps, clusters, dataClusterIndex
     let seriesOption = []
     let seriesNames = Object.keys(series)
     const seriesCount = seriesNames.length
+    console.log("test",series)
     let brushLink = []
     let categories = []
     for (let i = 0; i < clusters.length; i++) {
@@ -59,10 +61,15 @@ export default function PairPlot({series, timestamps, clusters, dataClusterIndex
         id: name,
         name,
         nameTextStyle: {
-          color: "#ffffff",
+          color: "#5470c6",
           fontWeight: xAxisActive === name ? 'bold' : 'normal',
-          backgroundColor: xAxisActive === name ? "#5470c6" : 'transparent',
-          borderRadius: 2
+          textBorderColor: xAxisActive === name ? "#ffffff" : 'transparent',
+          textBorderWidth: xAxisActive === name ? 5 : 0,
+          // backgroundColor: xAxisActive === name ? "#5470c6" : 'transparent',
+          // borderRadius: 2,
+          // height: 20,
+          // width: 500,
+          // verticalAlign: 'middle'
         },
         scale: true,
         type,
@@ -96,11 +103,15 @@ export default function PairPlot({series, timestamps, clusters, dataClusterIndex
         id: name,
         name,
         nameTextStyle: {
-          color: "#ffffff",
+          color: "#5470c6",
           fontWeight: yAxisActive === name ? 'bold' : 'normal',
-          backgroundColor: yAxisActive === name ? "#5470c6" : 'transparent',
-          borderWidth: 50,
-          borderRadius: 2
+          textBorderColor: yAxisActive === name ? "#ffffff" : 'transparent',
+          textBorderWidth: yAxisActive === name ? 5 : 0,
+          // backgroundColor: xAxisActive === name ? "#5470c6" : 'transparent',
+          // borderRadius: 2,
+          // height: 20,
+          // width: 500,
+          // verticalAlign: 'middle'
         },
         scale: true,
         type,
@@ -240,7 +251,9 @@ export default function PairPlot({series, timestamps, clusters, dataClusterIndex
         brushLink,
         xAxisIndex: brushLink,
         yAxisIndex: brushLink,
-        toolbox: ['rect', 'polygon', 'keep', 'clear']
+        toolbox: ['rect', 'polygon', 'keep', 'clear'],    
+        throttleType: 'debounce',   
+        throttleDelay: 100
       },
       toolbox: {
         show: true,
@@ -289,51 +302,55 @@ export default function PairPlot({series, timestamps, clusters, dataClusterIndex
   //   echarts.setOption(option, {notMerge: true})
   // }
 
-  // useEffect(() => {
+  useEffect(() => {
+    console.log("echarts",echarts)
+    if(echarts !== undefined){
+      if(brushingMode === true){
+        console.log("setOption/brush=true")
+        echarts.setOption(option, {
+          // notMerge: false,
+          replaceMerge: ['grid', 'yAxis', 'xAxis']
+        })
+      }else{
+        console.log("setOption/brush=false")
+        echarts.setOption(option, {
+          notMerge: true,
+        })
+      }
+    }
+  }, [brushingMode, echarts, option])
+
+
+
+  // if(echarts !== undefined){
   //   console.log("setOption")
-  //   if(echarts !== undefined){
-  //     if(brushingMode === true){
-  //       echarts.setOption(option, {
-  //         notMerge: false,
-  //         replaceMerge: ['grid', 'yAxis', 'xAxis']
-  //       })
-  //     }else{
-  //       echarts.setOption(option, {
-  //         // notMerge: true,
-  //         replaceMerge: ['grid', 'yAxis', 'xAxis']
-  //       })
-  //     }
-  //   }
-  // }, [brushingMode, echarts, option])
+  //     echarts.setOption(option, {
+  //       // notMerge: false,
+  //       replaceMerge: ['xAxis', 'yAxis', 'grid']
+  //     })
+  // }
 
-
-
-  if(echarts !== undefined){
-    console.log("setOption")
-      echarts.setOption(option, {
-        notMerge: true,
-        // replaceMerge: ['xAxis', 'yAxis', 'grid']
-      })
-  }
-
+  let updateEcharts = useCallback((instance) => {
+    setEcharts(instance)
+  },[setEcharts])
  
   let updateMousemove = useMemo(() => debounce((params) => {
     console.log("updateMousemove")
     if(params.encode !== undefined){
-      echarts.setOption(option, 
-        {
-          notMerge: true,
-          // replaceMerge: []
-        }
-      )
-      if(params.dimensionNames[params.encode.x] !== xAxisActive){
+      // echarts.setOption(option, 
+      //   {
+      //     notMerge: true,
+      //     // replaceMerge: []
+      //   }
+      // )
+      // if(params.dimensionNames[params.encode.x] !== xAxisActive){
         setXAxisActive(params.dimensionNames[params.encode.x])
-      }
-      if(params.dimensionNames[params.encode.y] !== yAxisActive){
+      // }
+      // if(params.dimensionNames[params.encode.y] !== yAxisActive){
         setYAxisActive(params.dimensionNames[params.encode.y])
-      }
+      // }
     }
-  }, 100), [setYAxisActive, setXAxisActive, xAxisActive, yAxisActive, echarts, option]) 
+  }, 100), [setYAxisActive, setXAxisActive]) 
 
   let updateBrushSelected = useMemo(() => debounce((params) => {
     console.log("updateBrushSelected")
@@ -341,34 +358,34 @@ export default function PairPlot({series, timestamps, clusters, dataClusterIndex
     if (batch?.length > 0) {
       let selectedIndex = batch[0].selected.find(({dataIndex}) => dataIndex.length > 0)
       if (selectedIndex !== undefined) {
+        // echarts.setOption(option,
+        //   {
+        //     // notMerge: false,
+        //     replaceMerge: ['xAxis', 'yAxis', 'grid']
+        // })
         onSelected(selectedIndex.dataIndex)
-        echarts.setOption(option,
-        {
-          notMerge: false,
-          replaceMerge: ['xAxis', 'yAxis', 'grid']
-        })
       } else {
         onSelected([])
       }
     }
-  }, 100), [onSelected, echarts, option])
+  }, 100), [onSelected])
 
   let updateGlobalCursorTaken = useMemo(() => debounce((params) => {
     console.log("updateGlobalCursorTaken")
     if (typeof params?.brushOption?.brushType === "boolean") {
       onBrushDeactivate()
-      echarts.setOption(option, {
-        notMerge: true,
-        // replaceMerge: ['grid', 'yAxis', 'xAxis']
-      })
+      // echarts.setOption(option, {
+      //   notMerge: true,
+      //   // replaceMerge: ['grid', 'yAxis', 'xAxis']
+      // })
     } else if (typeof params?.brushOption?.brushType === "string") {
       onBrushActivate()
-      echarts.setOption(option, {
-        notMerge: false,
-        replaceMerge: ['grid', 'yAxis', 'xAxis']
-      })
+      // echarts.setOption(option, {
+      //   notMerge: false,
+      //   // replaceMerge: ['grid', 'yAxis', 'xAxis']
+      // })
     }
-  }, 100), [onBrushActivate, onBrushDeactivate, echarts, option])
+  }, 100), [onBrushActivate, onBrushDeactivate])
 
 
   // const eventHandlers = useCallback(() => ({
@@ -385,9 +402,9 @@ export default function PairPlot({series, timestamps, clusters, dataClusterIndex
 
   const eventHandler = useMemo(() => ({
     mouseMove: updateMousemove,
-    // brushSelected: updateBrushSelected,
-    // globalCursorTaken:  updateGlobalCursorTaken
-  }), [updateMousemove])
+    brushSelected: updateBrushSelected,
+    globalCursorTaken:  updateGlobalCursorTaken
+  }), [updateMousemove, updateBrushSelected, updateGlobalCursorTaken])
 
 
   return (
@@ -395,9 +412,8 @@ export default function PairPlot({series, timestamps, clusters, dataClusterIndex
     <Grid item xs={12} sm={12} md={12} lg={12} className={classes.blackBackground}>
       <EchartsComponent
         // ref={e => chartRef.current = e} 
-        onInit={(instance) => setEcharts(instance)}
+        onInit={(instance) => updateEcharts(instance)}
         style={style} 
-        // option={option} 
         // notMerge={true}
         // replaceMerge={["yAxis", "xAxis", "grid"]}
         // notMerge={true}
