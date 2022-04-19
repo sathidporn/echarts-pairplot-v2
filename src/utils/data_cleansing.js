@@ -1,111 +1,111 @@
-export function cleansingSensors({tag, operator, value1, value2, sensorsObj, samplingData, samplingTimestamp}){
+export function cleansingSensors({tag, operator, value1, value2, sensorsObj, values, timestamps}){
     let filteredSeries = {}
     if(operator === "inRange"){
         sensorsObj.map((sensor) => {
-            let values = []
-            for (let i = 0; i < samplingTimestamp.length; i++) {
-            if (samplingData[tag][i] >= value1 && samplingData[tag][i] <= value2) {
-                values.push(samplingData[sensor.tag][i])
-                filteredSeries[sensor.tag] = values
+            let filteredValues = []
+            for (let i = 0; i < timestamps.length; i++) {
+            if (values[tag][i] >= value1 && values[tag][i] <= value2) {
+                filteredValues.push(values[sensor.tag][i])
+                filteredSeries[sensor.tag] = filteredValues
             }
             }
-            return values 
+            return filteredValues
         })
     }else if (operator === "equal"){
         sensorsObj.map((sensor) => {
-            let values = []
-            for (let i = 0; i < samplingTimestamp.length; i++) {
-            if (samplingData[tag][i] === value1) {
-                values.push(samplingData[sensor.tag][i])
-                filteredSeries[sensor.tag] = values
+            let filteredValues = []
+            for (let i = 0; i < timestamps.length; i++) {
+            if (values[tag][i] === value1) {
+                filteredValues.push(values[sensor.tag][i])
+                filteredSeries[sensor.tag] = filteredValues
             }
             }
-            return values 
+            return filteredValues
         })
     }else if(operator === "moreThan"){
         sensorsObj.map((sensor) => {
-            let values = []
-            for (let i = 0; i < samplingTimestamp.length; i++) {
-            if (samplingData[tag][i] > value1) {
-                values.push(samplingData[sensor.tag][i])
-                filteredSeries[sensor.tag] = values
+            let filteredValues = []
+            for (let i = 0; i < timestamps.length; i++) {
+            if (values[tag][i] > value1) {
+                filteredValues.push(values[sensor.tag][i])
+                filteredSeries[sensor.tag] = filteredValues
             }
             }
-            return values 
+            return filteredValues
         })
     }else if(operator === "moreThanEqual"){
         sensorsObj.map((sensor) => {
-        let values = []
-        for (let i = 0; i < samplingTimestamp.length; i++) {
-            if (samplingData[tag][i] >= value1){
-                values.push(samplingData[sensor.tag][i])
-                filteredSeries[sensor.tag] = values
+        let filteredValues = []
+        for (let i = 0; i < timestamps.length; i++) {
+            if (values[tag][i] >= value1){
+                filteredValues.push(values[sensor.tag][i])
+                filteredSeries[sensor.tag] = filteredValues
             }
         }
-        return values 
+        return filteredValues
         })
     }else if(operator === "lessThan"){
         sensorsObj.map((sensor) => {
-        let values = []
-        for (let i = 0; i < samplingTimestamp.length; i++) {
-            if (samplingData[tag][i] < value1) {
-                values.push(samplingData[sensor.tag][i])
-                filteredSeries[sensor.tag] = values
+        let filteredValues = []
+        for (let i = 0; i < timestamps.length; i++) {
+            if (values[tag][i] < value1) {
+                filteredValues.push(values[sensor.tag][i])
+                filteredSeries[sensor.tag] = filteredValues
             }
         }
-        return values 
+        return filteredValues
         })
     }else if(operator === "lessThanEqual"){
         sensorsObj.map((sensor) => {
-        let values = []
-        for (let i = 0; i < samplingTimestamp.length; i++) {
-            if (samplingData[tag][i] <= value1){
-                values.push(samplingData[sensor.tag][i])
-                filteredSeries[sensor.tag] = values
+        let filteredValues = []
+        for (let i = 0; i < timestamps.length; i++) {
+            if (values[tag][i] <= value1){
+                filteredValues.push(values[sensor.tag][i])
+                filteredSeries[sensor.tag] = filteredValues
             }
         }
-        return values 
+        return filteredValues
         })  
     }
     return filteredSeries
 }
 
-export function cleansingTimestamps({tag, operator, value1, value2, samplingData, samplingTimestamp}){
+export function cleansingTimestamps({tag, operator, value1, value2, values, timestamps}){
     let filteredTimestamps = []
     if(operator === "inRange"){
-        for (let i = 0; i < samplingTimestamp.length; i++) {
-            if (samplingData[tag][i] >= value1 && samplingData[tag][i] <= value2) {
-                filteredTimestamps.push(samplingTimestamp[i])
+        for (let i = 0; i < timestamps.length; i++) {
+            if (values[tag][i] >= value1 && values[tag][i] <= value2) {
+                filteredTimestamps.push(timestamps[i])
             }  
         }
     }else if (operator === "equal"){
-        for (let i = 0; i < samplingTimestamp.length; i++) {
-            if (samplingData[tag][i] === value1) {
-                filteredTimestamps.push(samplingTimestamp[i])
+        for (let i = 0; i < timestamps.length; i++) {
+            if (values[tag][i] === value1) {
+                filteredTimestamps.push(timestamps[i])
             }  
         }
     }else if(operator === "moreThan"){
-        for (let i = 0; i < samplingTimestamp.length; i++) {
-            if (samplingData[tag][i] > value1) {
-            filteredTimestamps.push(samplingTimestamp[i])
+        for (let i = 0; i < timestamps.length; i++) {
+            if (values[tag][i] > value1) {
+            filteredTimestamps.push(timestamps[i])
             }  
         }
     }else if(operator === "moreThanEqual"){
-        for (let i = 0; i < samplingTimestamp.length; i++) {
-            if (samplingData[tag][i] >= value1){
-                filteredTimestamps.push(samplingTimestamp[i])
+        for (let i = 0; i < timestamps.length; i++) {
+            if (values[tag][i] >= value1){
+                filteredTimestamps.push(timestamps[i])
             }  
         }
     }else if(operator === "lessThan"){
-        for (let i = 0; i < samplingTimestamp.length; i++) {
-            if (samplingData[tag][i] < value1) {
-                filteredTimestamps.push(samplingTimestamp[i])
+        for (let i = 0; i < timestamps.length; i++) {
+            if (values[tag][i] < value1) {
+                filteredTimestamps.push(timestamps[i])
             }  
         } 
     }else if(operator === "lessThanEqual"){
-        for (let i = 0; i < samplingTimestamp.length; i++) {
-            if (samplingData[tag][i] <= value1){
-                filteredTimestamps.push(samplingTimestamp[i])
+        for (let i = 0; i < timestamps.length; i++) {
+            if (values[tag][i] <= value1){
+                filteredTimestamps.push(timestamps[i])
             }  
         }
 
