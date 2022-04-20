@@ -71,10 +71,10 @@ const steps = [
     label: 'Select sensor',
     description: `Select sensor and date to plot graph`,
   },
-  {
-    label: 'Select date range',
-    description: `Select sensor and date to plot graph`,
-  },
+  // {
+  //   label: 'Select date range',
+  //   description: `Select sensor and date to plot graph`,
+  // },
   {
     label: 'Customize Chart',
     description: `Select sensor and date to plot graph`,
@@ -622,14 +622,20 @@ function App() {
                     } */}
                     {index === 3 && (samplingData || filteredSensors) &&
                     <>
-                    <Grid item container xs={12} sm={12} md={12} lg={12} direction="row" justifyContent="space-between" spacing={0}>
-                      <Grid item xs={12} sm={12} md={12} lg={12} className={classes.stepContent}>
-                        {/* <DatePicker startSeries={raw['TimeStamp'][0]} endSeries={raw['TimeStamp'][raw['TimeStamp']?.length-2]} onPickedDate={onPickedDate} ></DatePicker> */}
+                    <Grid item container xs={12} sm={12} md={12} lg={12} direction="row" justifyContent="space-between" spacing={1}>
                         {/* <ImportSensorList specialFile={false} onReadSensorListFile={onReadSensorListFile}></ImportSensorList>
                         <ImportSensorList specialFile={true} onReadSensorListFile={onReadSpecialSensorListFile}></ImportSensorList> */}
-                        <SensorPicker sensors={sensorsObj} checkedSensors={checkedSensors} raw={raw} timestampsIndex={timestampsIndex}  onPickedSensors={onPickedSensors} onUpDateSensors={onUpDateSensors} onRemoveSpecialSensor={onRemoveSpecialSensor}></SensorPicker>
+                      <Grid item xs={12} sm={12} md={12} lg={12} className={classes.stepContent}>
+                        <Grid item container xs={12} sm={12} md={12} lg={12} spacing={1}>
+                          <Grid item xs={12} sm={12} md={12} lg={12}>
+                            <DatePicker startSeries={raw['TimeStamp'][0]} endSeries={raw['TimeStamp'][raw['TimeStamp']?.length-2]} onPickedDate={onPickedDate} ></DatePicker>
+                          </Grid>
+                          <Grid item xs={12} sm={12} md={12} lg={12}>
+                            <SensorPicker sensors={sensorsObj} checkedSensors={checkedSensors} raw={raw} timestampsIndex={timestampsIndex}  onPickedSensors={onPickedSensors} onUpDateSensors={onUpDateSensors} onRemoveSpecialSensor={onRemoveSpecialSensor}></SensorPicker>
+                          </Grid>
+                        </Grid>
                       </Grid>
-                      <Grid item xs={12} sm={12} md={12} lg={12} style={{paddingTop: 10}}>
+                      <Grid item xs={12} sm={12} md={12} lg={12} style={{paddingTop: 10}} >
                       <Accordion square={false} className={classes.accordion}>
                         <AccordionSummary className={classes.accordionSummary} expandIcon={<AddCircleIcon className={classes.accordionIcon} />}>
                           Add special sensor
@@ -642,14 +648,14 @@ function App() {
                     </Grid>
                     </>
                     }
-
+{/* 
                     {index === 4 && series &&
                       <Grid item xs={12} sm={12} md={12} lg={12}  className={classes.stepContent} >
                         <DatePicker startSeries={raw['TimeStamp'][0]} endSeries={raw['TimeStamp'][raw['TimeStamp']?.length-2]} onPickedDate={onPickedDate} ></DatePicker>
                       </Grid>
-                    }
+                    } */}
 
-                    {index === 5 && series &&
+                    {index === 4 && series &&
                     <>
                       <PlotTypePicker onSelectedType={onSelectedType}></PlotTypePicker>
                       {plotType === "scatter" &&      

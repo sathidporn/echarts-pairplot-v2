@@ -232,7 +232,7 @@ export const style = makeStyles((theme) => ({
     tableContainer: {
        '&.MuiTableContainer-root': {
             overflowY: 'auto', 
-            overflowX: 'hidden', 
+            overflowX: 'auto', 
             maxHeight: '30vh',
             minWidth: '20vw',
             // backgroundColor: '#242f39',
