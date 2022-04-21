@@ -41,7 +41,7 @@ let SPECIAL_HEADERS = [
     { label: "FACTOR", key: "factor" },
 ]
 
-export default function SensorCustomize({sensors, specialSensor=false, onRemoveSpecialSensor = () => {}, onUpdateSensors = () => {}, onUpdateSpecialSensors = () => {}, onReadSensorListFile = () => {}, onReadSpecialSensorListFile = () => {}}){
+export default function SensorCustomize({sensors, specialSensor=false, onRemoveSpecialSensor = () => {}, onCustomizeSensors = () => {}, onReadSensorListFile = () => {}, onReadSpecialSensorListFile = () => {}}){
     const classes = useStyles();
     const [open, setOpen] = useState(false);
     const fullWidth = true
@@ -66,34 +66,34 @@ export default function SensorCustomize({sensors, specialSensor=false, onRemoveS
         
         if (index !== -1) {
             if(field === "name"){
-                onUpdateSensors([...sensors.slice(0, index), { ...sensors[index], name: value }, ...sensors.slice(index + 1)])
+                onCustomizeSensors([...sensors.slice(0, index), { ...sensors[index], name: value }, ...sensors.slice(index + 1)])
             }else if(field === "description"){
-                onUpdateSensors([...sensors.slice(0, index), { ...sensors[index], description: value }, ...sensors.slice(index + 1)])
+                onCustomizeSensors([...sensors.slice(0, index), { ...sensors[index], description: value }, ...sensors.slice(index + 1)])
             }else if(field === "type"){
-                onUpdateSensors([...sensors.slice(0, index), { ...sensors[index], type: value }, ...sensors.slice(index + 1)])   
+                onCustomizeSensors([...sensors.slice(0, index), { ...sensors[index], type: value }, ...sensors.slice(index + 1)])   
             }else if(field === "unit"){
-                onUpdateSensors([...sensors.slice(0, index), { ...sensors[index], unit: value }, ...sensors.slice(index + 1)])
+                onCustomizeSensors([...sensors.slice(0, index), { ...sensors[index], unit: value }, ...sensors.slice(index + 1)])
             }else if(field === "component"){
-                onUpdateSpecialSensors([...sensors.slice(0, index), { ...sensors[index], component: value }, ...sensors.slice(index + 1)])
+                onCustomizeSensors([...sensors.slice(0, index), { ...sensors[index], component: value }, ...sensors.slice(index + 1)])
             }else if(field === "specialName"){
-                onUpdateSpecialSensors([...sensors.slice(0, index), { ...sensors[index], specialName: value }, ...sensors.slice(index + 1)])
+                onCustomizeSensors([...sensors.slice(0, index), { ...sensors[index], specialName: value }, ...sensors.slice(index + 1)])
             }else if(field === "derivedFromTag"){
-                onUpdateSpecialSensors([...sensors.slice(0, index), { ...sensors[index], derivedFromTag: value }, ...sensors.slice(index + 1)])
+                onCustomizeSensors([...sensors.slice(0, index), { ...sensors[index], derivedFromTag: value }, ...sensors.slice(index + 1)])
             }else if(field === "derivedFromName"){
-                onUpdateSpecialSensors([...sensors.slice(0, index), { ...sensors[index], derivedFromName: value }, ...sensors.slice(index + 1)])
+                onCustomizeSensors([...sensors.slice(0, index), { ...sensors[index], derivedFromName: value }, ...sensors.slice(index + 1)])
             }else if(field === "calType"){
-                onUpdateSpecialSensors([...sensors.slice(0, index), { ...sensors[index], calType: value }, ...sensors.slice(index + 1)])
+                onCustomizeSensors([...sensors.slice(0, index), { ...sensors[index], calType: value }, ...sensors.slice(index + 1)])
             }else if(field === "subType"){
-                onUpdateSpecialSensors([...sensors.slice(0, index), { ...sensors[index], subType: value }, ...sensors.slice(index + 1)])
+                onCustomizeSensors([...sensors.slice(0, index), { ...sensors[index], subType: value }, ...sensors.slice(index + 1)])
             }else if(field === "fromUnit"){
-                onUpdateSpecialSensors([...sensors.slice(0, index), { ...sensors[index], fromUnit: value }, ...sensors.slice(index + 1)])
+                onCustomizeSensors([...sensors.slice(0, index), { ...sensors[index], fromUnit: value }, ...sensors.slice(index + 1)])
             }else if(field === "toUnit"){
-                onUpdateSpecialSensors([...sensors.slice(0, index), { ...sensors[index], toUnit: value }, ...sensors.slice(index + 1)])
+                onCustomizeSensors([...sensors.slice(0, index), { ...sensors[index], toUnit: value }, ...sensors.slice(index + 1)])
             }else if(field === "factor"){
-                onUpdateSpecialSensors([...sensors.slice(0, index), { ...sensors[index], factor: value }, ...sensors.slice(index + 1)])
+                onCustomizeSensors([...sensors.slice(0, index), { ...sensors[index], factor: value }, ...sensors.slice(index + 1)])
             }           
         }
-    },[sensors, specialSensor, onUpdateSpecialSensors, onUpdateSensors])
+    },[sensors, specialSensor, onCustomizeSensors])
 
     return(
         <>

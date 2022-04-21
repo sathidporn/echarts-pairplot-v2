@@ -10,7 +10,7 @@ import { style } from '../../styles/style';
 const useStyles = style
 
 
-export default function SensorPicker({ sensors, checkedSensors, onPickedSensors = () => {}, onUpdateSensors = () => {}, onRemoveSpecialSensor = () => {}, onReadSensorListFile = () => {}}) {
+export default function SensorPicker({ sensors, checkedSensors, onPickedSensors = () => {}, onCustomizeSensors = () => {}, onRemoveSpecialSensor = () => {}, onReadSensorListFile = () => {}}) {
   const classes = useStyles();
   const toggleSensors = useCallback ((tag,checked) => {
     let newSensors
@@ -90,7 +90,7 @@ export default function SensorPicker({ sensors, checkedSensors, onPickedSensors 
           </TableContainer>
         </Grid>
         <Grid item xs={12} sm={12} md={12} lg={12} align="right">
-          <SensorCustomize sensors={sensors} specialSensor={false} onUpdateSensors={onUpdateSensors} onRemoveSpecialSensor={onRemoveSpecialSensor} onReadSensorListFile={onReadSensorListFile}></SensorCustomize>
+          <SensorCustomize sensors={sensors} specialSensor={false} onCustomizeSensors={onCustomizeSensors} onRemoveSpecialSensor={onRemoveSpecialSensor} onReadSensorListFile={onReadSensorListFile}></SensorCustomize>
         </Grid>
       </Grid>
     </div>

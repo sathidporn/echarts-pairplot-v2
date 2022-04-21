@@ -16,7 +16,7 @@ const useStyles = style
 
 const calculationList = [{value:"select", name: "Select calculation"}, {value:"ADD", name: "Add"}, {value:"ABSDIFF", name: "Absolute Diff"}, {value:"MUL", name: "Multiply"}, {value:"DIV", name: "Divide"}, {value:"AVG", name: "Average"}]     
 
-export default function AddSpecialSensor({ sensors, specialSensors, onAddSpecialSensor=()=>{}, onUpdateSpecialSensors=()=>{},  onRemoveSpecialSensor = () => {}, onReadSpecialSensorListFile = () => {}}){
+export default function AddSpecialSensor({ sensors, specialSensors, onAddSpecialSensor=()=>{}, onCustomizeSensors=()=>{},  onRemoveSpecialSensor = () => {}, onReadSpecialSensorListFile = () => {}}){
     const classes = useStyles()
     
     let [derivedSensors, setDerivedSensors] = useState([])
@@ -87,11 +87,11 @@ export default function AddSpecialSensor({ sensors, specialSensors, onAddSpecial
                 let objNew = {status: "new", specialTag: specialTag, specialName: specialName, derivedFromTag: derivedSensors[i].tag, derivedFromName: derivedSensors[i].name, calType: calType, subType: "", fromUnit: "", toUnit: "", factor: constant}
                 updateSpecialSensors.push(objNew)
             }
-            onUpdateSpecialSensors(updateSpecialSensors)
+            onCustomizeSensors(updateSpecialSensors)
         }else{
             onAddSpecialSensor(undefined)
         }
-    },[derivedSensors, calType, constant, specialTag, specialName, specialSensors, onUpdateSpecialSensors, onAddSpecialSensor])
+    },[derivedSensors, calType, constant, specialTag, specialName, specialSensors, onCustomizeSensors, onAddSpecialSensor])
 
     return(
         <>
@@ -141,7 +141,7 @@ export default function AddSpecialSensor({ sensors, specialSensors, onAddSpecial
             </Grid>
             
             <Grid item xs={12} sm={12} md={12} lg={12} align="right">
-                <SensorCustomize sensors={specialSensors} specialSensor={true} onUpdateSpecialSensors={onUpdateSpecialSensors} onRemoveSpecialSensor={onRemoveSpecialSensor} onReadSpecialSensorListFile={onReadSpecialSensorListFile}></SensorCustomize>
+                <SensorCustomize sensors={specialSensors} specialSensor={true} onCustomizeSensors={onCustomizeSensors} onRemoveSpecialSensor={onRemoveSpecialSensor} onReadSpecialSensorListFile={onReadSpecialSensorListFile}></SensorCustomize>
             </Grid>
 
             <Grid item container xs={12} sm={12} md={12} lg={12} align="left">

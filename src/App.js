@@ -638,15 +638,15 @@ console.log("sensors",sensors)
                     {index === 3 && (samplingData || filteredSensors) &&
                     <>
                     <Grid item container xs={12} sm={12} md={12} lg={12} direction="row" justifyContent="space-between" spacing={1}>
-                        {/* <ImportSensorList specialFile={false} onReadSensorListFile={onReadSensorListFile}></ImportSensorList>
-                        <ImportSensorList specialFile={true} onReadSensorListFile={onReadSpecialSensorListFile}></ImportSensorList> */}
+                        <ImportSensorList specialFile={false} onReadSensorListFile={onReadSensorListFile}></ImportSensorList>
+                        <ImportSensorList specialFile={true} onReadSensorListFile={onReadSpecialSensorListFile}></ImportSensorList>
                       <Grid item xs={12} sm={12} md={12} lg={12} className={classes.stepContent}>
                         <Grid item container xs={12} sm={12} md={12} lg={12} spacing={1}>
                           <Grid item xs={12} sm={12} md={12} lg={12}>
                             <DatePicker startSeries={raw['TimeStamp'][0]} endSeries={raw['TimeStamp'][raw['TimeStamp']?.length-2]} onPickedDate={onPickedDate} ></DatePicker>
                           </Grid>
                           <Grid item xs={12} sm={12} md={12} lg={12}>
-                            <SensorPicker sensors={sensors} checkedSensors={checkedSensors} raw={raw} timestampsIndex={timestampsIndex}  onPickedSensors={onPickedSensors} onUpDateSensors={onUpDateSensors} onRemoveSpecialSensor={onRemoveSpecialSensor} onReadSensorListFile={onReadSensorListFile}></SensorPicker>
+                            <SensorPicker sensors={sensors} checkedSensors={checkedSensors} raw={raw} timestampsIndex={timestampsIndex}  onPickedSensors={onPickedSensors} onCustomizeSensors={onUpDateSensors} onRemoveSpecialSensor={onRemoveSpecialSensor} onReadSensorListFile={onReadSensorListFile}></SensorPicker>
                           </Grid>
                         </Grid>
                       </Grid>
@@ -656,7 +656,7 @@ console.log("sensors",sensors)
                           Add special sensor
                         </AccordionSummary>
                         <AccordionDetails className={classes.accordionDetail}>
-                          <AddSpecialSensor sensors={sensors.filter(sensor=>sensor.status !== "unavailable")} specialSensors={specialSensors} onAddSpecialSensor={onAddSpecialSensor} onGenerateSpecialSensor={onGenerateSpecialSensor} onUpdateSpecialSensors={onUpdateSpecialSensors} onRemoveSpecialSensor={onRemoveSpecialSensor} onReadSpecialSensorListFile={onReadSpecialSensorListFile}></AddSpecialSensor>
+                          <AddSpecialSensor sensors={sensors.filter(sensor=>sensor.status !== "unavailable")} specialSensors={specialSensors} onAddSpecialSensor={onAddSpecialSensor} onGenerateSpecialSensor={onGenerateSpecialSensor} onCustomizeSensors={onUpdateSpecialSensors} onRemoveSpecialSensor={onRemoveSpecialSensor} onReadSpecialSensorListFile={onReadSpecialSensorListFile}></AddSpecialSensor>
                         </AccordionDetails>
                       </Accordion>
                       </Grid>
