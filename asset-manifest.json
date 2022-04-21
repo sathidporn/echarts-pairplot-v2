@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/wizard-feature/static/css/main.1e5da5a7.css",
+    "main.js": "/wizard-feature/static/js/main.084761c3.js",
+    "static/js/787.d9cf20cc.chunk.js": "/wizard-feature/static/js/787.d9cf20cc.chunk.js",
+    "index.html": "/wizard-feature/index.html",
+    "main.1e5da5a7.css.map": "/wizard-feature/static/css/main.1e5da5a7.css.map",
+    "main.084761c3.js.map": "/wizard-feature/static/js/main.084761c3.js.map",
+    "787.d9cf20cc.chunk.js.map": "/wizard-feature/static/js/787.d9cf20cc.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.1e5da5a7.css",
+    "static/js/main.084761c3.js"
+  ]
+}
