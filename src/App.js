@@ -120,7 +120,7 @@ function App() {
   // selected sensors to plot
   let [checkedSensors, setCheckedSensors] = useState([])
   // all sensor object
-  let [sensorsObj, setSensorsObj] = useState()
+  let [sensorsObj, setSensorsObj] = useState([])
   // all special sensors
   let [specialSensors, setSpecialSensors] = useState([])
   // filtered data only selected sensors

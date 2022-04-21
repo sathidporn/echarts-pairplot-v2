@@ -100,27 +100,54 @@ export default function SensorCustomize({sensors, onCustomizeSensors, specialSen
 
     // Get sensor list file
     const onReadSensorListFile = useCallback((list) => {
-        let updateSensors = []
+        // let updateSensors = []
+        // if(list !== undefined){
+        // // Make obj
+        // list.filter(sensor => sensor.SENSOR_TAG !== "").map((sensor, i) => {
+        //     let index = sensors.findIndex(obj => obj.tag === sensor.SENSOR_TAG)
+        //     if (index !== -1) {
+        //     let newObj = {status: "available", tag: sensors[index].tag, checked: sensors[index].checked, name: sensor.SENSOR_NAME, description: sensor.SENSOR_DESCRIPTION, type: sensor.SENSOR_TYPE, unit: sensor.SENSOR_UNIT}
+        //         updateSensors.push(newObj)
+        //     }else{
+        //         updateSensors = [...updateSensors.slice(0, i), { ...updateSensors[i], status: "unavailable", tag: sensor.SENSOR_TAG, checked: false, name: sensor.SENSOR_NAME, description: sensor.SENSOR_DESCRIPTION, type: sensor.SENSOR_TYPE, unit: sensor.SENSOR_UNIT }, ...updateSensors.slice(i + 1)]
+        //     }
+        //     return updateSensors
+        // })
+        // onCustomizeSensors(updateSensors)
+
         if(list !== undefined){
-        // Make obj
-        list.filter(sensor => sensor.SENSOR_TAG !== "").map((sensor, i) => {
-            let index = sensors.findIndex(obj => obj.tag === sensor.SENSOR_TAG)
-            if (index !== -1) {
-            let newObj = {status: "available", tag: sensors[index].tag, checked: sensors[index].checked, name: sensor.SENSOR_NAME, description: sensor.SENSOR_DESCRIPTION, type: sensor.SENSOR_TYPE, unit: sensor.SENSOR_UNIT}
-            updateSensors.push(newObj)
-            }else{
-            updateSensors = [...updateSensors.slice(0, i), { ...updateSensors[i], status: "unavailable", tag: sensor.SENSOR_TAG, checked: false, name: sensor.SENSOR_NAME, description: sensor.SENSOR_DESCRIPTION, type: sensor.SENSOR_TYPE, unit: sensor.SENSOR_UNIT }, ...updateSensors.slice(i + 1)]
-            }
-            return updateSensors
-        })
-        onCustomizeSensors(updateSensors)
-        // setOpen(true)
-        // setMessage("Sensor list file has uploaded successful.")
-        console.log("onReadSensorListFile => ", updateSensors)
+            let sensorList = list.filter(sensor=>sensor.SENSOR_TAG !== "").map((sensor,i) => {
+                let index = sensors.findIndex(obj => obj.tag === sensor.SENSOR_TAG)
+                if(index !== -1){
+                    return {
+                        status: "available", 
+                        tag: sensors[index].tag, 
+                        checked: sensors[index].checked, 
+                        name: sensor.SENSOR_NAME, 
+                        description: sensor.SENSOR_DESCRIPTION, 
+                        type: sensor.SENSOR_TYPE, 
+                        unit: sensor.SENSOR_UNIT
+                    }
+                }else{
+                    return{
+                        status: "unavailable", 
+                        tag: sensor.SENSOR_TAG, 
+                        checked: false, 
+                        name: sensor.SENSOR_NAME, 
+                        description: sensor.SENSOR_DESCRIPTION, 
+                        type: sensor.SENSOR_TYPE, 
+                        unit: sensor.SENSOR_UNIT
+                    }
+                }
+            })
+            onCustomizeSensors(sensorList)
+            // setOpen(true)
+            // setMessage("Sensor list file has uploaded successful.")
+            console.log("onReadSensorListFile => ", list)
         }else{
-        // setOpen(true)
-        // setMessage("Please try again to upload sensor list file.")
-        console.error("onReadSensorListFile => ", list)
+            // setOpen(true)
+            // setMessage("Please try again to upload sensor list file.")
+            console.error("onReadSensorListFile => ", list)
         }
     },[sensors, onCustomizeSensors])
 
