@@ -35,7 +35,7 @@ export default function PairPlot({series, timestamps, clusters, dataClusterIndex
     let seriesOption = []
     let seriesNames = Object.keys(series)
     const seriesCount = seriesNames.length
-    console.log("test",series)
+    // console.log("test",series)
     let brushLink = []
     let categories = []
     for (let i = 0; i < clusters.length; i++) {
@@ -303,7 +303,6 @@ export default function PairPlot({series, timestamps, clusters, dataClusterIndex
   // }
 
   useEffect(() => {
-    console.log("echarts",echarts)
     if(echarts !== undefined){
       if(brushingMode === true){
         console.log("setOption/brush=true")

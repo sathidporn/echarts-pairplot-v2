@@ -41,7 +41,7 @@ let SPECIAL_HEADERS = [
     { label: "FACTOR", key: "factor" },
 ]
 
-export default function SensorCustomize({sensors, onCustomizeSensors, specialSensor=false, onRemoveSpecialSensor = () => {}}){
+export default function SensorCustomize({sensors, onCustomizeSensors = () => {}, specialSensor=false, onRemoveSpecialSensor = () => {}, onUpdateSensors = () => {}, onUpdateSpecialSensors = () => {}}){
     const classes = useStyles();
     const [open, setOpen] = useState(false);
     const fullWidth = true
@@ -69,55 +69,41 @@ export default function SensorCustomize({sensors, onCustomizeSensors, specialSen
         
         if (index !== -1) {
             if(field === "name"){
-                onCustomizeSensors([...sensors.slice(0, index), { ...sensors[index], name: value }, ...sensors.slice(index + 1)])
+                onUpdateSensors([...sensors.slice(0, index), { ...sensors[index], name: value }, ...sensors.slice(index + 1)])
             }else if(field === "description"){
-                onCustomizeSensors([...sensors.slice(0, index), { ...sensors[index], description: value }, ...sensors.slice(index + 1)])
+                onUpdateSensors([...sensors.slice(0, index), { ...sensors[index], description: value }, ...sensors.slice(index + 1)])
             }else if(field === "type"){
-                onCustomizeSensors([...sensors.slice(0, index), { ...sensors[index], type: value }, ...sensors.slice(index + 1)])   
+                onUpdateSensors([...sensors.slice(0, index), { ...sensors[index], type: value }, ...sensors.slice(index + 1)])   
             }else if(field === "unit"){
-                onCustomizeSensors([...sensors.slice(0, index), { ...sensors[index], unit: value }, ...sensors.slice(index + 1)])
+                onUpdateSensors([...sensors.slice(0, index), { ...sensors[index], unit: value }, ...sensors.slice(index + 1)])
             }else if(field === "component"){
-                onCustomizeSensors([...sensors.slice(0, index), { ...sensors[index], component: value }, ...sensors.slice(index + 1)])
+                onUpdateSpecialSensors([...sensors.slice(0, index), { ...sensors[index], component: value }, ...sensors.slice(index + 1)])
             }else if(field === "specialName"){
-                onCustomizeSensors([...sensors.slice(0, index), { ...sensors[index], specialName: value }, ...sensors.slice(index + 1)])
+                onUpdateSpecialSensors([...sensors.slice(0, index), { ...sensors[index], specialName: value }, ...sensors.slice(index + 1)])
             }else if(field === "derivedFromTag"){
-                onCustomizeSensors([...sensors.slice(0, index), { ...sensors[index], derivedFromTag: value }, ...sensors.slice(index + 1)])
+                onUpdateSpecialSensors([...sensors.slice(0, index), { ...sensors[index], derivedFromTag: value }, ...sensors.slice(index + 1)])
             }else if(field === "derivedFromName"){
-                onCustomizeSensors([...sensors.slice(0, index), { ...sensors[index], derivedFromName: value }, ...sensors.slice(index + 1)])
+                onUpdateSpecialSensors([...sensors.slice(0, index), { ...sensors[index], derivedFromName: value }, ...sensors.slice(index + 1)])
             }else if(field === "calType"){
-                onCustomizeSensors([...sensors.slice(0, index), { ...sensors[index], calType: value }, ...sensors.slice(index + 1)])
+                onUpdateSpecialSensors([...sensors.slice(0, index), { ...sensors[index], calType: value }, ...sensors.slice(index + 1)])
             }else if(field === "subType"){
-                onCustomizeSensors([...sensors.slice(0, index), { ...sensors[index], subType: value }, ...sensors.slice(index + 1)])
+                onUpdateSpecialSensors([...sensors.slice(0, index), { ...sensors[index], subType: value }, ...sensors.slice(index + 1)])
             }else if(field === "fromUnit"){
-                onCustomizeSensors([...sensors.slice(0, index), { ...sensors[index], fromUnit: value }, ...sensors.slice(index + 1)])
+                onUpdateSpecialSensors([...sensors.slice(0, index), { ...sensors[index], fromUnit: value }, ...sensors.slice(index + 1)])
             }else if(field === "toUnit"){
-                onCustomizeSensors([...sensors.slice(0, index), { ...sensors[index], toUnit: value }, ...sensors.slice(index + 1)])
+                onUpdateSpecialSensors([...sensors.slice(0, index), { ...sensors[index], toUnit: value }, ...sensors.slice(index + 1)])
             }else if(field === "factor"){
-                onCustomizeSensors([...sensors.slice(0, index), { ...sensors[index], factor: value }, ...sensors.slice(index + 1)])
+                onUpdateSpecialSensors([...sensors.slice(0, index), { ...sensors[index], factor: value }, ...sensors.slice(index + 1)])
             }           
         }
-    },[sensors, specialSensor, onCustomizeSensors])
+    },[sensors, specialSensor, onUpdateSpecialSensors, onUpdateSensors])
 
     // Get sensor list file
     const onReadSensorListFile = useCallback((list) => {
-        // let updateSensors = []
-        // if(list !== undefined){
-        // // Make obj
-        // list.filter(sensor => sensor.SENSOR_TAG !== "").map((sensor, i) => {
-        //     let index = sensors.findIndex(obj => obj.tag === sensor.SENSOR_TAG)
-        //     if (index !== -1) {
-        //     let newObj = {status: "available", tag: sensors[index].tag, checked: sensors[index].checked, name: sensor.SENSOR_NAME, description: sensor.SENSOR_DESCRIPTION, type: sensor.SENSOR_TYPE, unit: sensor.SENSOR_UNIT}
-        //         updateSensors.push(newObj)
-        //     }else{
-        //         updateSensors = [...updateSensors.slice(0, i), { ...updateSensors[i], status: "unavailable", tag: sensor.SENSOR_TAG, checked: false, name: sensor.SENSOR_NAME, description: sensor.SENSOR_DESCRIPTION, type: sensor.SENSOR_TYPE, unit: sensor.SENSOR_UNIT }, ...updateSensors.slice(i + 1)]
-        //     }
-        //     return updateSensors
-        // })
-        // onCustomizeSensors(updateSensors)
-
         if(list !== undefined){
             let sensorList = list.filter(sensor=>sensor.SENSOR_TAG !== "").map((sensor,i) => {
                 let index = sensors.findIndex(obj => obj.tag === sensor.SENSOR_TAG)
+                console.log("index",index)
                 if(index !== -1){
                     return {
                         status: "available", 
@@ -140,16 +126,16 @@ export default function SensorCustomize({sensors, onCustomizeSensors, specialSen
                     }
                 }
             })
-            onCustomizeSensors(sensorList)
+            onUpdateSensors(sensorList)
             // setOpen(true)
             // setMessage("Sensor list file has uploaded successful.")
-            console.log("onReadSensorListFile => ", list)
+            console.log("onReadSensorListFile => ",  sensorList)
         }else{
             // setOpen(true)
             // setMessage("Please try again to upload sensor list file.")
             console.error("onReadSensorListFile => ", list)
         }
-    },[sensors, onCustomizeSensors])
+    },[sensors, onUpdateSensors])
 
       // Get special sensor file
   const onReadSpecialSensorListFile = useCallback((list) => {
@@ -167,16 +153,16 @@ export default function SensorCustomize({sensors, onCustomizeSensors, specialSen
             factor: sensor.FACTOR,
         }
       })
-      onCustomizeSensors(specialList)
+      onUpdateSpecialSensors(specialList)
       // setOpen(true)
       // setMessage("Special sensor list has uploaded successful.")
-      console.log("onReadSpecialSensorListFile => ", list)
+      console.log("onReadSpecialSensorListFile => ", specialList)
     }else{
       // setOpen(true)
       // setMessage("Please try again to upload special sensor list file.")
       console.error("onReadSpecialSensorListFile => ", list)
     }
-  },[onCustomizeSensors])
+  },[onUpdateSpecialSensors])
 
     return(
         <>
@@ -293,10 +279,10 @@ export default function SensorCustomize({sensors, onCustomizeSensors, specialSen
 
                         {specialSensor &&
                         <TableBody>
-                        {sensors.map((sensor) => {
+                        {sensors.map((sensor, i) => {
                             return(
                             <TableRow
-                            key={sensor.specialTag}
+                            key={`${sensor?.specialTag}-${i}`}
                             sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                             >
                                 

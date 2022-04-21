@@ -208,7 +208,7 @@ function App() {
       setSensorsObj(sensorsArray)
       setSeries(undefined)
       setOpen(true)
-      setMessage("Raw data has uploaded successful.")
+      setMessage("Raw data has been uploaded successfully.")
       console.log("onRawDataHandler => ", raw)
     }else{
       setOpen(true)
@@ -326,7 +326,7 @@ function App() {
       if(updateSamplingData !== undefined) {
         setSamplingData(updateSamplingData)
         setOpen(true)
-        setMessage("Data has sampling successful.") 
+        setMessage("Data has been sampled successfully.") 
         console.log("onSamplingData => ",updateSamplingData)
       }else{
         setOpen(true)
@@ -351,7 +351,7 @@ function App() {
             setSeries(updateSeries)
             updateDataClusterIndex(Object.values(updateSeries)[0].map(() => -1)) 
             setOpen(true)
-            setMessage("Data has updated successful.")
+            setMessage("Data has been updated successfully.")
             console.log("onSamplingData / update series => ", updateSeries)
           }
           else{
@@ -382,7 +382,7 @@ function App() {
         setFilteredSensors(updateSensors)
         setFilterProcess({tag: tag, operator: operator, firstValue: value1, secondValue: value2})
         setOpen(true)
-        setMessage("Data has filtered successful.") 
+        setMessage("Data has been filtered successfully.") 
         console.log("onFilterByIndicator => ",updateSensors)
         // Update series when filter process changed
         if(checkedSensors.length > 0){
@@ -394,7 +394,7 @@ function App() {
             setSeries(updateSeries)
             updateDataClusterIndex(Object.values(updateSeries)[0].map(() => -1)) 
             setOpen(true)
-            setMessage("Data has updated successful.")
+            setMessage("Data has been updated successfull.")
             console.log("onFilterByIndicator / update series => ", updateSeries)
           }else{
             setOpen(true)
@@ -488,7 +488,7 @@ function App() {
         updateDataClusterIndex(Object.values(updateSeries)[0].map(() => -1)) 
         console.log("onPickedDate / update series => ", updateSeries)
         setOpen(true)
-        setMessage("Data has filtered successful.")
+        setMessage("Data has been filtered successfully.")
       }else{
         console.error("onPickedDate / update series => ", updateSeries)
         setOpen(true)
@@ -508,7 +508,7 @@ function App() {
         setFilteredSensors(updateFilteredSensors)
         setSensorsObj([...sensorsObj, {status: "new", tag: `${specialSensor.tag}`, checked: false, name: `${specialSensor.name}`, description: "", type: "", unit: "", method: `${specialSensor.calType}`, component: ""}])
         setOpen(true)
-        setMessage("Special sensor has added successful.")
+        setMessage("Special sensor has been added successfully.")
         console.log("onAddSpecialSensor => ", specialSensorObj)
       }else{
         setOpen(true)
@@ -531,6 +531,7 @@ function App() {
 
   // Update sensor obj from components
   const onUpDateSensors = useCallback((updateSensors) => {
+    console.log("update",updateSensors)
     setSensorsObj(updateSensors)
   }, [setSensorsObj])
 
@@ -641,7 +642,7 @@ function App() {
                           Add special sensor
                         </AccordionSummary>
                         <AccordionDetails className={classes.accordionDetail}>
-                          <AddSpecialSensor sensorsObj={sensorsObj.filter(sensor=>sensor.status !== "unavailable")} specialSensors={specialSensors} onAddSpecialSensor={onAddSpecialSensor} onGenerateSpecialSensor={onGenerateSpecialSensor} onUpDateSensors={onUpDateSensors} onUpdateSpecialSensors={onUpdateSpecialSensors} onRemoveSpecialSensor={onRemoveSpecialSensor}></AddSpecialSensor>
+                          <AddSpecialSensor sensorsObj={sensorsObj.filter(sensor=>sensor.status !== "unavailable")} specialSensors={specialSensors} onAddSpecialSensor={onAddSpecialSensor} onGenerateSpecialSensor={onGenerateSpecialSensor} onUpdateSpecialSensors={onUpdateSpecialSensors} onRemoveSpecialSensor={onRemoveSpecialSensor}></AddSpecialSensor>
                         </AccordionDetails>
                       </Accordion>
                       </Grid>

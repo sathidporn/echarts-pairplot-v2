@@ -93,10 +93,6 @@ export default function AddSpecialSensor({ sensorsObj, specialSensors, onAddSpec
         }
     },[derivedSensors, calType, constant, specialTag, specialName, specialSensors, onUpdateSpecialSensors, onAddSpecialSensor])
 
-    const onCustomizeSensors = useCallback((updateSpecialSensors) => {
-        onUpdateSpecialSensors(updateSpecialSensors)
-    },[onUpdateSpecialSensors])
-
     return(
         <>
         <Grid item container xs={12} sm={12} md={12} lg={12} spacing={1}>
@@ -145,7 +141,7 @@ export default function AddSpecialSensor({ sensorsObj, specialSensors, onAddSpec
             </Grid>
             
             <Grid item xs={12} sm={12} md={12} lg={12} align="right">
-                <SensorCustomize sensors={specialSensors} specialSensor={true} onCustomizeSensors={onCustomizeSensors} onRemoveSpecialSensor={onRemoveSpecialSensor}></SensorCustomize>
+                <SensorCustomize sensors={specialSensors} specialSensor={true} onUpdateSpecialSensors={onUpdateSpecialSensors} onRemoveSpecialSensor={onRemoveSpecialSensor}></SensorCustomize>
             </Grid>
 
             <Grid item container xs={12} sm={12} md={12} lg={12} align="left">
@@ -157,7 +153,7 @@ export default function AddSpecialSensor({ sensorsObj, specialSensors, onAddSpec
                     return(
                     <Grid key={sensor.tag} item container xs={10} sm={10} md={10} lg={10} spacing={1} style={{paddingLeft: 10}}>
                         <Grid item xs={12} sm={12} md={12} lg={12}>
-                            <Tooltip title={sensor?.tag} placement="top">
+                            <Tooltip title={sensor.tag ? sensor.tag : "-"} placement="top">
                                 <Typography className={classes.blueText}>
                                     {sensor.tag.length > 40 ? `${sensor.tag.substring(0,40)}...` : `${sensor.tag}`}
                                     {/* <Tooltip title="Remove" placement="right"> */}
@@ -209,9 +205,9 @@ export default function AddSpecialSensor({ sensorsObj, specialSensors, onAddSpec
                     <Typography className={classes.blueText}>TAG : </Typography>
                 </Grid>
                 <Grid item xs={9} sm={9} md={9} lg={9}>
-                    <Tooltip title={specialTag} placement="top">
+                    {/* <Tooltip title={specialTag ? specialTag : "-"} placement="top"> */}
                         <TextFieldItem id={`specialTag`} type="text" value={specialTag} onChange={(value) => setSpecialTag(value)} defaultValue={false}></TextFieldItem>
-                    </Tooltip>
+                    {/* </Tooltip> */}
                 </Grid>
             </Grid>
 
@@ -220,9 +216,9 @@ export default function AddSpecialSensor({ sensorsObj, specialSensors, onAddSpec
                     <Typography className={classes.blueText}>NAME : </Typography>
                 </Grid>
                 <Grid item xs={9} sm={9} md={9} lg={9}>
-                    <Tooltip title={specialTag} placement="top">
+                    {/* <Tooltip title={specialTag ? specialTag : "-"} placement="top"> */}
                         <TextFieldItem id={`specialName`} type="text"  value={specialName} onChange={(value) => setSpecialName(value)}></TextFieldItem>
-                    </Tooltip>
+                    {/* </Tooltip> */}
                 </Grid>
             </Grid>
             
