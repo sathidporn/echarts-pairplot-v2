@@ -9,7 +9,7 @@ gl = undefined // Return canvas and webgl to garbage collector.
 console.info("Possible max tensor size is", MAX_TENSOR_SIZE)
 
 export function KDEPlot({batchSize, data, gridSize=25, bins, style, tags}) {
-  console.log("data",data)
+  // console.log("data",data)
   if (bins === undefined) {
     bins = gridSize * 2
   }
