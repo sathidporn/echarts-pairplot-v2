@@ -73,7 +73,7 @@ export default function AddSpecialSensor({ sensorsObj, specialSensors, onAddSpec
 
     const onGenerateSensor = useCallback(() => {
         // let objNewSensor = {tag: specialTag, name: "", derived: derivedSensors, calType: calType, subType: subType, fromUnit: "", toUnit: "", factor: ""}
-        if(derivedSensors && specialTag && specialName && calType && constant){
+        if(derivedSensors && specialTag && calType){
             let objNewSensor = {sensor: derivedSensors, tag: specialTag, name: specialName, calType: calType, constant: constant}
             onAddSpecialSensor(objNewSensor)
             setDerivedSensors([])
@@ -157,7 +157,7 @@ export default function AddSpecialSensor({ sensorsObj, specialSensors, onAddSpec
                     return(
                     <Grid key={sensor.tag} item container xs={10} sm={10} md={10} lg={10} spacing={1} style={{paddingLeft: 10}}>
                         <Grid item xs={12} sm={12} md={12} lg={12}>
-                            <Tooltip title={sensor.tag} placement="top">
+                            <Tooltip title={sensor?.tag} placement="top">
                                 <Typography className={classes.blueText}>
                                     {sensor.tag.length > 40 ? `${sensor.tag.substring(0,40)}...` : `${sensor.tag}`}
                                     {/* <Tooltip title="Remove" placement="right"> */}

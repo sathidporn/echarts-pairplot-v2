@@ -182,7 +182,7 @@ export const style = makeStyles((theme) => ({
             height: 25,
             minWidth: '6vw',
             '&:hover': {
-                backgroundColor: '#51b4ec',
+                backgroundColor: '',
                 color: '#ffffff',
             },
         }
