@@ -1,7 +1,7 @@
-export function cleansingSensors({tag, operator, value1, value2, sensorsObj, values, timestamps}){
+export function cleansingSensors({tag, operator, value1, value2, sensors, values, timestamps}){
     let filteredSeries = {}
     if(operator === "inRange"){
-        sensorsObj.map((sensor) => {
+        sensors.map((sensor) => {
             let filteredValues = []
             for (let i = 0; i < timestamps.length; i++) {
             if (values[tag][i] >= value1 && values[tag][i] <= value2) {
@@ -12,7 +12,7 @@ export function cleansingSensors({tag, operator, value1, value2, sensorsObj, val
             return filteredValues
         })
     }else if (operator === "equal"){
-        sensorsObj.map((sensor) => {
+        sensors.map((sensor) => {
             let filteredValues = []
             for (let i = 0; i < timestamps.length; i++) {
             if (values[tag][i] === value1) {
@@ -23,7 +23,7 @@ export function cleansingSensors({tag, operator, value1, value2, sensorsObj, val
             return filteredValues
         })
     }else if(operator === "moreThan"){
-        sensorsObj.map((sensor) => {
+        sensors.map((sensor) => {
             let filteredValues = []
             for (let i = 0; i < timestamps.length; i++) {
             if (values[tag][i] > value1) {
@@ -34,7 +34,7 @@ export function cleansingSensors({tag, operator, value1, value2, sensorsObj, val
             return filteredValues
         })
     }else if(operator === "moreThanEqual"){
-        sensorsObj.map((sensor) => {
+        sensors.map((sensor) => {
         let filteredValues = []
         for (let i = 0; i < timestamps.length; i++) {
             if (values[tag][i] >= value1){
@@ -45,7 +45,7 @@ export function cleansingSensors({tag, operator, value1, value2, sensorsObj, val
         return filteredValues
         })
     }else if(operator === "lessThan"){
-        sensorsObj.map((sensor) => {
+        sensors.map((sensor) => {
         let filteredValues = []
         for (let i = 0; i < timestamps.length; i++) {
             if (values[tag][i] < value1) {
@@ -56,7 +56,7 @@ export function cleansingSensors({tag, operator, value1, value2, sensorsObj, val
         return filteredValues
         })
     }else if(operator === "lessThanEqual"){
-        sensorsObj.map((sensor) => {
+        sensors.map((sensor) => {
         let filteredValues = []
         for (let i = 0; i < timestamps.length; i++) {
             if (values[tag][i] <= value1){

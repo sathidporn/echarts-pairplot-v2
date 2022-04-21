@@ -41,14 +41,11 @@ let SPECIAL_HEADERS = [
     { label: "FACTOR", key: "factor" },
 ]
 
-export default function SensorCustomize({sensors, onCustomizeSensors = () => {}, specialSensor=false, onRemoveSpecialSensor = () => {}, onUpdateSensors = () => {}, onUpdateSpecialSensors = () => {}}){
+export default function SensorCustomize({sensors, specialSensor=false, onRemoveSpecialSensor = () => {}, onUpdateSensors = () => {}, onUpdateSpecialSensors = () => {}, onReadSensorListFile = () => {}, onReadSpecialSensorListFile = () => {}}){
     const classes = useStyles();
     const [open, setOpen] = useState(false);
     const fullWidth = true
     const maxWidth = 'lg'
-
-    console.log("sensors",sensors)
-
     const csvLinkEl = createRef()
   
     const handleClickOpen = () => {
@@ -98,72 +95,6 @@ export default function SensorCustomize({sensors, onCustomizeSensors = () => {},
         }
     },[sensors, specialSensor, onUpdateSpecialSensors, onUpdateSensors])
 
-    // Get sensor list file
-    const onReadSensorListFile = useCallback((list) => {
-        if(list !== undefined){
-            let sensorList = list.filter(sensor=>sensor.SENSOR_TAG !== "").map((sensor,i) => {
-                let index = sensors.findIndex(obj => obj.tag === sensor.SENSOR_TAG)
-                console.log("index",index)
-                if(index !== -1){
-                    return {
-                        status: "available", 
-                        tag: sensors[index].tag, 
-                        checked: sensors[index].checked, 
-                        name: sensor.SENSOR_NAME, 
-                        description: sensor.SENSOR_DESCRIPTION, 
-                        type: sensor.SENSOR_TYPE, 
-                        unit: sensor.SENSOR_UNIT
-                    }
-                }else{
-                    return{
-                        status: "unavailable", 
-                        tag: sensor.SENSOR_TAG, 
-                        checked: false, 
-                        name: sensor.SENSOR_NAME, 
-                        description: sensor.SENSOR_DESCRIPTION, 
-                        type: sensor.SENSOR_TYPE, 
-                        unit: sensor.SENSOR_UNIT
-                    }
-                }
-            })
-            onUpdateSensors(sensorList)
-            // setOpen(true)
-            // setMessage("Sensor list file has uploaded successful.")
-            console.log("onReadSensorListFile => ",  sensorList)
-        }else{
-            // setOpen(true)
-            // setMessage("Please try again to upload sensor list file.")
-            console.error("onReadSensorListFile => ", list)
-        }
-    },[sensors, onUpdateSensors])
-
-      // Get special sensor file
-  const onReadSpecialSensorListFile = useCallback((list) => {
-    if(list !== undefined){
-      let specialList = list.filter(sensor=>sensor.SPECIAL_TAG !== "").map(sensor => {
-        return {
-            specialTag: sensor.SPECIAL_TAG,
-            specialName: sensor.SPECIAL_NAME,
-            derivedFromTag: sensor.DERIVED_FROM_TAG,
-            derivedFromName: sensor.DERIVE_FROM_NAME,
-            calType: sensor.CAL_TYPE,
-            subType: sensor.SUB_TYPE,
-            fromUnit: sensor.FROM_UNIT,
-            toUnit: sensor.TO_UNIT, 
-            factor: sensor.FACTOR,
-        }
-      })
-      onUpdateSpecialSensors(specialList)
-      // setOpen(true)
-      // setMessage("Special sensor list has uploaded successful.")
-      console.log("onReadSpecialSensorListFile => ", specialList)
-    }else{
-      // setOpen(true)
-      // setMessage("Please try again to upload special sensor list file.")
-      console.error("onReadSpecialSensorListFile => ", list)
-    }
-  },[onUpdateSpecialSensors])
-
     return(
         <>
         <Button variant="outlined" className={classes.defaultButton} onClick={handleClickOpen}>
@@ -180,12 +111,12 @@ export default function SensorCustomize({sensors, onCustomizeSensors = () => {},
             <DialogContent className={classes.dialog}>
                 <Grid item container xs={12} sm={12} md={12} lg={12} spacing={1}>
                     <Grid item xs={12} sm={12} md={12} lg={8}>
-                    {specialSensor === false &&
-                    <ImportSensorList specialFile={false} onReadSensorListFile={onReadSensorListFile}></ImportSensorList>
-                    }
-                    {specialSensor === true &&
-                    <ImportSensorList specialFile={true} onReadSensorListFile={onReadSpecialSensorListFile}></ImportSensorList>
-                    }
+                    {specialSensor === true ? (
+                        <ImportSensorList specialFile={true} onReadSpecialSensorListFile={onReadSpecialSensorListFile}></ImportSensorList>
+
+                    ):(
+                        <ImportSensorList specialFile={false} onReadSensorListFile={onReadSensorListFile}></ImportSensorList>
+                    )}
                     </Grid>
                     <Grid item xs={12} sm={12} md={12} lg={12}>
                     <TableContainer className={classes.tableContainer} >

@@ -10,7 +10,7 @@ import papa from 'papaparse'
 
 const useStyles = style
 
-export default function ImportSensorList({ onReadSensorListFile=()=>{}, specialFile=false}) {
+export default function ImportSensorList({ onReadSensorListFile=()=>{},  onReadSpecialSensorListFile = () => {}, specialFile=false}) {
     const classes = useStyles();
 
     let [fileName, setFileName] = useState()
@@ -36,8 +36,12 @@ export default function ImportSensorList({ onReadSensorListFile=()=>{}, specialF
     }, [setContent, setLoading, setFileName])
 
     const onSyncFile = useCallback(() => {
-        onReadSensorListFile(content)
-    }, [content, onReadSensorListFile])
+        if(specialFile){
+            onReadSpecialSensorListFile(content)
+        }else{
+            onReadSensorListFile(content) 
+        } 
+    }, [content, onReadSensorListFile,  onReadSpecialSensorListFile])
 
 
     return(

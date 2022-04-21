@@ -16,7 +16,7 @@ const useStyles = style
 
 const calculationList = [{value:"select", name: "Select calculation"}, {value:"ADD", name: "Add"}, {value:"ABSDIFF", name: "Absolute Diff"}, {value:"MUL", name: "Multiply"}, {value:"DIV", name: "Divide"}, {value:"AVG", name: "Average"}]     
 
-export default function AddSpecialSensor({ sensorsObj, specialSensors, onAddSpecialSensor=()=>{}, onUpdateSpecialSensors=()=>{},  onRemoveSpecialSensor = () => {}}){
+export default function AddSpecialSensor({ sensors, specialSensors, onAddSpecialSensor=()=>{}, onUpdateSpecialSensors=()=>{},  onRemoveSpecialSensor = () => {}, onReadSpecialSensorListFile = () => {}}){
     const classes = useStyles()
     
     let [derivedSensors, setDerivedSensors] = useState([])
@@ -118,7 +118,7 @@ export default function AddSpecialSensor({ sensorsObj, specialSensors, onAddSpec
                         </TableRow>
                         </TableHead>
                         <TableBody>
-                        {sensorsObj.filter(sensor=> selected.indexOf(sensor.tag) === -1).map((sensor) => {
+                        {sensors.filter(sensor=> selected.indexOf(sensor.tag) === -1).map((sensor) => {
                             return(
                             <TableRow
                                 key={sensor.tag}
@@ -141,7 +141,7 @@ export default function AddSpecialSensor({ sensorsObj, specialSensors, onAddSpec
             </Grid>
             
             <Grid item xs={12} sm={12} md={12} lg={12} align="right">
-                <SensorCustomize sensors={specialSensors} specialSensor={true} onUpdateSpecialSensors={onUpdateSpecialSensors} onRemoveSpecialSensor={onRemoveSpecialSensor}></SensorCustomize>
+                <SensorCustomize sensors={specialSensors} specialSensor={true} onUpdateSpecialSensors={onUpdateSpecialSensors} onRemoveSpecialSensor={onRemoveSpecialSensor} onReadSpecialSensorListFile={onReadSpecialSensorListFile}></SensorCustomize>
             </Grid>
 
             <Grid item container xs={12} sm={12} md={12} lg={12} align="left">

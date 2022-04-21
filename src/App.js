@@ -120,7 +120,7 @@ function App() {
   // selected sensors to plot
   let [checkedSensors, setCheckedSensors] = useState([])
   // all sensor object
-  let [sensorsObj, setSensorsObj] = useState([])
+  let [sensors, setSensors] = useState([])
   // all special sensors
   let [specialSensors, setSpecialSensors] = useState([])
   // filtered data only selected sensors
@@ -205,7 +205,7 @@ function App() {
           sensorsArray.push(sensors[sensor])
         }
       }
-      setSensorsObj(sensorsArray)
+      setSensors(sensorsArray)
       setSeries(undefined)
       setOpen(true)
       setMessage("Raw data has been uploaded successfully.")
@@ -215,39 +215,13 @@ function App() {
       setMessage("Please try again to upload raw data.")
       console.error("onRawDataHandler => ", raw)
     }
-  }, [setRaw, setContent, setTimestampsIndex, setSamplingTimestamp, setSensorsObj, setSeries, setOpen, setMessage])
+  }, [setRaw, setContent, setTimestampsIndex, setSamplingTimestamp, setSensors, setSeries, setOpen, setMessage])
 
-  // Get sensor list file
-  const onReadSensorListFile = useCallback((list) => {
-    let updateSensors = []
-    if(list !== undefined){
-      // Make obj
-      list.filter(sensor => sensor.SENSOR_TAG !== "").map((sensor, i) => {
-        let index = sensorsObj.findIndex(obj => obj.tag === sensor.SENSOR_TAG)
-        if (index !== -1) {
-          let newObj = {status: "available", tag: sensorsObj[index].tag, checked: sensorsObj[index].checked, name: sensor.SENSOR_NAME, description: sensor.SENSOR_DESCRIPTION, type: sensor.SENSOR_TYPE, unit: sensor.SENSOR_UNIT}
-          updateSensors.push(newObj)
-        }else{
-          updateSensors = [...updateSensors.slice(0, i), { ...updateSensors[i], status: "unavailable", tag: sensor.SENSOR_TAG, checked: false, name: sensor.SENSOR_NAME, description: sensor.SENSOR_DESCRIPTION, type: sensor.SENSOR_TYPE, unit: sensor.SENSOR_UNIT }, ...updateSensors.slice(i + 1)]
-        }
-        return []
-      })
-      setSensorsObj(updateSensors)
-      // setOpen(true)
-      // setMessage("Sensor list file has uploaded successful.")
-      console.log("onReadSensorListFile => ", updateSensors)
-    }else{
-      // setOpen(true)
-      // setMessage("Please try again to upload sensor list file.")
-      console.error("onReadSensorListFile => ", list)
-    }
-  },[sensorsObj, setSensorsObj, setOpen, setMessage])
-
-   // Generate special sensor data when import special sensor file
+  // Generate special sensor data when import special sensor file
   const onGenerateSpecialSensor = useCallback((specialSensors) => {
-    let sensors = sensorsObj.filter(sensor=>sensor.status === "unavailable")
+    let sensors = sensors.filter(sensor=>sensor.status === "unavailable")
     let updateFilteredSensors = filteredSensors
-    let updateSensors = sensorsObj
+    let updateSensors = sensors
     sensors.map((sensor) => {
       let filterSensor  = specialSensors.filter(s=>s.specialTag === sensor.tag)
       let derivedSensors = []
@@ -261,51 +235,23 @@ function App() {
       specialSensorObj[`${specialSensor.tag}`] = specialSensorData
       updateFilteredSensors = Object.assign(specialSensorObj, updateFilteredSensors)
 
-      let index = sensorsObj.findIndex(obj => obj.tag === sensor.tag)
+      let index = sensors.findIndex(obj => obj.tag === sensor.tag)
       if (index !== -1 &&  updateFilteredSensors[sensor.tag].length > 0) {
         updateSensors = [...updateSensors.slice(0, index), { ...updateSensors[index], status: "available"}, ...updateSensors.slice(index + 1)]
       }
       return updateFilteredSensors
     })
     setFilteredSensors(updateFilteredSensors)
-    setSensorsObj(updateSensors)
+    setSensors(updateSensors)
     console.log("onGenerateSpecialSensor => ",updateFilteredSensors, updateSensors)
-  },[filteredSensors, sensorsObj, setFilteredSensors, setSensorsObj])
-
-  // Get special sensor file
-  const onReadSpecialSensorListFile = useCallback((list) => {
-    if(list !== undefined){
-      let specialList = list.filter(sensor=>sensor.SPECIAL_TAG !== "").map(sensor => {
-        return {
-            specialTag: sensor.SPECIAL_TAG,
-            specialName: sensor.SPECIAL_NAME,
-            derivedFromTag: sensor.DERIVED_FROM_TAG,
-            derivedFromName: sensor.DERIVE_FROM_NAME,
-            calType: sensor.CAL_TYPE,
-            subType: sensor.SUB_TYPE,
-            fromUnit: sensor.FROM_UNIT,
-            toUnit: sensor.TO_UNIT, 
-            factor: sensor.FACTOR,
-        }
-      })
-      setSpecialSensors(specialList)
-      onGenerateSpecialSensor(specialList)
-      // setOpen(true)
-      // setMessage("Special sensor list has uploaded successful.")
-      console.log("onReadSpecialSensorListFile => ", list)
-    }else{
-      // setOpen(true)
-      // setMessage("Please try again to upload special sensor list file.")
-      console.error("onReadSpecialSensorListFile => ", list)
-    }
-  },[setSpecialSensors, onGenerateSpecialSensor, setOpen, setMessage])
+  },[filteredSensors, setFilteredSensors, setSensors])
 
   // Make raw data to sampling data by type
   const onSamplingData = useCallback((type) => {
     let updateSamplingData = {}
-    console.log("s",sensorsObj)
+    console.log("s",sensors)
       // Loop for generate sampling data of each sensor
-      sensorsObj.map((sensor) => {
+      sensors.map((sensor) => {
         let values = []
         let result
         for (let i = 0; i < timestampsIndex.length; i++) {
@@ -337,7 +283,7 @@ function App() {
      
       // Update filteredSensors, filteredTimestamps
       let updateTimestamps = cleansingTimestamps({ tag: filterProcess.tag, operator: filterProcess.operator, value1: filterProcess.firstValue, value2: filterProcess.secondValue, samplingData: updateSamplingData, samplingTimestamp})
-      let updateSensors = cleansingSensors({ tag: filterProcess.tag, operator: filterProcess.operator, value1: filterProcess.firstValue, value2: filterProcess.secondValue, sensorsObj, samplingData: updateSamplingData, samplingTimestamp})
+      let updateSensors = cleansingSensors({ tag: filterProcess.tag, operator: filterProcess.operator, value1: filterProcess.firstValue, value2: filterProcess.secondValue, sensors, samplingData: updateSamplingData, samplingTimestamp})
       if(Object.keys(updateSensors).length > 0){
         setFilteredTimestamps(updateTimestamps)
         setFilteredSensors(updateSensors)
@@ -361,7 +307,7 @@ function App() {
           }  
         }
       }
-  },[checkedSensors, sensorsObj, timestampsIndex, raw, filterProcess, samplingTimestamp, setSamplingData, setSeries, setOpen, setMessage])
+  },[checkedSensors, sensors, timestampsIndex, raw, filterProcess, samplingTimestamp, setSamplingData, setSeries, setOpen, setMessage])
 
   // Filter data by indicator sensor
   const onFilterByIndicator = useCallback((tag, operator, value1, value2) => {
@@ -371,10 +317,10 @@ function App() {
       let updateSensors
       if(filteredSensors){
         updateTimestamps = cleansingTimestamps({tag, operator, value1, value2, values: filteredSensors, timestamps: filteredTimestamps})
-        updateSensors = cleansingSensors({tag, operator, value1, value2, sensorsObj, values: filteredSensors,  timestamps: filteredTimestamps})
+        updateSensors = cleansingSensors({tag, operator, value1, value2, sensors, values: filteredSensors,  timestamps: filteredTimestamps})
       }else{
         updateTimestamps = cleansingTimestamps({tag, operator, value1, value2, values: samplingData, timestamps: samplingTimestamp})
-        updateSensors = cleansingSensors({tag, operator, value1, value2, sensorsObj, values: samplingData, timestamps: samplingTimestamp})
+        updateSensors = cleansingSensors({tag, operator, value1, value2, sensors, values: samplingData, timestamps: samplingTimestamp})
       }
 
       if(Object.keys(updateSensors).length > 0){
@@ -411,7 +357,7 @@ function App() {
       setOpen(true)
       setMessage("Please fill up this form.") 
     }
-  }, [sensorsObj, checkedSensors, samplingData, samplingTimestamp, filteredSensors, filteredTimestamps, setFilteredSensors, setFilteredTimestamps, setFilterProcess, setSeries])
+  }, [sensors, checkedSensors, samplingData, samplingTimestamp, filteredSensors, filteredTimestamps, setFilteredSensors, setFilteredTimestamps, setFilterProcess, setSeries])
 
   // Add sensor to plot
   const onPickedSensors = useCallback((tag, checkedSensors, newSensorsObj ) => {
@@ -446,8 +392,8 @@ function App() {
       setSeries(undefined)
     }
     setCheckedSensors(checkedSensors)
-    setSensorsObj(newSensorsObj)
-  },[filteredSensors, series, setSeries, updateDataClusterIndex, setCheckedSensors, setSensorsObj, setBrushingMode])
+    setSensors(newSensorsObj)
+  },[filteredSensors, series, setSeries, updateDataClusterIndex, setCheckedSensors, setSensors, setBrushingMode])
 
   // Filter data when picked date
   const onPickedDate = useCallback((startDate, endDate) => {
@@ -506,7 +452,7 @@ function App() {
       if(specialSensorObj !== undefined){
         let updateFilteredSensors = Object.assign(specialSensorObj, filteredSensors)
         setFilteredSensors(updateFilteredSensors)
-        setSensorsObj([...sensorsObj, {status: "new", tag: `${specialSensor.tag}`, checked: false, name: `${specialSensor.name}`, description: "", type: "", unit: "", method: `${specialSensor.calType}`, component: ""}])
+        setSensors([...sensors, {status: "new", tag: `${specialSensor.tag}`, checked: false, name: `${specialSensor.name}`, description: "", type: "", unit: "", method: `${specialSensor.calType}`, component: ""}])
         setOpen(true)
         setMessage("Special sensor has been added successfully.")
         console.log("onAddSpecialSensor => ", specialSensorObj)
@@ -519,24 +465,91 @@ function App() {
       setOpen(true)
       setMessage("Please fill up this form.")
     }
-  },[filteredSensors, sensorsObj, setFilteredSensors, setSensorsObj])
+  },[filteredSensors, sensors, setFilteredSensors, setSensors])
+
+  // Get sensor list file
+  const onReadSensorListFile = useCallback((list) => {
+    console.log("list",list)
+    if(list !== undefined){
+        let sensorList = list.filter(sensor=>sensor.SENSOR_TAG !== "").map((sensor) => {
+          let index = sensors.findIndex(obj => obj.tag === sensor.SENSOR_TAG)
+          if(index !== -1){
+              return {
+                  status: "available", 
+                  tag: sensors[index].tag, 
+                  checked: sensors[index].checked, 
+                  name: sensor.SENSOR_NAME, 
+                  description: sensor.SENSOR_DESCRIPTION, 
+                  type: sensor.SENSOR_TYPE, 
+                  unit: sensor.SENSOR_UNIT
+              }
+          }else{
+              return{
+                  status: "unavailable", 
+                  tag: sensor.SENSOR_TAG, 
+                  checked: false, 
+                  name: sensor.SENSOR_NAME, 
+                  description: sensor.SENSOR_DESCRIPTION, 
+                  type: sensor.SENSOR_TYPE, 
+                  unit: sensor.SENSOR_UNIT
+              }
+          }
+        })
+        setSensors(sensorList)
+        // setOpen(true)
+        // setMessage("Sensor list file has uploaded successful.")
+        console.log("onReadSensorListFile => ",  sensorList)
+    }else{
+        // setOpen(true)
+        // setMessage("Please try again to upload sensor list file.")
+        console.error("onReadSensorListFile => ", list)
+    }
+  },[sensors, setSensors])
+
+      // Get special sensor file
+  const onReadSpecialSensorListFile = useCallback((list) => {
+    if(list !== undefined){
+      let specialList = list.filter(sensor=>sensor.SPECIAL_TAG !== "").map(sensor => {
+        return {
+            specialTag: sensor.SPECIAL_TAG,
+            specialName: sensor.SPECIAL_NAME,
+            derivedFromTag: sensor.DERIVED_FROM_TAG,
+            derivedFromName: sensor.DERIVE_FROM_NAME,
+            calType: sensor.CAL_TYPE,
+            subType: sensor.SUB_TYPE,
+            fromUnit: sensor.FROM_UNIT,
+            toUnit: sensor.TO_UNIT, 
+            factor: sensor.FACTOR,
+        }
+      })
+      setSpecialSensors(specialList)
+      // setOpen(true)
+      // setMessage("Special sensor list has uploaded successful.")
+      console.log("onReadSpecialSensorListFile => ", specialList)
+    }else{
+      // setOpen(true)
+      // setMessage("Please try again to upload special sensor list file.")
+      console.error("onReadSpecialSensorListFile => ", list)
+    }
+  },[setSpecialSensors])
 
   // Remove new special sensor
   const onRemoveSpecialSensor = useCallback((tag) => {
-    let updateSensors = sensorsObj.filter(sensor=> sensor.tag !== tag)
+    let updateSensors = sensors.filter(sensor=> sensor.tag !== tag)
     let updateSpecialSensors = specialSensors.filter(sensor=> sensor.specialTag !== tag)
-    setSensorsObj(updateSensors)
+    setSensors(updateSensors)
     setSpecialSensors(updateSpecialSensors)
-  }, [sensorsObj, specialSensors, setSensorsObj, setSpecialSensors])
+  }, [sensors, specialSensors, setSensors, setSpecialSensors])
 
   // Update sensor obj from components
   const onUpDateSensors = useCallback((updateSensors) => {
     console.log("update",updateSensors)
-    setSensorsObj(updateSensors)
-  }, [setSensorsObj])
+    setSensors(updateSensors)
+  }, [setSensors])
 
   // Update special sensor from components
   const onUpdateSpecialSensors = useCallback((updateSpecialSensors) => {
+    console.log("update",updateSpecialSensors)
     setSpecialSensors(updateSpecialSensors)
   }, [setSpecialSensors])
 
@@ -553,6 +566,7 @@ function App() {
   // }, [checkedSensors, content])
 
 // end
+console.log("sensors",sensors)
 
   return (
     <div className="App">
@@ -590,7 +604,7 @@ function App() {
                     }
                     {index === 1 && raw && 
                     <Grid item xs={12} sm={12} md={12} lg={12} className={classes.stepContent}>
-                      <SamplingPicker sensorsObj={sensorsObj} raw={raw} timestampsIndex={timestampsIndex} onSamplingData={onSamplingData}></SamplingPicker>
+                      <SamplingPicker sensors={sensors} raw={raw} timestampsIndex={timestampsIndex} onSamplingData={onSamplingData}></SamplingPicker>
                     </Grid>
                     }
                     {index === 2  && samplingData &&
@@ -600,7 +614,7 @@ function App() {
                           <Typography className={classes.headerTextWhite}>Filter data by indication sensor</Typography>
                         </Grid>
                         <Grid item xs={12} sm={12} md={12} lg={12}>
-                          <IndicationSensor sensors={sensorsObj} indexCluster={false} onFilterByIndicator={onFilterByIndicator}></IndicationSensor> 
+                          <IndicationSensor sensors={sensors} indexCluster={false} onFilterByIndicator={onFilterByIndicator}></IndicationSensor> 
                         </Grid>
                       </Grid>
                       {/* <Grid item container xs={12} sm={12} md={12} lg={12} spacing={1}>
@@ -632,7 +646,7 @@ function App() {
                             <DatePicker startSeries={raw['TimeStamp'][0]} endSeries={raw['TimeStamp'][raw['TimeStamp']?.length-2]} onPickedDate={onPickedDate} ></DatePicker>
                           </Grid>
                           <Grid item xs={12} sm={12} md={12} lg={12}>
-                            <SensorPicker sensors={sensorsObj} checkedSensors={checkedSensors} raw={raw} timestampsIndex={timestampsIndex}  onPickedSensors={onPickedSensors} onUpDateSensors={onUpDateSensors} onRemoveSpecialSensor={onRemoveSpecialSensor}></SensorPicker>
+                            <SensorPicker sensors={sensors} checkedSensors={checkedSensors} raw={raw} timestampsIndex={timestampsIndex}  onPickedSensors={onPickedSensors} onUpDateSensors={onUpDateSensors} onRemoveSpecialSensor={onRemoveSpecialSensor} onReadSensorListFile={onReadSensorListFile}></SensorPicker>
                           </Grid>
                         </Grid>
                       </Grid>
@@ -642,7 +656,7 @@ function App() {
                           Add special sensor
                         </AccordionSummary>
                         <AccordionDetails className={classes.accordionDetail}>
-                          <AddSpecialSensor sensorsObj={sensorsObj.filter(sensor=>sensor.status !== "unavailable")} specialSensors={specialSensors} onAddSpecialSensor={onAddSpecialSensor} onGenerateSpecialSensor={onGenerateSpecialSensor} onUpdateSpecialSensors={onUpdateSpecialSensors} onRemoveSpecialSensor={onRemoveSpecialSensor}></AddSpecialSensor>
+                          <AddSpecialSensor sensors={sensors.filter(sensor=>sensor.status !== "unavailable")} specialSensors={specialSensors} onAddSpecialSensor={onAddSpecialSensor} onGenerateSpecialSensor={onGenerateSpecialSensor} onUpdateSpecialSensors={onUpdateSpecialSensors} onRemoveSpecialSensor={onRemoveSpecialSensor} onReadSpecialSensorListFile={onReadSpecialSensorListFile}></AddSpecialSensor>
                         </AccordionDetails>
                       </Accordion>
                       </Grid>
