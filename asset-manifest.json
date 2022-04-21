@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/echarts-pairplot-v2/static/css/main.1e5da5a7.css",
+    "main.js": "/echarts-pairplot-v2/static/js/main.3cf0db1e.js",
+    "static/js/787.d9cf20cc.chunk.js": "/echarts-pairplot-v2/static/js/787.d9cf20cc.chunk.js",
+    "index.html": "/echarts-pairplot-v2/index.html",
+    "main.1e5da5a7.css.map": "/echarts-pairplot-v2/static/css/main.1e5da5a7.css.map",
+    "main.3cf0db1e.js.map": "/echarts-pairplot-v2/static/js/main.3cf0db1e.js.map",
+    "787.d9cf20cc.chunk.js.map": "/echarts-pairplot-v2/static/js/787.d9cf20cc.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.1e5da5a7.css",
+    "static/js/main.3cf0db1e.js"
+  ]
+}
