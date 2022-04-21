@@ -2,7 +2,7 @@
   "name": "echart-pairplot-v2",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://stpeyyee.github.io/echarts-pairplot-v2/",
+  "homepage": "https://stpeyyee.github.io/wizard-feature/",
   "dependencies": {
     "@emotion/react": "^11.8.1",
     "@emotion/styled": "^11.8.1",
