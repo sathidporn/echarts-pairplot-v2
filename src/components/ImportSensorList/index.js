@@ -51,7 +51,7 @@ export default function ImportSensorList({ onReadSensorListFile=()=>{},  onReadS
         }
         <Grid item container xs={12} sm={12} md={12} lg={12} spacing={1} style={{padding:10}}>
             <Grid item xs={12} sm={4} md={4} lg={4} algin="left">
-                <Typography className={classes.headerText}>{specialFile ? 'import special sensor file :' : 'import sensor file :'}</Typography>
+                <Typography className={classes.headerText}>import file : </Typography>
             </Grid>
             <Grid item xs={12} sm={4} md={4} lg={4} algin="left">
                 <Tooltip title={fileName ? fileName : ""}>

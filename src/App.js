@@ -249,7 +249,6 @@ function App() {
   // Make raw data to sampling data by type
   const onSamplingData = useCallback((type) => {
     let updateSamplingData = {}
-    console.log("s",sensors)
       // Loop for generate sampling data of each sensor
       sensors.map((sensor) => {
         let values = []
@@ -469,7 +468,6 @@ function App() {
 
   // Get sensor list file
   const onReadSensorListFile = useCallback((list) => {
-    console.log("list",list)
     if(list !== undefined){
         let sensorList = list.filter(sensor=>sensor.SENSOR_TAG !== "").map((sensor) => {
           let index = sensors.findIndex(obj => obj.tag === sensor.SENSOR_TAG)
@@ -566,7 +564,7 @@ function App() {
   // }, [checkedSensors, content])
 
 // end
-console.log("sensors",sensors)
+// console.log("sensors",sensors)
 
   return (
     <div className="App">
@@ -638,8 +636,8 @@ console.log("sensors",sensors)
                     {index === 3 && (samplingData || filteredSensors) &&
                     <>
                     <Grid item container xs={12} sm={12} md={12} lg={12} direction="row" justifyContent="space-between" spacing={1}>
-                        <ImportSensorList specialFile={false} onReadSensorListFile={onReadSensorListFile}></ImportSensorList>
-                        <ImportSensorList specialFile={true} onReadSensorListFile={onReadSpecialSensorListFile}></ImportSensorList>
+                        {/* <ImportSensorList specialFile={false} onReadSensorListFile={onReadSensorListFile}></ImportSensorList>
+                        <ImportSensorList specialFile={true} onReadSensorListFile={onReadSpecialSensorListFile}></ImportSensorList> */}
                       <Grid item xs={12} sm={12} md={12} lg={12} className={classes.stepContent}>
                         <Grid item container xs={12} sm={12} md={12} lg={12} spacing={1}>
                           <Grid item xs={12} sm={12} md={12} lg={12}>

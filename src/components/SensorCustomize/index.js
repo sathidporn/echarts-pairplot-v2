@@ -12,7 +12,7 @@ import { Tooltip, IconButton } from '@mui/material';
 import CancelIcon from '@mui/icons-material/Cancel'
 import TextFieldItem from '../TextFieldItem'
 import TableViewIcon from '@mui/icons-material/TableView';
-import { CSVDownload, CSVLink } from 'react-csv'
+import { CSVLink } from 'react-csv'
 import ImportSensorList from '../ImportSensorList';
 
 import { style } from '../../styles/style';
@@ -45,8 +45,14 @@ export default function SensorCustomize({sensors, specialSensor=false, onRemoveS
     const classes = useStyles();
     const [open, setOpen] = useState(false);
     const fullWidth = true
-    const maxWidth = 'lg'
+    const maxWidth = 'xxs'
     const csvLinkEl = createRef()
+
+    const [edit, setEdit] = useState(false)
+
+    const handleEdit = useCallback(() => {
+        setEdit(!edit)
+    },[setEdit, edit])
   
     const handleClickOpen = () => {
       setOpen(true);
@@ -54,6 +60,7 @@ export default function SensorCustomize({sensors, specialSensor=false, onRemoveS
   
     const handleClose = () => {
       setOpen(false);
+      setEdit(false)
     };
 
     const onChange = useCallback((tag, field, value) => {
@@ -95,6 +102,21 @@ export default function SensorCustomize({sensors, specialSensor=false, onRemoveS
         }
     },[sensors, specialSensor, onCustomizeSensors])
 
+    const CustomTableCell = ({id, value, onChange}) => {
+        return(
+            <TableCell align="left" className={classes.tableCell}>
+                <Tooltip title={value} placement="top">
+                {edit ? (
+                    <TextFieldItem id={id} type="text" value={value} onChange={(value) => onChange(value)}></TextFieldItem>
+                ):
+                (
+                    <Typography className={classes.whiteText}>{value}</Typography>
+                )}
+                </Tooltip>
+            </TableCell>
+        )
+    }
+
     return(
         <>
         <Button variant="outlined" className={classes.defaultButton} onClick={handleClickOpen}>
@@ -110,7 +132,7 @@ export default function SensorCustomize({sensors, specialSensor=false, onRemoveS
             <DialogTitle className={classes.dialog}>{specialSensor ? "Special Sensor File" : "Sensor File"}</DialogTitle>
             <DialogContent className={classes.dialog}>
                 <Grid item container xs={12} sm={12} md={12} lg={12} spacing={1}>
-                    <Grid item xs={12} sm={12} md={12} lg={8}>
+                    <Grid item xs={12} sm={12} md={12} lg={4}>
                     {specialSensor === true ? (
                         <ImportSensorList specialFile={true} onReadSpecialSensorListFile={onReadSpecialSensorListFile}></ImportSensorList>
 
@@ -118,175 +140,114 @@ export default function SensorCustomize({sensors, specialSensor=false, onRemoveS
                         <ImportSensorList specialFile={false} onReadSensorListFile={onReadSensorListFile}></ImportSensorList>
                     )}
                     </Grid>
+                    <Grid item xs={12} sm={12} md={12} lg={12} align="right">
+                        <Button className={classes.defaultButton} onClick={handleEdit}>Edit File</Button>
+                    </Grid>
                     <Grid item xs={12} sm={12} md={12} lg={12}>
                     <TableContainer className={classes.tableContainer} >
                     <Table size="small" stickyHeader>
                         <TableHead>
-                        {!specialSensor &&
-                        <TableRow key={"sensor"}>
-                            <TableCell className={classes.tableCell}></TableCell>
-                            <TableCell align="left" className={classes.tableCell}>SENSOR_TAG</TableCell>
-                            <TableCell align="left" className={classes.tableCell}>SENSOR_NAME</TableCell>
-                            <TableCell align="left" className={classes.tableCell}>SENSOR_DESCRIPTION</TableCell>
-                            <TableCell align="left" className={classes.tableCell}>SENSOR_TYPE</TableCell>
-                            <TableCell align="left" className={classes.tableCell}>SENSOR_UNIT</TableCell>
-                            <TableCell align="left" className={classes.tableCell}>METHOD</TableCell>
-                            <TableCell align="left" className={classes.tableCell}>COMPONENT_ID</TableCell>
-                        </TableRow>
-                        }
-                        {specialSensor &&
-                        <TableRow key={"special-sensor"}>
-                            <TableCell className={classes.tableCell}></TableCell>
-                            <TableCell align="left" className={classes.tableCell}>SPECIAL_TAG</TableCell>
-                            <TableCell align="left" className={classes.tableCell}>SPECIAL_NAME</TableCell>
-                            <TableCell align="left" className={classes.tableCell}>DERIVED_FROM_TAG</TableCell>
-                            <TableCell align="left" className={classes.tableCell}>DERIVE_FROM_NAME</TableCell>
-                            <TableCell align="left" className={classes.tableCell}>CAL_TYPE</TableCell>
-                            <TableCell align="left" className={classes.tableCell}>SUB_TYPE</TableCell>
-                            <TableCell align="left" className={classes.tableCell}>FROM_UNIT</TableCell>
-                            <TableCell align="left" className={classes.tableCell}>TO_UNIT</TableCell>
-                            <TableCell align="left" className={classes.tableCell}>FACTOR</TableCell>
-                        </TableRow>
-                        }
+                        {specialSensor === false ? (
+                            <TableRow key={"sensor"}>
+                                 <TableCell align="left" className={classes.tableHead}></TableCell>  
+                                {SENSOR_HEADERS.map((sensor) => {
+                                    return(
+                                        <TableCell align="left" className={classes.tableHead}>{sensor.label}</TableCell>  
+                                    ) 
+                                })}
+                            </TableRow>
+                        ):(
+                            <TableRow key={"special-sensor"}>
+                                <TableCell align="left" className={classes.tableHead}></TableCell>  
+                                {SPECIAL_HEADERS.map((sensor) => {
+                                    return(
+                                        <TableCell align="left" className={classes.tableHead}>{sensor.label}</TableCell>  
+                                    ) 
+                                })}
+                            </TableRow>
+
+                        )}
                         </TableHead>
-                        {!specialSensor &&
-                        <TableBody>
-                        {sensors.map((sensor) => {
-                            return(
-                            <TableRow
-                            key={sensor?.tag}
-                            sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                            >
-                                <TableCell component="th" scope="row" className={classes.tableCell}>
-                                    {sensor.status === "new" &&
-                                    <>
-                                    <Chip label="New!" variant="outlined" className={classes.chip} />
-                                    </>
-                                    }
-                                </TableCell>
-                               
-                                <TableCell component="th" scope="row" className={classes.tableCell}>
-                                    {sensor.status === "new" &&
-                                    <>
-                                    <Tooltip title={"remove from list"} placement="top">
-                                        <Typography className={classes.whiteText}>
+
+                        {specialSensor === false ? (
+                            <TableBody>
+                                {sensors.map((sensor) => {
+                                    return(
+                                    <TableRow
+                                    key={sensor?.tag}
+                                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                    >
+                                        <TableCell component="th" scope="row" className={classes.tableCell}>
+                                            <Chip label={sensor.status === "new" ? "new" : "origin"} variant="outlined" className={classes.chip} />
+                                            {sensor.status === "new" &&
                                             <IconButton  onClick={()=>onRemoveSpecialSensor(sensor.tag)}>
                                                 <CancelIcon style={{fontSize:'1rem', color:"#f04461", borderRadius:5}}></CancelIcon>
                                             </IconButton>
-                                            {sensor.tag}
-                                        </Typography>
-                                    </Tooltip>
-                                    </>
-                                    }
-                                    {sensor.status !== "new" &&
-                                    <>
-                                    {sensor.tag}           
-                                    </>
-                                    }
-                                </TableCell>
-                                <TableCell align="left" className={classes.tableCell}>
-                                    <TextFieldItem id={`${sensor.tag}-name`} type="text" value={sensor.name} onChange={(value) => onChange(sensor.tag, "name", value)}></TextFieldItem>
-                                </TableCell>
-                                <TableCell align="left" className={classes.tableCell}>
-                                    <TextFieldItem id={`${sensor.tag}-description`} type="text" value={sensor.description} onChange={(value) => onChange(sensor.tag, "description", value)}></TextFieldItem>
-                                </TableCell>
-                                <TableCell align="left" className={classes.tableCell}>
-                                    <TextFieldItem id={`${sensor.tag}-type`} type="text" value={sensor.type} onChange={(value) => onChange(sensor.tag, "type", value)}></TextFieldItem>
-                                </TableCell>
-                                <TableCell align="left" className={classes.tableCell}>
-                                    <TextFieldItem id={`${sensor.tag}-unit`} type="text" value={sensor.unit} onChange={(value) => onChange(sensor.tag, "unit", value)}></TextFieldItem>
-                                </TableCell>
-                                <TableCell align="left" className={classes.tableCell}>
-                                    <TextFieldItem id={`${sensor.tag}-method`} type="text" value={sensor.method}></TextFieldItem>
-                                </TableCell>
-                                <TableCell align="left" className={classes.tableCell}>
-                                    <TextFieldItem id={`${sensor.tag}-component`} type="text" value={sensor.component} onChange={(value) => onChange(sensor.tag, "component", value)}></TextFieldItem>
-                                </TableCell>
-                            </TableRow>
-                            )
-                        })}
-                        </TableBody>
-                        }
-
-                        {specialSensor &&
-                        <TableBody>
-                        {sensors.map((sensor, i) => {
-                            return(
-                            <TableRow
-                            key={`${sensor?.specialTag}-${i}`}
-                            sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                            >
-                                
-                                <TableCell component="th" scope="row" className={classes.tableCell}>
-                                    {sensor.status === "new" &&
-                                        <>
-                                        <Chip label="New!" variant="outlined" className={classes.chip} />
-                                        </>
-                                    }
-                                </TableCell>
-                                
-                                <TableCell component="th" scope="row" className={classes.tableCell}>
-                                    {sensor.status === "new" &&
-                                        <>
-                                        <Tooltip title={"remove from list"} placement="top">
+                                            }
+                                        </TableCell>
+                                        <TableCell component="th" scope="row" className={classes.tableCell}>
+                                            <Tooltip title={sensor.tag} placement="top">
+                                                <Typography className={classes.whiteText}>
+                                                    {sensor.tag.length > 20 ? `${sensor.tag.substring(0,20)}...` : `${sensor.tag}`}   
+                                                </Typography>
+                                            </Tooltip>       
+                                        </TableCell>
+                                        <CustomTableCell id={`${sensor.tag}-name`} value={sensor.name} onChange={(value) => onChange(sensor.tag, "name", value)}></CustomTableCell>
+                                        <CustomTableCell id={`${sensor.tag}-description`} value={sensor.description} onChange={(value) => onChange(sensor.tag, "description", value)}></CustomTableCell>
+                                        <CustomTableCell id={`${sensor.tag}-type`} value={sensor.type} onChange={(value) => onChange(sensor.tag, "type", value)}></CustomTableCell>
+                                        <CustomTableCell id={`${sensor.tag}-unit`} value={sensor.unit} onChange={(value) => onChange(sensor.tag, "unit", value)}></CustomTableCell>
+                                        <CustomTableCell id={`${sensor.tag}-method`} value={sensor.method}></CustomTableCell>
+                                        <CustomTableCell id={`${sensor.tag}-component`} value={sensor.component} onChange={(value) => onChange(sensor.tag, "component", value)}></CustomTableCell>
+                                    </TableRow>
+                                    )
+                                })}
+                            </TableBody>
+                        ):(
+                            <TableBody>
+                                {sensors.map((sensor, i) => {
+                                    return(
+                                    <TableRow
+                                    key={`${sensor?.specialTag}-${i}`}
+                                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                    >
+                                        <TableCell component="th" scope="row" className={classes.tableCell}>
+                                            <Chip label={sensor.status === "new" ? "new" : "origin"} variant="outlined" className={classes.chip} />
+                                            {sensor.status === "new" &&
                                             <IconButton  onClick={()=>onRemoveSpecialSensor(sensor.specialTag)}>
                                                 <CancelIcon style={{fontSize:'1rem', color:"#f04461", borderRadius:5}}></CancelIcon>
-                                                <Typography className={classes.whiteText}>
-                                                {sensor.specialTag}
-                                                </Typography>
                                             </IconButton>
-                                        </Tooltip>
-                                        </>
-                                        }
-                                        {sensor.status !== "new" &&
-                                        <>
-                                        {sensor.specialTag}           
-                                        </>
-                                    }
-                                </TableCell>
-                                <TableCell align="left" className={classes.tableCell}>
-                                    <TextFieldItem id={`${sensor.specialTag}-specialName`} type="text" value={sensor.specialName} onChange={(value) => onChange(sensor.specialTag, "specialName", value)}></TextFieldItem>
-                                </TableCell>
-                                <TableCell align="left" className={classes.tableCell}>
-                                    <TextFieldItem id={`${sensor.specialTag}-derivedFromTag`} type="text" value={sensor.derivedFromTag} onChange={(value) => onChange(sensor.specialTag, "derivedFromTag", value)}></TextFieldItem>
-                                </TableCell>
-                                <TableCell align="left" className={classes.tableCell}>
-                                    <TextFieldItem id={`${sensor.specialTag}-derivedFromName`} type="text" value={sensor.derivedFromName} onChange={(value) => onChange(sensor.specialTag, "derivedFromName", value)}></TextFieldItem>
-                                </TableCell>
-                                <TableCell align="left" className={classes.tableCell}>
-                                    <TextFieldItem id={`${sensor.specialTag}-calType`} type="text" value={sensor.calType} onChange={(value) => onChange(sensor.specialTag, "calType", value)}></TextFieldItem>
-                                </TableCell>
-                                <TableCell align="left" className={classes.tableCell}>
-                                    <TextFieldItem id={`${sensor.specialTag}-subType`} type="text" value={sensor.subType} onChange={(value) => onChange(sensor.specialTag, "subType", value)}></TextFieldItem>
-                                </TableCell>
-                                <TableCell align="left" className={classes.tableCell}>
-                                    <TextFieldItem id={`${sensor.specialTag}-fromUnit`} type="text" value={sensor.fromUnit} onChange={(value) => onChange(sensor.specialTag, "fromUnit", value)}></TextFieldItem>
-                                </TableCell>
-                                <TableCell align="left" className={classes.tableCell}>
-                                    <TextFieldItem id={`${sensor.specialTag}-toUnit`} type="text" value={sensor.toUnit} onChange={(value) => onChange(sensor.specialTag, "toUnit", value)}></TextFieldItem>
-                                </TableCell>
-                                <TableCell align="left" className={classes.tableCell}>
-                                    <TextFieldItem id={`${sensor.specialTag}-factor`} type="text" value={sensor.factor} onChange={(value) => onChange(sensor.specialTag, "factor", value)}></TextFieldItem>
-                                </TableCell>
-                            </TableRow>
-                            )
-                        })}
-                        </TableBody>
-                        }
+                                            }
+                                        </TableCell>
+                                        <TableCell component="th" scope="row" className={classes.tableCell}>
+                                            <Tooltip title={sensor.specialTag} placement="top">
+                                                <Typography className={classes.whiteText}>
+                                                    {sensor.specialTag.length > 20 ? `${sensor.specialTag.substring(0,20)}...` : `${sensor.specialTag}`}
+                                                </Typography> 
+                                            </Tooltip>        
+                                        </TableCell>
+                                        <CustomTableCell id={`${sensor.specialTag}-specialName`} value={sensor.specialName} onChange={(value) => onChange(sensor.specialTag, "specialName", value)}></CustomTableCell>
+                                        <CustomTableCell id={`${sensor.specialTag}-derivedFromTag`} value={sensor.derivedFromTag} onChange={(value) => onChange(sensor.specialTag, "derivedFromTag", value)}></CustomTableCell>
+                                        <CustomTableCell id={`${sensor.specialTag}-derivedFromName`} value={sensor.derivedFromName} onChange={(value) => onChange(sensor.specialTag, "derivedFromName", value)}></CustomTableCell>
+                                        <CustomTableCell id={`${sensor.specialTag}-calType`} value={sensor.calType} onChange={(value) => onChange(sensor.specialTag, "calType", value)}></CustomTableCell>
+                                        <CustomTableCell id={`${sensor.specialTag}-subType`} value={sensor.subType} onChange={(value) => onChange(sensor.specialTag, "subType", value)}></CustomTableCell>
+                                        <CustomTableCell id={`${sensor.specialTag}-fromUnit`} value={sensor.fromUnit} onChange={(value) => onChange(sensor.specialTag, "fromUnit", value)}></CustomTableCell>
+                                        <CustomTableCell id={`${sensor.specialTag}-toUnit`} value={sensor.toUnit} onChange={(value) => onChange(sensor.specialTag, "toUnit", value)}></CustomTableCell>
+                                        <CustomTableCell id={`${sensor.specialTag}-factor`} value={sensor.factor} onChange={(value) => onChange(sensor.specialTag, "factor", value)}></CustomTableCell>
+                                    </TableRow>
+                                    )
+                                })}
+                            </TableBody>
+                        )}
                     </Table>
                     </TableContainer>
                     </Grid>
                 </Grid>
-  
             </DialogContent>
             <DialogActions className={classes.dialog}>
                 <Button className={classes.defaultButton}>
-                    {/* <Typography className={classes.contentTextBlack}>Download CSV</Typography>
-                    {download && */}
                     <CSVLink ref={csvLinkEl} data={sensors} headers={specialSensor ? SPECIAL_HEADERS : SENSOR_HEADERS} filename={specialSensor ? SPECIAL_FILE_NAME : SENSOR_FILE_NAME}>   
                     <Typography className={classes.contentTextBlack}>Download CSV</Typography>
                     </CSVLink>
-                    {/* } */}
                 </Button>
                 <Button className={classes.defaultButton} onClick={handleClose}>
                     <Typography className={classes.contentTextBlack}>Close</Typography>

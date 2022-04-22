@@ -40,11 +40,18 @@ export const style = makeStyles((theme) => ({
     },
     chip: {
         '&.MuiChip-root':{
-           borderColor: '#51b4ec' 
+           borderColor: '#51b4ec',
+           color: '#ffffff',
+           fontSize: FONT_SIZE_CONTENT,
+           height: 30,
+           borderRadius: 10
         },
         '&.MuiChip-outlined': {
             borderColor: '#51b4ec',
-            color: '#ffffff'
+            color: '#ffffff',
+            fontSize: FONT_SIZE_CONTENT,
+            height: 30,
+            borderRadius: 10
         }
     },
     blackBackground: {
@@ -240,13 +247,11 @@ export const style = makeStyles((theme) => ({
        }
     },
     tableHead: {
-        '&.MuiTableHead-root': {
-            fontSize: FONT_SIZE_HEAD,
+        '&.MuiTableCell-root': {
+            borderBottomColor: '#242f39',
             backgroundColor: '#242f39',
-            color: '#ffffff',
-            position: "sticky",
-            top: 0,
-            borderBottomColor: 'black'
+            fontSize: FONT_SIZE_BUTTON,
+            color: '#51b4ec',
         }
     },
     tableBody: {
