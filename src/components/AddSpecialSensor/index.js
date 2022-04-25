@@ -1,8 +1,8 @@
 import React from 'react';
 import Grid from '@mui/material/Grid'
 import { useCallback, useState }  from 'react';
-import { Table, TableContainer, TableHead, TableBody, TableRow, TableCell, Typography, Button, Select, MenuItem, IconButton, Tooltip, TextField } from '@mui/material';
-import ArrowDropDownCircleIcon from '@mui/icons-material/ArrowDropDownCircle';
+import { Table, TableContainer, TableHead, TableBody, TableRow, TableCell, Typography, Button, IconButton, Tooltip } from '@mui/material';
+// import ArrowDropDownCircleIcon from '@mui/icons-material/ArrowDropDownCircle';
 import CancelIcon from '@mui/icons-material/Cancel'
 import { style } from '../../styles/style';
 import SensorCustomize from '../SensorCustomize';

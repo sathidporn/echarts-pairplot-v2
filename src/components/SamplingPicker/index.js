@@ -1,8 +1,7 @@
 // import papa from 'papaparse'
 import React, { useCallback, useState } from 'react';
 import Grid from '@mui/material/Grid'
-import { Typography, Select, MenuItem} from '@mui/material';
-import ArrowDropDownCircleIcon from '@mui/icons-material/ArrowDropDownCircle';
+import { Typography } from '@mui/material';
 import SelectorItem from '../SelectorItem';
 import { style } from '../../styles/style';
 const useStyles = style

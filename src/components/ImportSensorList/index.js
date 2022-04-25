@@ -41,7 +41,7 @@ export default function ImportSensorList({ onReadSensorListFile=()=>{},  onReadS
         }else{
             onReadSensorListFile(content) 
         } 
-    }, [content, onReadSensorListFile,  onReadSpecialSensorListFile])
+    }, [content, specialFile, onReadSensorListFile,  onReadSpecialSensorListFile])
 
 
     return(

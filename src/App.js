@@ -21,7 +21,7 @@ import SensorPicker from './components/SensorPicker'
 import DatePicker from './components/DatePicker';
 import PlotTypePicker from './components/PlotTypePicker';
 import ImportData from './components/ImportData';
-import ImportSensorList from './components/ImportSensorList';
+// import ImportSensorList from './components/ImportSensorList';
 import AddSpecialSensor from './components/AddSpecialSensor';
 import SamplingPicker from './components/SamplingPicker';
 import DialogMessage from './components/DialogMessage';
@@ -106,7 +106,7 @@ function App() {
   // unique index by 1 hour sampling rate
   let [timestampsIndex, setTimestampsIndex] = useState()
   // raw data for kde plot
-  let [content, setContent] = useState([])
+  // let [content, setContent] = useState([])
 
   // sampling all sensor data
   let [samplingData, setSamplingData] = useState()
@@ -195,7 +195,7 @@ function App() {
     let sensors = {}
     if(raw !== undefined){
       setRaw(raw)
-      setContent(data)
+      // setContent(data)
       setTimestampsIndex(timestampsIndex)
       setSamplingTimestamp(timestamps)
       // Make sensor object
@@ -215,13 +215,13 @@ function App() {
       setMessage("Please try again to upload raw data.")
       console.error("onRawDataHandler => ", raw)
     }
-  }, [setRaw, setContent, setTimestampsIndex, setSamplingTimestamp, setSensors, setSeries, setOpen, setMessage])
+  }, [setRaw, setTimestampsIndex, setSamplingTimestamp, setSensors, setSeries, setOpen, setMessage])
 
   // Generate special sensor data when import special sensor file
   const onGenerateSpecialSensor = useCallback((specialSensors) => {
-    let sensors = sensors.filter(sensor=>sensor.status === "unavailable")
+    // let sensors = sensors.filter(sensor=>sensor.status === "unavailable")
     let updateFilteredSensors = filteredSensors
-    let updateSensors = sensors
+    let updateSensors = sensors.filter(sensor=>sensor.status === "unavailable")
     sensors.map((sensor) => {
       let filterSensor  = specialSensors.filter(s=>s.specialTag === sensor.tag)
       let derivedSensors = []
@@ -244,7 +244,7 @@ function App() {
     setFilteredSensors(updateFilteredSensors)
     setSensors(updateSensors)
     console.log("onGenerateSpecialSensor => ",updateFilteredSensors, updateSensors)
-  },[filteredSensors, setFilteredSensors, setSensors])
+  },[filteredSensors, sensors, setFilteredSensors, setSensors])
 
   // Make raw data to sampling data by type
   const onSamplingData = useCallback((type) => {

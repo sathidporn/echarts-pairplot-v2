@@ -1,20 +1,20 @@
 import * as React from 'react';
-import { useState, useEffect } from 'react';
+// import { useState, useEffect } from 'react';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
-import DialogTitle from '@mui/material/DialogTitle';
-import Slide from '@mui/material/Slide';
+// import DialogTitle from '@mui/material/DialogTitle';
+// import Slide from '@mui/material/Slide';
 import { style } from '../../styles/style';
 import { Typography } from '@mui/material';
 const useStyles = style
 
 
-const Transition = React.forwardRef(function Transition(props, ref) {
-  return <Slide direction="up" ref={ref} {...props} />;
-});
+// const Transition = React.forwardRef(function Transition(props, ref) {
+//   return <Slide direction="up" ref={ref} {...props} />;
+// });
 
 export default function DialogMessage({message, open, handleCloseDialog = () => {} }) {
   const classes = useStyles()
