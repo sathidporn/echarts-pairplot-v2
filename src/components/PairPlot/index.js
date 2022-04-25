@@ -1,10 +1,10 @@
 // import EChartsReact from "echarts-for-react"
 import { EchartsComponent } from "echarts-react-wrapper"
-import { useCallback, useEffect, useMemo, useRef, useState } from "react"
+import { useCallback, useEffect, useMemo,  useState } from "react"
 import { Grid } from "@mui/material"
 import { style } from "../../styles/style"
 import debounce from 'lodash.debounce'
-import { height } from "@mui/system"
+
 const useStyles = style
 const histogramBarCount = 40
 
@@ -161,7 +161,7 @@ export default function PairPlot({series, timestamps, clusters, dataClusterIndex
           },
           formatter: params => {
             // ${params.marker}
-            return `<p style={{align: "left"}}>[ X ] ${xName} : ${xFormatter(params.dataIndex)}</p>` +  `<p style={{align: "left"}}>[ Y ] ${yName} : ${series[yName][params.dataIndex].toFixed(2)}</p>`
+            return `<p style={{align: "left"}}>[ X ] ${xName} : ${xFormatter(params.dataIndex)}</p> <p style={{align: "left"}}>[ Y ] ${yName} : ${series[yName][params.dataIndex].toFixed(2)}</p>;`
           }
         },
       }
@@ -400,10 +400,10 @@ export default function PairPlot({series, timestamps, clusters, dataClusterIndex
   // }),[updateMousemove, updateBrushSelected, updateGlobalCursorTaken])
 
   const eventHandler = useMemo(() => ({
-    mouseMove: updateMousemove,
+    // mouseMove: updateMousemove,
     brushSelected: updateBrushSelected,
     globalCursorTaken:  updateGlobalCursorTaken
-  }), [updateMousemove, updateBrushSelected, updateGlobalCursorTaken])
+  }), [updateBrushSelected, updateGlobalCursorTaken])
 
 
   return (
