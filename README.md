@@ -11,8 +11,3 @@ See https://echarts.apache.org/en/option.html#brush for more details on which ty
 
 - For the future we will use https://github.com/Alpha-Com-Thailand/kde_plot to implement front-end to remove outlier data by chart.
 
-
-## Data flow
-
-![image](https://user-images.githubusercontent.com/77266865/165040585-817f0adb-64f6-468c-896f-7aadfd33ba03.png)
-
