@@ -1,6 +1,6 @@
 # Wizard Feature
 
-## Implement a feature for exploring data to build the model.
+## Implement a feature for exploring data to build models.
 
 - This feature used https://github.com/NattapongSiri/echarts-react-wrapper to implement echarts react component.
 The reason we use echarts-react-wrapper because replaceMerge in 'echarts-for-react' does not support this function.
