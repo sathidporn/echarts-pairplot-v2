@@ -333,23 +333,23 @@ export default function PairPlot({series, timestamps, clusters, dataClusterIndex
     setEcharts(instance)
   },[setEcharts])
  
-  let updateMousemove = useMemo(() => debounce((params) => {
-    console.log("updateMousemove")
-    if(params.encode !== undefined){
-      // echarts.setOption(option, 
-      //   {
-      //     notMerge: true,
-      //     // replaceMerge: []
-      //   }
-      // )
-      // if(params.dimensionNames[params.encode.x] !== xAxisActive){
-        setXAxisActive(params.dimensionNames[params.encode.x])
-      // }
-      // if(params.dimensionNames[params.encode.y] !== yAxisActive){
-        setYAxisActive(params.dimensionNames[params.encode.y])
-      // }
-    }
-  }, 100), [setYAxisActive, setXAxisActive]) 
+  // let updateMousemove = useMemo(() => debounce((params) => {
+  //   console.log("updateMousemove")
+  //   if(params.encode !== undefined){
+  //     // echarts.setOption(option, 
+  //     //   {
+  //     //     notMerge: true,
+  //     //     // replaceMerge: []
+  //     //   }
+  //     // )
+  //     // if(params.dimensionNames[params.encode.x] !== xAxisActive){
+  //       setXAxisActive(params.dimensionNames[params.encode.x])
+  //     // }
+  //     // if(params.dimensionNames[params.encode.y] !== yAxisActive){
+  //       setYAxisActive(params.dimensionNames[params.encode.y])
+  //     // }
+  //   }
+  // }, 100), [setYAxisActive, setXAxisActive]) 
 
   let updateBrushSelected = useMemo(() => debounce((params) => {
     console.log("updateBrushSelected")
