@@ -20,9 +20,7 @@ export default function ImportData({ onRawDataHandler=()=>{}}) {
     let [data, setData] = useState([])
     let [loading, setLoading] = useState(false)
 
-
     // read csv file
-
     const onReadFile = useCallback((target) => {
         if(target){
             // setFile(target.files[0])

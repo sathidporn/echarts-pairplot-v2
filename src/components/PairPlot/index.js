@@ -161,7 +161,7 @@ export default function PairPlot({series, timestamps, clusters, dataClusterIndex
           },
           formatter: params => {
             // ${params.marker}
-            return `<p style={{align: "left"}}>[ X ] ${xName} : ${xFormatter(params.dataIndex)}</p> <p style={{align: "left"}}>[ Y ] ${yName} : ${series[yName][params.dataIndex].toFixed(2)}</p>;`
+            return `<p style={{align: "left"}}>[ X ] ${xName} : ${xFormatter(params.dataIndex)}</p> <p style={{align: "left"}}>[ Y ] ${yName} : ${series[yName][params.dataIndex].toFixed(2)}</p>`
           }
         },
       }
