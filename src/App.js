@@ -564,7 +564,7 @@ function App() {
   // }, [checkedSensors, content])
 
 // end
-// console.log("sensors",sensors)
+
 
   return (
     <div className="App">
