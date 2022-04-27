@@ -1,7 +1,7 @@
 import React from 'react';
 import Grid from '@mui/material/Grid'
 import { useCallback, useState }  from 'react';
-import { Table, TableContainer, TableHead, TableBody, TableRow, TableCell, Typography, Button, IconButton, Tooltip } from '@mui/material';
+import { Dialog, DialogTitle, DialogContent, DialogActions, Table, TableContainer, TableHead, TableBody, TableRow, TableCell, Typography, Button, IconButton, Tooltip } from '@mui/material';
 // import ArrowDropDownCircleIcon from '@mui/icons-material/ArrowDropDownCircle';
 import CancelIcon from '@mui/icons-material/Cancel'
 import { style } from '../../styles/style';
@@ -40,18 +40,6 @@ export default function AddSpecialSensor({ sensors, specialSensors, onAddSpecial
         }
     }, [derivedSensors, calType, setCalType, setSpecialTag, setMaxSensors, setConstantState])
 
-    const onAddConstant = useCallback(() => {
-        setConstant(undefined)
-        setConstantState(true)
-        setMaxSensors(maximumSensorSelection({calType, constant: true}))
-    },[calType, setConstant, setConstantState, setMaxSensors])
-
-    const onRemoveConstant = useCallback(() => {
-        setConstant(undefined)
-        setConstantState(false)
-        setMaxSensors(maximumSensorSelection({calType, constant: false}))
-    },[calType, setConstant, setConstantState, setMaxSensors])
-
     const onAddSensor = useCallback((curSensor) => {
         // let maxSensors = ({calType, constant: constantState})
         let index = derivedSensors.findIndex(sensor => sensor.tag === curSensor.tag)
@@ -63,6 +51,18 @@ export default function AddSpecialSensor({ sensors, specialSensors, onAddSpecial
             setSpecialTag(name)
         }
     },[derivedSensors, maxSensors, calType, selected, setDerivedSensors, setSpecialTag, setSelected])
+
+    const onAddConstant = useCallback(() => {
+        setConstant(undefined)
+        setConstantState(true)
+        setMaxSensors(maximumSensorSelection({calType, constant: true}))
+    },[calType, setConstant, setConstantState, setMaxSensors])
+
+    const onRemoveConstant = useCallback(() => {
+        setConstant(undefined)
+        setConstantState(false)
+        setMaxSensors(maximumSensorSelection({calType, constant: false}))
+    },[calType, setConstant, setConstantState, setMaxSensors])
 
     const onRemoveSensor = useCallback((curSensor) => {
         let newSensorList = derivedSensors.filter(sensor=>sensor.tag !== curSensor.tag)
@@ -93,144 +93,172 @@ export default function AddSpecialSensor({ sensors, specialSensors, onAddSpecial
         }
     },[derivedSensors, calType, constant, specialTag, specialName, specialSensors, onCustomizeSensors, onAddSpecialSensor])
 
+    const [open, setOpen] = useState(false);
+    const fullWidth = true
+    const maxWidth = 'sm'
+    const handleClickOpen = () => {
+        setOpen(true);
+    };
+
+    const handleClose = () => {
+        setOpen(false);
+    };
+
     return(
         <>
-        <Grid item container xs={12} sm={12} md={12} lg={12} spacing={1}>
+
+        <Button variant="outlined" className={classes.defaultButton} fullWidth onClick={handleClickOpen}>
+            {/* <TableViewIcon className={classes.blackIcon}></TableViewIcon> */}
+            <Typography className={classes.contentTextBlack}>Add Special Sensor</Typography>
+        </Button>
+        <Dialog
+        fullWidth={fullWidth}
+        maxWidth={maxWidth}
+        open={open}
+        onClose={handleClose}
+        >
+            <DialogTitle className={classes.dialog}>Add special sensor</DialogTitle>
+            <DialogContent className={classes.dialog}>
             <Grid item container xs={12} sm={12} md={12} lg={12} spacing={1}>
-                <Grid item xs={3} sm={3} md={3} lg={3}>
-                    <Typography className={classes.blueText}>CALCULATION : </Typography>
+                <Grid item container xs={12} sm={12} md={12} lg={12} spacing={1}>
+                    <Grid item xs={3} sm={3} md={3} lg={3}>
+                        <Typography className={classes.blueText}>CALCULATION : </Typography>
+                    </Grid>
+                    <Grid item xs={9} sm={9} md={9} lg={9}>
+                        <SelectorItem id={'calType'} value={calType} items={calculationList} onChange={(value) => handleChangeCalType(value)}></SelectorItem>
+                    </Grid>
                 </Grid>
-                <Grid item xs={9} sm={9} md={9} lg={9}>
-                    <SelectorItem id={'calType'} value={calType} items={calculationList} onChange={(value) => handleChangeCalType(value)}></SelectorItem>
-                </Grid>
-            </Grid>
 
-            {/* {derivedSensors.length > 0 &&
-            <> */}
-
-            <Grid item xs={12} sm={12} md={12} lg={12}>
-                <TableContainer className={classes.tableContainer} >
-                    <Table size="small" stickyHeader aria-label="sticky table">
-                        <TableHead>
-                        <TableRow>
-                            <TableCell align="left" className={classes.tableCell}></TableCell>
-                            <TableCell className={classes.tableCell}>SENSOR_TAG</TableCell>
-                        </TableRow>
-                        </TableHead>
-                        <TableBody>
-                        {sensors.filter(sensor=> selected.indexOf(sensor.tag) === -1).map((sensor) => {
-                            return(
-                            <TableRow
-                                key={sensor.tag}
-                                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                            >
-                                <TableCell align="left"  className={classes.tableCell}>
-                                    <Button onClick={()=>onAddSensor({tag: sensor.tag, name: sensor.name})} className={classes.defaultButton}>
-                                        <Typography className={classes.contentTextBlack}>Select</Typography>
-                                    </Button>
-                                </TableCell>
-                                <TableCell component="th" scope="row" className={classes.tableCell}>
-                                    <Typography className={classes.formControlLabel}>{sensor.tag}</Typography>
-                                </TableCell>
+                <Grid item xs={12} sm={12} md={12} lg={12}>
+                    <TableContainer className={classes.tableContainer} >
+                        <Table size="small" stickyHeader aria-label="sticky table">
+                            <TableHead>
+                            <TableRow>
+                                <TableCell align="left" className={classes.tableCell}></TableCell>
+                                <TableCell className={classes.tableCell}>SENSOR_TAG</TableCell>
                             </TableRow>
-                            )
-                        })}
-                        </TableBody>
-                    </Table>
-                </TableContainer>
-            </Grid>
+                            </TableHead>
+                            <TableBody>
+                            {sensors.filter(sensor=> selected.indexOf(sensor.tag) === -1).map((sensor) => {
+                                return(
+                                <TableRow
+                                    key={sensor.tag}
+                                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                >
+                                    <TableCell align="left"  className={classes.tableCell}>
+                                        <Button onClick={()=>onAddSensor({tag: sensor.tag, name: sensor.name})} className={classes.defaultButton}>
+                                            <Typography className={classes.contentTextBlack}>Select</Typography>
+                                        </Button>
+                                    </TableCell>
+                                    <TableCell component="th" scope="row" className={classes.tableCell}>
+                                        <Typography className={classes.formControlLabel}>{sensor.tag}</Typography>
+                                    </TableCell>
+                                </TableRow>
+                                )
+                            })}
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
+                </Grid>
+                
+                <Grid item xs={12} sm={12} md={12} lg={12} align="right">
+                    <SensorCustomize sensors={specialSensors} specialSensor={true} onCustomizeSensors={onCustomizeSensors} onRemoveSpecialSensor={onRemoveSpecialSensor} onReadSpecialSensorListFile={onReadSpecialSensorListFile}></SensorCustomize>
+                </Grid>
+
+                <Grid item container xs={12} sm={12} md={12} lg={12} align="left">
+                    <Grid item xs={3} sm={3} md={3} lg={3}>
+                        <Typography className={classes.blueText}>SENSOR : </Typography>
+                    </Grid>
+                    <Grid item xs={9} sm={9} md={9} lg={9}>
+                    {derivedSensors.map((sensor) => {
+                        return(
+                        <Grid key={sensor.tag} item container xs={10} sm={10} md={10} lg={10} spacing={1} style={{paddingLeft: 10}}>
+                            <Grid item xs={12} sm={12} md={12} lg={12}>
+                                <Tooltip title={sensor.tag ? sensor.tag : "-"} placement="top">
+                                    <Typography className={classes.blueText}>
+                                        {sensor.tag.length > 40 ? `${sensor.tag.substring(0,40)}...` : `${sensor.tag}`}
+                                        {/* <Tooltip title="Remove" placement="right"> */}
+                                        <IconButton onClick={()=>onRemoveSensor(sensor)} >
+                                            <CancelIcon style={{fontSize:'1rem', color:"#f04461", borderRadius:5}}></CancelIcon>
+                                        </IconButton>
+                                        {/* </Tooltip> */}
+                                    </Typography>
+                                </Tooltip>
+                            </Grid>
+                        </Grid>  
+                        )
+                    })}
+                    </Grid>
+                </Grid>
+
+                <Grid item container xs={12} sm={12} md={12} lg={12} align="left" >
+                    {constantState === false &&
+                    <>
+                    <Grid item xs={3} sm={3} md={3} lg={3}>
+                    </Grid>
+                    <Grid item xs={9} sm={9} md={9} lg={9} alignContent="right" alignItems="right" alignSelf="right">
+                        <Button className={classes.defaultButton} onClick={()=>onAddConstant()}>
+                            {/* <AddCircleOutlineIcon className={classes.blackIcon}></AddCircleOutlineIcon> */}
+                            <Typography className={classes.contentTextBlack}> Add Constant</Typography>
+                        </Button>
+                    </Grid>
+                    </>
+                    }
+                    {constantState === true &&
+                    <>
+                    <Grid item xs={3} sm={3} md={3} lg={3}>
+                        <Typography className={classes.blueText}>CONSTANT : </Typography>
+                    </Grid>
+                    <Grid item xs={6} sm={6} md={6} lg={6}>
+                        <TextFieldItem id={`constant`} type="number" value={constant} onChange={(value) => setConstant(value)} defaultValue={false}></TextFieldItem>
+                    </Grid>
+                    <Grid item xs={3} sm={3} md={3} lg={3}>
+                        <IconButton onClick={()=>onRemoveConstant()}>
+                            <CancelIcon style={{fontSize:'1rem', color:"#f04461", borderRadius:5}}></CancelIcon>
+                        </IconButton>
+                    </Grid>
+                    </>
+                    }
+                </Grid>
             
-            <Grid item xs={12} sm={12} md={12} lg={12} align="right">
-                <SensorCustomize sensors={specialSensors} specialSensor={true} onCustomizeSensors={onCustomizeSensors} onRemoveSpecialSensor={onRemoveSpecialSensor} onReadSpecialSensorListFile={onReadSpecialSensorListFile}></SensorCustomize>
-            </Grid>
+                <Grid item container xs={12} sm={12} md={12} lg={12} align="left">
+                    <Grid item xs={3} sm={3} md={3} lg={3}>
+                        <Typography className={classes.blueText}>TAG : </Typography>
+                    </Grid>
+                    <Grid item xs={9} sm={9} md={9} lg={9}>
+                        {/* <Tooltip title={specialTag ? specialTag : "-"} placement="top"> */}
+                            <TextFieldItem id={`specialTag`} type="text" value={specialTag} onChange={(value) => setSpecialTag(value)} defaultValue={false}></TextFieldItem>
+                        {/* </Tooltip> */}
+                    </Grid>
+                </Grid>
 
-            <Grid item container xs={12} sm={12} md={12} lg={12} align="left">
-                <Grid item xs={3} sm={3} md={3} lg={3}>
-                    <Typography className={classes.blueText}>SENSOR : </Typography>
+                <Grid item container xs={12} sm={12} md={12} lg={12} align="left">
+                    <Grid item xs={3} sm={3} md={3} lg={3}>
+                        <Typography className={classes.blueText}>NAME : </Typography>
+                    </Grid>
+                    <Grid item xs={9} sm={9} md={9} lg={9}>
+                        {/* <Tooltip title={specialTag ? specialTag : "-"} placement="top"> */}
+                            <TextFieldItem id={`specialName`} type="text"  value={specialName} onChange={(value) => setSpecialName(value)}></TextFieldItem>
+                        {/* </Tooltip> */}
+                    </Grid>
                 </Grid>
-                <Grid item xs={9} sm={9} md={9} lg={9} className={classes.sensorBox}>
-                {derivedSensors.map((sensor) => {
-                    return(
-                    <Grid key={sensor.tag} item container xs={10} sm={10} md={10} lg={10} spacing={1} style={{paddingLeft: 10}}>
-                        <Grid item xs={12} sm={12} md={12} lg={12}>
-                            <Tooltip title={sensor.tag ? sensor.tag : "-"} placement="top">
-                                <Typography className={classes.blueText}>
-                                    {sensor.tag.length > 40 ? `${sensor.tag.substring(0,40)}...` : `${sensor.tag}`}
-                                    {/* <Tooltip title="Remove" placement="right"> */}
-                                    <IconButton onClick={()=>onRemoveSensor(sensor)} >
-                                        <CancelIcon style={{fontSize:'1rem', color:"#f04461", borderRadius:5}}></CancelIcon>
-                                    </IconButton>
-                                    {/* </Tooltip> */}
-                                </Typography>
-                            </Tooltip>
-                        </Grid>
-                    </Grid>  
-                    )
-                })}
-                </Grid>
-            </Grid>
-
-            <Grid item container xs={12} sm={12} md={12} lg={12} align="left" >
-                {constantState === false &&
-                <>
-                <Grid item xs={3} sm={3} md={3} lg={3}>
-                </Grid>
-                <Grid item xs={9} sm={9} md={9} lg={9} alignContent="right" alignItems="right" alignSelf="right">
-                    <Button className={classes.defaultButton} onClick={()=>onAddConstant()}>
-                        {/* <AddCircleOutlineIcon className={classes.blackIcon}></AddCircleOutlineIcon> */}
-                        <Typography className={classes.contentTextBlack}> Add Constant</Typography>
+                
+                <Grid item xs={12} sm={12} md={12} lg={12} align="right">
+                    <Button onClick={()=>onGenerateSensor()} className={classes.confirmButton}>
+                        {/* <AddCircleOutlineIcon className={classes.whiteIcon}></AddCircleOutlineIcon> */}
+                        <Typography className={classes.contentTextWhite}>Add Special Sensor</Typography>
                     </Button>
                 </Grid>
-                </>
-                }
-                {constantState === true &&
-                <>
-                <Grid item xs={3} sm={3} md={3} lg={3}>
-                    <Typography className={classes.blueText}>CONSTANT : </Typography>
-                </Grid>
-                <Grid item xs={6} sm={6} md={6} lg={6}>
-                    <TextFieldItem id={`constant`} type="number" value={constant} onChange={(value) => setConstant(value)} defaultValue={false}></TextFieldItem>
-                </Grid>
-                <Grid item xs={3} sm={3} md={3} lg={3}>
-                    <IconButton onClick={()=>onRemoveConstant()}>
-                        <CancelIcon style={{fontSize:'1rem', color:"#f04461", borderRadius:5}}></CancelIcon>
-                    </IconButton>
-                </Grid>
-                </>
-                }
+                {/* </>
+                }  */}
             </Grid>
-           
-            <Grid item container xs={12} sm={12} md={12} lg={12} align="left">
-                <Grid item xs={3} sm={3} md={3} lg={3}>
-                    <Typography className={classes.blueText}>TAG : </Typography>
-                </Grid>
-                <Grid item xs={9} sm={9} md={9} lg={9}>
-                    {/* <Tooltip title={specialTag ? specialTag : "-"} placement="top"> */}
-                        <TextFieldItem id={`specialTag`} type="text" value={specialTag} onChange={(value) => setSpecialTag(value)} defaultValue={false}></TextFieldItem>
-                    {/* </Tooltip> */}
-                </Grid>
-            </Grid>
-
-            <Grid item container xs={12} sm={12} md={12} lg={12} align="left">
-                <Grid item xs={3} sm={3} md={3} lg={3}>
-                    <Typography className={classes.blueText}>NAME : </Typography>
-                </Grid>
-                <Grid item xs={9} sm={9} md={9} lg={9}>
-                    {/* <Tooltip title={specialTag ? specialTag : "-"} placement="top"> */}
-                        <TextFieldItem id={`specialName`} type="text"  value={specialName} onChange={(value) => setSpecialName(value)}></TextFieldItem>
-                    {/* </Tooltip> */}
-                </Grid>
-            </Grid>
-            
-            <Grid item xs={12} sm={12} md={12} lg={12} align="right">
-                <Button onClick={()=>onGenerateSensor()} className={classes.confirmButton}>
-                    {/* <AddCircleOutlineIcon className={classes.whiteIcon}></AddCircleOutlineIcon> */}
-                    <Typography className={classes.contentTextWhite}>Add Special Sensor</Typography>
+            </DialogContent>
+            <DialogActions className={classes.dialog}>
+                <Button className={classes.defaultButton} onClick={handleClose}>
+                    <Typography className={classes.contentTextBlack}>Close</Typography>
                 </Button>
-            </Grid>
-            {/* </>
-            }  */}
-        </Grid>
+            </DialogActions>
+        </Dialog>
         </>
     )
 

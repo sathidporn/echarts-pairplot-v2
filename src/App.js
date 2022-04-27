@@ -648,15 +648,8 @@ function App() {
                           </Grid>
                         </Grid>
                       </Grid>
-                      <Grid item xs={12} sm={12} md={12} lg={12} style={{paddingTop: 10}} >
-                      <Accordion square={false} className={classes.accordion}>
-                        <AccordionSummary className={classes.accordionSummary} expandIcon={<AddCircleIcon className={classes.accordionIcon} />}>
-                          Add special sensor
-                        </AccordionSummary>
-                        <AccordionDetails className={classes.accordionDetail}>
-                          <AddSpecialSensor sensors={sensors.filter(sensor=>sensor.status !== "unavailable")} specialSensors={specialSensors} onAddSpecialSensor={onAddSpecialSensor} onGenerateSpecialSensor={onGenerateSpecialSensor} onCustomizeSensors={onUpdateSpecialSensors} onRemoveSpecialSensor={onRemoveSpecialSensor} onReadSpecialSensorListFile={onReadSpecialSensorListFile}></AddSpecialSensor>
-                        </AccordionDetails>
-                      </Accordion>
+                      <Grid item xs={12} sm={12} md={12} lg={12}>
+                        <AddSpecialSensor sensors={sensors.filter(sensor=>sensor.status !== "unavailable")} specialSensors={specialSensors} onAddSpecialSensor={onAddSpecialSensor} onGenerateSpecialSensor={onGenerateSpecialSensor} onCustomizeSensors={onUpdateSpecialSensors} onRemoveSpecialSensor={onRemoveSpecialSensor} onReadSpecialSensorListFile={onReadSpecialSensorListFile}></AddSpecialSensor>
                       </Grid>
                     </Grid>
                     </>

@@ -64,7 +64,8 @@ export const style = makeStyles((theme) => ({
         color: '#ffffff'
     },
     sensorBox: {
-        backgroundColor: '#242f39',
+        background: '#454c54',
+        backgroundColor: '#454c54',
         borderRadius: 10,
         overflowY: 'auto',
         minHeight: '3vh',
@@ -189,7 +190,7 @@ export const style = makeStyles((theme) => ({
             height: 25,
             minWidth: '6vw',
             '&:hover': {
-                backgroundColor: '',
+                backgroundColor: '#51b4ec',
                 color: '#ffffff',
             },
         }
@@ -240,7 +241,7 @@ export const style = makeStyles((theme) => ({
        '&.MuiTableContainer-root': {
             overflowY: 'auto', 
             overflowX: 'auto', 
-            maxHeight: '30vh',
+            maxHeight: '50vh',
             minWidth: '20vw',
             // backgroundColor: '#242f39',
             borderRadius: 10,
@@ -296,36 +297,54 @@ export const style = makeStyles((theme) => ({
         '&.MuiTypography-root': {
             color: '#ffffff',
             fontSize: FONT_SIZE_CONTENT,
+            '&:hover': {
+                color: '#ffffff',
+            },
         }
     },
     blueText: {
         '&.MuiTypography-root': {
             color: '#51b4ec',
             fontSize: FONT_SIZE_CONTENT,
+            '&:hover': {
+                color: '#ffffff',
+            },
         }
     },
     headerTextWhite: {
         '&.MuiTypography-root': {
             color: '#ffffff',
             fontSize: FONT_SIZE_HEAD,
+            '&:hover': {
+                color: '#ffffff',
+            },
         }
     },
     headerTextBlue: {
         '&.MuiTypography-root': {
             color: '#51b4ec',
             fontSize: FONT_SIZE_HEAD,
+            '&:hover': {
+                color: '#ffffff',
+            },
         }
     },
     contentTextWhite: {
         '&.MuiTypography-root': {
             color: '#ffffff',
             fontSize: FONT_SIZE_CONTENT,
+            '&:hover': {
+                color: '#ffffff',
+            },
         }
     },
     contentTextBlack: {
         '&.MuiTypography-root': {
             color: '#000a14',
             fontSize: FONT_SIZE_CONTENT,
+            '&:hover': {
+                color: '#ffffff',
+            },
         }
     },
     textField: {
