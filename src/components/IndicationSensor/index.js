@@ -153,9 +153,9 @@ export default function IndicationSensor({ sensors, filteredTimestamps, series, 
                 <Grid item container xs={12} sm={12} md={12} lg={12} justifyContent="flex-end">
                     <Grid item xs={12} sm={12} md={12} lg={4}>
                         <Button onClick={onAddIndicationSensor} className={classes.confirmButton}>
-                            {indexCluster ? 
+                            {/* {indexCluster ? 
                             (<BrushIcon className={classes.whiteIcon}></BrushIcon>):(<FilterAltIcon className={classes.whiteIcon}></FilterAltIcon>)
-                            }
+                            } */}
                             <Typography className={classes.contentTextWhite}>{indexCluster ? `Brush` : `Filter Data`}</Typography>
                         </Button>
                     </Grid>

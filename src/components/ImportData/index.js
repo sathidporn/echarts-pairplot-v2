@@ -127,7 +127,7 @@ export default function ImportData({ onRawDataHandler=()=>{}}) {
             </Grid>
             <Grid item xs={12} sm={4} md={4} lg={4} algin="left">
                 <Button onClick={uploadFile} className={classes.confirmButton}>
-                    <FileDownloadIcon className={classes.whiteIcon}></FileDownloadIcon>
+                    {/* <FileDownloadIcon className={classes.whiteIcon}></FileDownloadIcon> */}
                     <Typography className={classes.contentTextWhite}>Upload</Typography>
                 </Button>
             </Grid>

@@ -177,7 +177,7 @@ export default function ClustersTable({clusters, activeClusterIndex, dataCluster
             <Grid item container xs={12} sm={12} md={12} lg={12} spacing={1}>
               <Grid item xs={12} sm={12} md={12} lg={12}>
                 <Button className={classes.defaultButton} onClick={addClusterHandler}>
-                  <AddCircleOutlineIcon className={classes.whiteIcon}></AddCircleOutlineIcon>
+                  {/* <AddCircleOutlineIcon className={classes.whiteIcon}></AddCircleOutlineIcon> */}
                   <Typography className={classes.contentTextWhite}>Add cluster</Typography>
                 </Button>
               </Grid>

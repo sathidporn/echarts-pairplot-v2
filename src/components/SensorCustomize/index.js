@@ -120,7 +120,7 @@ export default function SensorCustomize({sensors, specialSensor=false, onRemoveS
     return(
         <>
         <Button variant="outlined" className={classes.defaultButton} onClick={handleClickOpen}>
-            <TableViewIcon className={classes.blackIcon}></TableViewIcon>
+            {/* <TableViewIcon className={classes.blackIcon}></TableViewIcon> */}
             <Typography className={classes.contentTextBlack}>View file</Typography>
         </Button>
         <Dialog
@@ -141,7 +141,7 @@ export default function SensorCustomize({sensors, specialSensor=false, onRemoveS
                     )}
                     </Grid>
                     <Grid item xs={12} sm={12} md={12} lg={12} align="right">
-                        <Button className={classes.defaultButton} onClick={handleEdit}>Edit File</Button>
+                        <Button className={classes.defaultButton} onClick={handleEdit}><Typography className={classes.contentTextWhite}>Edit File</Typography></Button>
                     </Grid>
                     <Grid item xs={12} sm={12} md={12} lg={12}>
                     <TableContainer className={classes.tableContainer} >

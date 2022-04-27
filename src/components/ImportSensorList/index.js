@@ -80,7 +80,7 @@ export default function ImportSensorList({ onReadSensorListFile=()=>{},  onReadS
             </Grid>
             <Grid item xs={12} sm={4} md={4} lg={4} algin="left">
                 <Button onClick={onSyncFile} className={classes.confirmButton}>
-                    <FileDownloadIcon className={classes.whiteIcon}></FileDownloadIcon>
+                    {/* <FileDownloadIcon className={classes.whiteIcon}></FileDownloadIcon> */}
                     <Typography className={classes.contentTextWhite}>Import</Typography>
                 </Button>
             </Grid>

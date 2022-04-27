@@ -568,7 +568,6 @@ function App() {
 
   return (
     <div className="App">
-      Deploy Test
     <Grid item container xs={12} sm={12} md={12} lg={12} spacing={1}>
       <Grid item container xs={3} sm={3} md={3} lg={3} className={classes.toolbox} direction="row" justifyContent="flex-end">
       {/* <div className={classes.toolbox}> */}

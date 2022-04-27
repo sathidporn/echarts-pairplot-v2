@@ -98,7 +98,7 @@ export default function DatePicker({ startSeries, endSeries, onPickedDate=()=>{}
             </Grid>
             <Grid item xs={4} sm={4} md={4} lg={4} align="right">
                 <Button onClick={()=>onPickedDate(startDate, endDate)} className={classes.confirmButton}>
-                    <FilterAltIcon className={classes.whiteIcon}></FilterAltIcon>
+                    {/* <FilterAltIcon className={classes.whiteIcon}></FilterAltIcon> */}
                     <Typography className={classes.contentTextWhite}>Filter Data</Typography>
                 </Button>
             </Grid>

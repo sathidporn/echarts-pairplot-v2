@@ -224,7 +224,7 @@ export default function AddSpecialSensor({ sensors, specialSensors, onAddSpecial
             
             <Grid item xs={12} sm={12} md={12} lg={12} align="right">
                 <Button onClick={()=>onGenerateSensor()} className={classes.confirmButton}>
-                    <AddCircleOutlineIcon className={classes.whiteIcon}></AddCircleOutlineIcon>
+                    {/* <AddCircleOutlineIcon className={classes.whiteIcon}></AddCircleOutlineIcon> */}
                     <Typography className={classes.contentTextWhite}>Add Special Sensor</Typography>
                 </Button>
             </Grid>

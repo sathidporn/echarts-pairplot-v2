@@ -29,7 +29,7 @@ export default function SamplingPicker({ onSamplingData = () => {}}) {
             <SelectorItem id={'sampling'} value={samplingType} items={samplingList} onChange={(value) => setSamplingType(value)}></SelectorItem>
         </Grid>
         <Grid item  xs={4} sm={4} md={4} lg={4} align="left">
-            <Button className={classes.defaultButton} onClick={()=>onSamplingData(samplingType)}>Submit</Button>
+            <Button className={classes.confirmButton} onClick={()=>onSamplingData(samplingType)}><Typography className={classes.contentTextWhite}>Submit</Typography></Button>
         </Grid>
       </Grid>
   );
