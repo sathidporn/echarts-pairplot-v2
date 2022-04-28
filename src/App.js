@@ -311,15 +311,17 @@ function App() {
   // Filter data by indicator sensor
   const onFilterByIndicator = useCallback((tag, operator, value1, value2) => {
     // Update filteredSensors, filteredTimestamps
-    if(tag && operator && value1 && value2){
+    if(tag && operator){
       let updateTimestamps
       let updateSensors
       if(filteredSensors){
         updateTimestamps = cleansingTimestamps({tag, operator, value1, value2, values: filteredSensors, timestamps: filteredTimestamps})
         updateSensors = cleansingSensors({tag, operator, value1, value2, sensors, values: filteredSensors,  timestamps: filteredTimestamps})
+        console.log("onFilterByIndicator/false => ",updateTimestamps,updateSensors)
       }else{
         updateTimestamps = cleansingTimestamps({tag, operator, value1, value2, values: samplingData, timestamps: samplingTimestamp})
         updateSensors = cleansingSensors({tag, operator, value1, value2, sensors, values: samplingData, timestamps: samplingTimestamp})
+        console.log("onFilterByIndicator/false => ",samplingData, samplingTimestamp, updateTimestamps,updateSensors)
       }
 
       if(Object.keys(updateSensors).length > 0){
@@ -349,8 +351,8 @@ function App() {
         } 
       }else{
         setOpen(true)
-        setMessage("Failed to update data.") 
-        console.error("onFilterByIndicator => ",updateSensors)
+        setMessage("No data in this condition.") 
+        console.log("onFilterByIndicator => ",updateSensors)
       }
     }else{
       setOpen(true)
