@@ -169,13 +169,13 @@ export default function AddSpecialSensor({ sensors, specialSensors, onAddSpecial
                     <Grid item xs={3} sm={3} md={3} lg={3}>
                         <Typography className={classes.blueText}>SENSOR : </Typography>
                     </Grid>
-                    <Grid item xs={9} sm={9} md={9} lg={9}>
+                    <Grid item xs={9} sm={9} md={9} lg={9} style={{backgroundColor: '#454c54', borderRadius: 15, minHeight: '5vh'}}>
                     {derivedSensors.map((sensor) => {
                         return(
                         <Grid key={sensor.tag} item container xs={10} sm={10} md={10} lg={10} spacing={1} style={{paddingLeft: 10}}>
                             <Grid item xs={12} sm={12} md={12} lg={12}>
                                 <Tooltip title={sensor.tag ? sensor.tag : "-"} placement="top">
-                                    <Typography className={classes.blueText}>
+                                    <Typography className={classes.whiteText}>
                                         {sensor.tag.length > 40 ? `${sensor.tag.substring(0,40)}...` : `${sensor.tag}`}
                                         {/* <Tooltip title="Remove" placement="right"> */}
                                         <IconButton onClick={()=>onRemoveSensor(sensor)} >
