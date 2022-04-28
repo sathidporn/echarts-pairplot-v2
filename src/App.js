@@ -437,9 +437,9 @@ function App() {
         setOpen(true)
         setMessage("Data has been filtered successfully.")
       }else{
-        console.error("onPickedDate / update series => ", updateSeries)
+        console.log("onPickedDate / update series => ", updateSeries)
         setOpen(true)
-        setMessage("Failed to filter data.")
+        setMessage("No data in this condition.")
       }
     }
   }, [checkedSensors, series, filteredTimestamps, samplingTimestamp, setSeries, setStartDate, setEndDate, updateDataClusterIndex])
