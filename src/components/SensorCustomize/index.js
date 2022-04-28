@@ -104,7 +104,7 @@ export default function SensorCustomize({sensors, specialSensor=false, onRemoveS
 
     const CustomTableCell = ({id, value, onChange}) => {
         return(
-            <TableCell align="left" className={classes.tableCell}>
+            <TableCell key={id} align="left" className={classes.tableCell}>
                 <Tooltip title={value} placement="top">
                 {edit ? (
                     <TextFieldItem id={id} type="text" value={value} onChange={(value) => onChange(value)}></TextFieldItem>
@@ -149,19 +149,19 @@ export default function SensorCustomize({sensors, specialSensor=false, onRemoveS
                         <TableHead>
                         {specialSensor === false ? (
                             <TableRow key={"sensor"}>
-                                 <TableCell align="left" className={classes.tableHead}></TableCell>  
+                                 <TableCell key={"label"} align="left" className={classes.tableHead}></TableCell>  
                                 {SENSOR_HEADERS.map((sensor) => {
                                     return(
-                                        <TableCell align="left" className={classes.tableHead}>{sensor.label}</TableCell>  
+                                        <TableCell key={sensor.label} align="left" className={classes.tableHead}>{sensor.label}</TableCell>  
                                     ) 
                                 })}
                             </TableRow>
                         ):(
                             <TableRow key={"special-sensor"}>
-                                <TableCell align="left" className={classes.tableHead}></TableCell>  
+                                <TableCell key={"label"} align="left" className={classes.tableHead}></TableCell>  
                                 {SPECIAL_HEADERS.map((sensor) => {
                                     return(
-                                        <TableCell align="left" className={classes.tableHead}>{sensor.label}</TableCell>  
+                                        <TableCell key={sensor.label} align="left" className={classes.tableHead}>{sensor.label}</TableCell>  
                                     ) 
                                 })}
                             </TableRow>
@@ -177,7 +177,7 @@ export default function SensorCustomize({sensors, specialSensor=false, onRemoveS
                                     key={sensor?.tag}
                                     sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                                     >
-                                        <TableCell component="th" scope="row" className={classes.tableCell}>
+                                        <TableCell key={`${sensor.tag}-label`} component="th" scope="row" className={classes.tableCell}>
                                             <Chip label={sensor.status === "new" ? "new" : "origin"} variant="outlined" className={classes.chip} />
                                             {sensor.status === "new" &&
                                             <IconButton  onClick={()=>onRemoveSpecialSensor(sensor.tag)}>
@@ -185,7 +185,7 @@ export default function SensorCustomize({sensors, specialSensor=false, onRemoveS
                                             </IconButton>
                                             }
                                         </TableCell>
-                                        <TableCell component="th" scope="row" className={classes.tableCell}>
+                                        <TableCell key={`${sensor.tag}-tag`} component="th" scope="row" className={classes.tableCell}>
                                             <Tooltip title={sensor.tag} placement="top">
                                                 <Typography className={classes.whiteText}>
                                                     {sensor.tag.length > 20 ? `${sensor.tag.substring(0,20)}...` : `${sensor.tag}`}   
@@ -210,7 +210,7 @@ export default function SensorCustomize({sensors, specialSensor=false, onRemoveS
                                     key={`${sensor?.specialTag}-${i}`}
                                     sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                                     >
-                                        <TableCell component="th" scope="row" className={classes.tableCell}>
+                                        <TableCell key={`${sensor.tag}-label`} component="th" scope="row" className={classes.tableCell}>
                                             <Chip label={sensor.status === "new" ? "new" : "origin"} variant="outlined" className={classes.chip} />
                                             {sensor.status === "new" &&
                                             <IconButton  onClick={()=>onRemoveSpecialSensor(sensor.specialTag)}>
@@ -218,7 +218,7 @@ export default function SensorCustomize({sensors, specialSensor=false, onRemoveS
                                             </IconButton>
                                             }
                                         </TableCell>
-                                        <TableCell component="th" scope="row" className={classes.tableCell}>
+                                        <TableCell key={`${sensor.tag}-tag`} component="th" scope="row" className={classes.tableCell}>
                                             <Tooltip title={sensor.specialTag} placement="top">
                                                 <Typography className={classes.whiteText}>
                                                     {sensor.specialTag.length > 20 ? `${sensor.specialTag.substring(0,20)}...` : `${sensor.specialTag}`}
