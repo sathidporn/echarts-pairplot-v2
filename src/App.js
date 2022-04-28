@@ -317,11 +317,9 @@ function App() {
       if(filteredSensors){
         updateTimestamps = cleansingTimestamps({tag, operator, value1, value2, values: filteredSensors, timestamps: filteredTimestamps})
         updateSensors = cleansingSensors({tag, operator, value1, value2, sensors, values: filteredSensors,  timestamps: filteredTimestamps})
-        console.log("onFilterByIndicator/false => ",updateTimestamps,updateSensors)
       }else{
         updateTimestamps = cleansingTimestamps({tag, operator, value1, value2, values: samplingData, timestamps: samplingTimestamp})
         updateSensors = cleansingSensors({tag, operator, value1, value2, sensors, values: samplingData, timestamps: samplingTimestamp})
-        console.log("onFilterByIndicator/false => ",samplingData, samplingTimestamp, updateTimestamps,updateSensors)
       }
 
       if(Object.keys(updateSensors).length > 0){
@@ -362,7 +360,7 @@ function App() {
 
   // Add sensor to plot
   const onPickedSensors = useCallback((tag, checkedSensors, newSensorsObj ) => {
-    console.log("checked",checkedSensors)
+    // console.log("checked",checkedSensors)
     // Add new sensor series 
     let addNewSeries = {}
     if(tag){
