@@ -4,10 +4,10 @@ export function cleansingSensors({tag, operator, value1, value2, sensors, values
         sensors.map((sensor) => {
             let filteredValues = []
             for (let i = 0; i < timestamps.length; i++) {
-            if (values[tag][i] >= value1 && values[tag][i] <= value2) {
-                filteredValues.push(values[sensor.tag][i])
-                filteredSeries[sensor.tag] = filteredValues
-            }
+                if (values[tag][i] >= value1 && values[tag][i] <= value2) {
+                    filteredValues.push(values[sensor.tag][i])
+                    filteredSeries[sensor.tag] = filteredValues
+                }
             }
             return filteredValues
         })
@@ -15,10 +15,10 @@ export function cleansingSensors({tag, operator, value1, value2, sensors, values
         sensors.map((sensor) => {
             let filteredValues = []
             for (let i = 0; i < timestamps.length; i++) {
-            if (values[tag][i] === value1) {
-                filteredValues.push(values[sensor.tag][i])
-                filteredSeries[sensor.tag] = filteredValues
-            }
+                if (values[tag][i] === value1) {
+                    filteredValues.push(values[sensor.tag][i])
+                    filteredSeries[sensor.tag] = filteredValues
+                }
             }
             return filteredValues
         })
@@ -26,45 +26,45 @@ export function cleansingSensors({tag, operator, value1, value2, sensors, values
         sensors.map((sensor) => {
             let filteredValues = []
             for (let i = 0; i < timestamps.length; i++) {
-            if (values[tag][i] > value1) {
-                filteredValues.push(values[sensor.tag][i])
-                filteredSeries[sensor.tag] = filteredValues
-            }
+                if (values[tag][i] > value1) {
+                    filteredValues.push(values[sensor.tag][i])
+                    filteredSeries[sensor.tag] = filteredValues
+                }
             }
             return filteredValues
         })
     }else if(operator === "moreThanEqual"){
         sensors.map((sensor) => {
-        let filteredValues = []
-        for (let i = 0; i < timestamps.length; i++) {
-            if (values[tag][i] >= value1){
-                filteredValues.push(values[sensor.tag][i])
-                filteredSeries[sensor.tag] = filteredValues
+            let filteredValues = []
+            for (let i = 0; i < timestamps.length; i++) {
+                if (values[tag][i] >= value1){
+                    filteredValues.push(values[sensor.tag][i])
+                    filteredSeries[sensor.tag] = filteredValues
+                }
             }
-        }
-        return filteredValues
+            return filteredValues
         })
     }else if(operator === "lessThan"){
         sensors.map((sensor) => {
-        let filteredValues = []
-        for (let i = 0; i < timestamps.length; i++) {
-            if (values[tag][i] < value1) {
-                filteredValues.push(values[sensor.tag][i])
-                filteredSeries[sensor.tag] = filteredValues
+            let filteredValues = []
+            for (let i = 0; i < timestamps.length; i++) {
+                if (values[tag][i] < value1) {
+                    filteredValues.push(values[sensor.tag][i])
+                    filteredSeries[sensor.tag] = filteredValues
+                }
             }
-        }
-        return filteredValues
+            return filteredValues
         })
     }else if(operator === "lessThanEqual"){
         sensors.map((sensor) => {
-        let filteredValues = []
-        for (let i = 0; i < timestamps.length; i++) {
-            if (values[tag][i] <= value1){
-                filteredValues.push(values[sensor.tag][i])
-                filteredSeries[sensor.tag] = filteredValues
+            let filteredValues = []
+            for (let i = 0; i < timestamps.length; i++) {
+                if (values[tag][i] <= value1){
+                    filteredValues.push(values[sensor.tag][i])
+                    filteredSeries[sensor.tag] = filteredValues
+                }
             }
-        }
-        return filteredValues
+            return filteredValues
         })  
     }
     return filteredSeries
