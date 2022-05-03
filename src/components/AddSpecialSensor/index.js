@@ -11,91 +11,77 @@ import { generateSensorTag, maximumSensorSelection } from '../../utils/calculate
 import TextFieldItem from '../TextFieldItem';
 import SelectorItem from '../SelectorItem';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import { max } from 'date-fns';
 
 const useStyles = style
 
-const calculationList = [{value:"select", name: "Select calculation"}, {value:"ADD", name: "Add"}, {value:"ABSDIFF", name: "Absolute Diff"}, {value:"MUL", name: "Multiply"}, {value:"DIV", name: "Divide"}, {value:"AVG", name: "Average"}]     
+const calculationList = [{value:"select", name: "Select calculation", symbol: ""}, {value:"ADD", name: "Add", symbol: "+"}, {value:"ABSDIFF", name: "Absolute Diff", symbol: "-"}, {value:"MUL", name: "Multiply", symbol: "*"}, {value:"DIV", name: "Divide", symbol: "/"}, {value:"AVG", name: "Average", symbol: "+"}]     
 
 export default function AddSpecialSensor({ sensors, specialSensors, onAddSpecialSensor=()=>{}, onCustomizeSensors=()=>{},  onRemoveSpecialSensor = () => {}, onReadSpecialSensorListFile = () => {}}){
     const classes = useStyles()
     
-    let [derivedSensors, setDerivedSensors] = useState([])
     let [selected, setSelected] = useState([])
-    let [calType, setCalType] = useState("select")
     let [constantState, setConstantState] = useState(false)
-    let [constant, setConstant] = useState()
-    let [specialTag, setSpecialTag] = useState("")
-    let [specialName, setSpecialName] = useState("")
-    let [maxSensors, setMaxSensors] = useState(maximumSensorSelection({calType, constant: false}))
+    let [newSensor, setNewSensor] = useState({sensors: [], maxSensor: 0, calType: "select", constant: "", tag: "", name: ""})
 
     const handleChangeCalType = useCallback((type) => {
-        if(type !== calType){
-            setCalType(type)
-            setDerivedSensors([])
-            setConstant(undefined)
-            setConstantState(false)
-            let name = generateSensorTag({derivedSensors, calType: type})
-            setSpecialTag(name)
-            setMaxSensors(maximumSensorSelection({calType: type, constant: false}))
+        if(type !== newSensor.calType){
+            let tag = generateSensorTag({derivedSensors: newSensor.sensors, calType: type})
+            let max = maximumSensorSelection({calType: type, constant: false})
+            setNewSensor({...newSensor, sensors: [], maxSensor: max, calType: type, constant: "", tag: tag, name: ""})
+            console.log("newSensor", newSensor)
         }
-    }, [derivedSensors, calType, setCalType, setSpecialTag, setMaxSensors, setConstantState])
+    }, [newSensor, setNewSensor])
 
     const onAddSensor = useCallback((curSensor) => {
-        // let maxSensors = ({calType, constant: constantState})
-        let index = derivedSensors.findIndex(sensor => sensor.tag === curSensor.tag)
-        if(derivedSensors.length < maxSensors && index === -1){
-            let newSensorList = [ ...derivedSensors, curSensor]
-            setDerivedSensors(newSensorList)
+        let index = newSensor.sensors.findIndex(sensor => sensor.tag === curSensor.tag)
+        if(newSensor.sensors.length < newSensor.maxSensor && index === -1){
+            let sensors = [ ...newSensor.sensors, curSensor]
             setSelected([...selected, curSensor.tag])
-            let name = generateSensorTag({derivedSensors: newSensorList, calType})
-            setSpecialTag(name)
+            let tag = generateSensorTag({derivedSensors: sensors, calType: newSensor.calType})
+            setNewSensor({...newSensor, sensors: sensors, tag: tag})
         }
-    },[derivedSensors, maxSensors, calType, selected, setDerivedSensors, setSpecialTag, setSelected])
+    },[newSensor, selected, setSelected, setNewSensor])
 
     const onAddConstant = useCallback(() => {
-        setConstant(undefined)
         setConstantState(true)
-        setMaxSensors(maximumSensorSelection({calType, constant: true}))
-    },[calType, setConstant, setConstantState, setMaxSensors])
+        let max = maximumSensorSelection({calType: newSensor.calType, constant: true})
+        setNewSensor({...newSensor, maxSensor: max, constant: undefined})
+    },[newSensor, setConstantState, setNewSensor])
 
     const onRemoveConstant = useCallback(() => {
-        setConstant(undefined)
         setConstantState(false)
-        setMaxSensors(maximumSensorSelection({calType, constant: false}))
-    },[calType, setConstant, setConstantState, setMaxSensors])
+        let max = maximumSensorSelection({calType: newSensor.calType, constant: false})
+        setNewSensor({...newSensor, maxSensor: max, constant: ""})
+    },[newSensor, setConstantState, setNewSensor])
 
     const onRemoveSensor = useCallback((curSensor) => {
-        let newSensorList = derivedSensors.filter(sensor=>sensor.tag !== curSensor.tag)
-        setDerivedSensors(newSensorList)
-        let name = generateSensorTag({derivedSensors: newSensorList, calType})
-        setSpecialTag(name)
-    },[calType, derivedSensors, setDerivedSensors, setSpecialTag])
+        let sensors = newSensor.sensors.filter(sensor=>sensor.tag !== curSensor.tag)
+        let tag = generateSensorTag({derivedSensors: sensors, calType: newSensor.calType})
+        setNewSensor({...newSensor, sensors: sensors, tag: tag})
+    },[newSensor, setNewSensor])
 
     const onGenerateSensor = useCallback(() => {
-        // let objNewSensor = {tag: specialTag, name: "", derived: derivedSensors, calType: calType, subType: subType, fromUnit: "", toUnit: "", factor: ""}
-        if(derivedSensors && specialTag && calType){
-            let objNewSensor = {sensor: derivedSensors, tag: specialTag, name: specialName, calType: calType, constant: constant}
+        if(newSensor.sensors && newSensor.tag && newSensor.calType){
+            let objNewSensor = {sensor: newSensor.sensors, tag: newSensor.tag, name: newSensor.name, calType: newSensor.calType, constant: newSensor.constant}
             onAddSpecialSensor(objNewSensor)
-            setDerivedSensors([])
-            setSpecialName("")
-            setSpecialTag("")
-            setCalType("select")
             setConstantState(false)
+            setNewSensor({sensors: [], tag: "", name: "", calType: "select"})
 
             let updateSpecialSensors = specialSensors
-            for(let i=0; i<derivedSensors.length; i++){
-                let objNew = {status: "new", specialTag: specialTag, specialName: specialName, derivedFromTag: derivedSensors[i].tag, derivedFromName: derivedSensors[i].name, calType: calType, subType: "", fromUnit: "", toUnit: "", factor: constant}
+            for(let i=0; i<newSensor.sensors.length; i++){
+                let objNew = {status: "new", specialTag: newSensor.tag, specialName: newSensor.name, derivedFromTag: newSensor.sensors[i].tag, derivedFromName: newSensor.sensors[i].name, calType: newSensor.calType, subType: "", fromUnit: "", toUnit: "", factor: newSensor.constant}
                 updateSpecialSensors.push(objNew)
             }
             onCustomizeSensors(updateSpecialSensors)
         }else{
             onAddSpecialSensor(undefined)
         }
-    },[derivedSensors, calType, constant, specialTag, specialName, specialSensors, onCustomizeSensors, onAddSpecialSensor])
+    },[newSensor, specialSensors, onCustomizeSensors, onAddSpecialSensor, setConstantState, setNewSensor])
 
     const [open, setOpen] = useState(false);
     const fullWidth = true
-    const maxWidth = 'sm'
+    const maxWidth = 'md'
     const handleClickOpen = () => {
         setOpen(true);
     };
@@ -103,6 +89,9 @@ export default function AddSpecialSensor({ sensors, specialSensors, onAddSpecial
     const handleClose = () => {
         setOpen(false);
     };
+
+
+    console.log("new",newSensor)
 
     return(
         <>
@@ -125,12 +114,12 @@ export default function AddSpecialSensor({ sensors, specialSensors, onAddSpecial
                         <Typography className={classes.blueText}>CALCULATION : </Typography>
                     </Grid>
                     <Grid item xs={9} sm={9} md={9} lg={9}>
-                        <SelectorItem id={'calType'} value={calType} items={calculationList} onChange={(value) => handleChangeCalType(value)}></SelectorItem>
+                        <SelectorItem id={'calType'} value={newSensor.calType} items={calculationList} onChange={(value) => handleChangeCalType(value)}></SelectorItem>
                     </Grid>
                 </Grid>
 
                 <Grid item xs={12} sm={12} md={12} lg={12}>
-                    <TableContainer className={classes.tableContainer} >
+                    <TableContainer className={classes.tableContainer} style={{height: '30vh'}}>
                         <Table size="small" stickyHeader aria-label="sticky table">
                             <TableHead>
                             <TableRow>
@@ -167,34 +156,103 @@ export default function AddSpecialSensor({ sensors, specialSensors, onAddSpecial
 
                 <Grid item container xs={12} sm={12} md={12} lg={12} align="left">
                     <Grid item xs={3} sm={3} md={3} lg={3}>
-                        <Typography className={classes.blueText}>SENSOR : </Typography>
+                        <Typography className={classes.blueText}>SELECTED SENSOR : </Typography>
                     </Grid>
-                    <Grid item xs={9} sm={9} md={9} lg={9} style={{backgroundColor: '#454c54', borderRadius: 15, minHeight: '5vh'}}>
-                    {derivedSensors.map((sensor) => {
+                    <Grid item container xs={9} sm={9} md={9} lg={9} style={{backgroundColor: '#454c54', borderRadius: 15, minHeight: '5vh'}}>
+                    {newSensor.sensors.map((sensor,i) => {
                         return(
-                        <Grid key={sensor.tag} item container xs={10} sm={10} md={10} lg={10} spacing={1} style={{paddingLeft: 10}}>
-                            <Grid item xs={12} sm={12} md={12} lg={12}>
+                        <Grid key={sensor.tag} item container xs={12} sm={12} md={12} lg={12} spacing={0} style={{paddingLeft: 10}}>
                                 <Tooltip title={sensor.tag ? sensor.tag : "-"} placement="top">
                                     <Typography className={classes.whiteText}>
                                         {sensor.tag.length > 40 ? `${sensor.tag.substring(0,40)}...` : `${sensor.tag}`}
-                                        {/* <Tooltip title="Remove" placement="right"> */}
                                         <IconButton onClick={()=>onRemoveSensor(sensor)} >
                                             <CancelIcon style={{fontSize:'1rem', color:"#f04461", borderRadius:5}}></CancelIcon>
                                         </IconButton>
-                                        {/* </Tooltip> */}
                                     </Typography>
                                 </Tooltip>
-                            </Grid>
                         </Grid>  
                         )
                     })}
                     </Grid>
                 </Grid>
 
+                <Grid item container xs={12} sm={12} md={12} lg={12} align="left">
+                    <Grid item xs={3} sm={3} md={3} lg={3}>
+                        <Typography className={classes.blueText}>FORMULA : </Typography>
+                    </Grid>
+                    <Grid item  xs={9} sm={9} md={9} lg={9} align="left">
+                    <Grid item container xs={12} sm={12} md={12} lg={12} style={{backgroundColor: '#454c54', borderRadius: 15, minHeight: '5vh'}} spacing={0}>
+                    {newSensor.sensors.map((sensor,i) => {
+                        return(
+                        <Grid item xs={4} sm={4} md={4} lg={3} style={{paddingLeft: 10}}>
+                            <Grid item container xs={12} sm={12} md={12} lg={12} spacing={0} direction="row" flexWrap="nowrap">
+                                {/* show ( symbol */}
+                                {i === 0 && newSensor.sensors.length > 1 && newSensor.calType === "AVG" &&
+                                <Grid item xs={1} sm={1} md={1} lg={1} align="left">
+                                    <Typography className={classes.whiteText}>
+                                    (
+                                    </Typography>
+                                </Grid>
+                                }
+
+                                
+                                {/* show sensor tag */}
+                                <Grid item  xs={6} sm={6} md={6} lg={8} align="left">
+                                    <Typography className={classes.whiteText}>
+                                        {sensor.tag.length > 40 ? `${sensor.tag.substring(0,40)}...` : `${sensor.tag}`}
+                                    </Typography>
+                                </Grid>
+
+                                {/* show calculation symbol */}
+                                {i !== newSensor.sensors.length-1  && newSensor.sensors.length > 1 &&
+                                <Grid item xs={1} sm={1} md={1} lg={1} align="right">
+                                    <Typography className={classes.whiteText}>
+                                        {calculationList.find(cal => cal.value === newSensor.calType).symbol}
+                                    </Typography>
+                                </Grid>
+                                }
+
+                                {/* show ) symbol */}
+                                {i === newSensor.sensors.length-1 && newSensor.sensors.length > 1 && newSensor.calType === "AVG" &&
+                                <Grid item xs={1} sm={1} md={1} lg={1} align="right">
+                                    <Typography className={classes.whiteText}>
+                                    )
+                                    </Typography>
+                                </Grid>
+                                }
+
+                                {/* show constant */}
+                                {i === newSensor.sensors.length-1 && newSensor.constant !== "" && newSensor.calType !== "AVG" &&
+                                <Grid item xs={3} sm={3} md={3} lg={3} align="left">
+                                    <Typography className={classes.whiteText}>
+                                        {calculationList.find(cal => cal.value === newSensor.calType).symbol} {newSensor.constant} 
+                                    </Typography>
+                                </Grid>
+                                }
+
+                                {/* show constant for avg */}
+                                {i === newSensor.sensors.length-1 && newSensor.sensors.length > 1 && newSensor.calType === "AVG" && 
+                                <Grid item xs={3} sm={3} md={3} lg={3} align="left">
+                                    <Typography className={classes.whiteText}>
+                                        / {newSensor.sensors.length}
+                                    </Typography>
+                                </Grid>
+                                }
+
+                            </Grid>  
+                        </Grid>
+                        )
+                    })}
+                    </Grid>
+                    </Grid>
+                </Grid>
+
+                {newSensor.calType !== "AVG" && ((newSensor.calType !== "ABSDIFF" || newSensor.calType !== "MUL") && newSensor.sensors.length !== 2) && 
                 <Grid item container xs={12} sm={12} md={12} lg={12} align="left" >
                     {constantState === false &&
                     <>
                     <Grid item xs={3} sm={3} md={3} lg={3}>
+                        <Typography className={classes.blueText}>CONSTANT : </Typography>
                     </Grid>
                     <Grid item xs={9} sm={9} md={9} lg={9} alignContent="right" alignItems="right" alignSelf="right">
                         <Button className={classes.defaultButton} onClick={()=>onAddConstant()}>
@@ -204,13 +262,16 @@ export default function AddSpecialSensor({ sensors, specialSensors, onAddSpecial
                     </Grid>
                     </>
                     }
-                    {constantState === true &&
+                    {constantState === true && 
                     <>
                     <Grid item xs={3} sm={3} md={3} lg={3}>
                         <Typography className={classes.blueText}>CONSTANT : </Typography>
                     </Grid>
+                    {/* <Grid item xs={3} sm={3} md={3} lg={3}>
+                        <SelectorItem id={'calType'} value={newSensor.calType} items={calculationList} onChange={(value) => handleChangeCalType(value)}></SelectorItem>
+                    </Grid> */}
                     <Grid item xs={6} sm={6} md={6} lg={6}>
-                        <TextFieldItem id={`constant`} type="number" value={constant} onChange={(value) => setConstant(value)} defaultValue={false}></TextFieldItem>
+                        <TextFieldItem id={`constant`} type="number" value={newSensor.constant} onChange={(value) => setNewSensor({...newSensor, constant: value})} defaultValue={false}></TextFieldItem>
                     </Grid>
                     <Grid item xs={3} sm={3} md={3} lg={3}>
                         <IconButton onClick={()=>onRemoveConstant()}>
@@ -220,6 +281,7 @@ export default function AddSpecialSensor({ sensors, specialSensors, onAddSpecial
                     </>
                     }
                 </Grid>
+                }
             
                 <Grid item container xs={12} sm={12} md={12} lg={12} align="left">
                     <Grid item xs={3} sm={3} md={3} lg={3}>
@@ -227,7 +289,7 @@ export default function AddSpecialSensor({ sensors, specialSensors, onAddSpecial
                     </Grid>
                     <Grid item xs={9} sm={9} md={9} lg={9}>
                         {/* <Tooltip title={specialTag ? specialTag : "-"} placement="top"> */}
-                            <TextFieldItem id={`specialTag`} type="text" value={specialTag} onChange={(value) => setSpecialTag(value)} defaultValue={false}></TextFieldItem>
+                            <TextFieldItem id={`specialTag`} type="text" value={newSensor.tag} onChange={(value) => setNewSensor({...newSensor, tag: value})} defaultValue={false}></TextFieldItem>
                         {/* </Tooltip> */}
                     </Grid>
                 </Grid>
@@ -238,7 +300,7 @@ export default function AddSpecialSensor({ sensors, specialSensors, onAddSpecial
                     </Grid>
                     <Grid item xs={9} sm={9} md={9} lg={9}>
                         {/* <Tooltip title={specialTag ? specialTag : "-"} placement="top"> */}
-                            <TextFieldItem id={`specialName`} type="text"  value={specialName} onChange={(value) => setSpecialName(value)}></TextFieldItem>
+                            <TextFieldItem id={`specialName`} type="text"  value={newSensor.name} onChange={(value) => setNewSensor({...newSensor, name: value})}></TextFieldItem>
                         {/* </Tooltip> */}
                     </Grid>
                 </Grid>
