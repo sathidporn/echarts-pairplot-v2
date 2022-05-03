@@ -63,7 +63,7 @@ export default function SensorCustomize({sensors, specialSensor=false, onRemoveS
       setEdit(false)
     };
 
-    const onChange = useCallback((tag, field, value) => {
+    const onChange = (tag, field, value) => {
         let index
         if(specialSensor === false){
             index = sensors.findIndex(sensor => sensor.tag === tag)  
@@ -100,7 +100,7 @@ export default function SensorCustomize({sensors, specialSensor=false, onRemoveS
                 onCustomizeSensors([...sensors.slice(0, index), { ...sensors[index], factor: value }, ...sensors.slice(index + 1)])
             }           
         }
-    },[sensors, specialSensor, onCustomizeSensors])
+    }
 
     const CustomTableCell = ({id, value, onChange}) => {
         return(
