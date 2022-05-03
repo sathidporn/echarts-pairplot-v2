@@ -568,6 +568,7 @@ function App() {
 
   return (
     <div className="App">
+    <DialogMessage message={message} open={open} handleCloseDialog={handleCloseDialog}></DialogMessage>
     <Grid item container xs={12} sm={12} md={12} lg={12} spacing={1}>
       <Grid item container xs={3} sm={3} md={3} lg={3} className={classes.toolbox} direction="row" justifyContent="flex-end">
       {/* <div className={classes.toolbox}> */}
@@ -749,8 +750,6 @@ function App() {
         }
       </Grid>
     </Grid>
-
-    <DialogMessage message={message} open={open} handleCloseDialog={handleCloseDialog}></DialogMessage>
     </div>
   );
 }
