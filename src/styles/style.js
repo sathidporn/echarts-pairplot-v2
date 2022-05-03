@@ -1,8 +1,8 @@
 import { makeStyles } from '@mui/styles';
 
-const FONT_SIZE_HEAD = "1rem"
-const FONT_SIZE_CONTENT = "0.7rem"
-const FONT_SIZE_BUTTON = "0.8rem"
+const FONT_SIZE_HEAD = "1.2rem"
+const FONT_SIZE_CONTENT = "0.9rem"
+const FONT_SIZE_BUTTON = "0.9rem"
 const FONT_SIZE_ICON = "1.5rem"
 
 export const style = makeStyles((theme) => ({
