@@ -37,3 +37,7 @@ code {
 ::-webkit-scrollbar-thumb:hover {
   background: #454c54; 
 }
+
+.font-link {
+  font-family: 'Roboto', sans-serif;
+}

@@ -13,17 +13,25 @@ import SelectorItem from '../SelectorItem';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import { max } from 'date-fns';
 
+import DialogMessage from '../DialogMessage';
+
 const useStyles = style
 
 const calculationList = [{value:"select", name: "Select calculation", symbol: ""}, {value:"ADD", name: "Add", symbol: "+"}, {value:"ABSDIFF", name: "Absolute Diff", symbol: "-"}, {value:"MUL", name: "Multiply", symbol: "*"}, {value:"DIV", name: "Divide", symbol: "/"}, {value:"AVG", name: "Average", symbol: "+"}]     
 
 export default function AddSpecialSensor({ sensors, specialSensors, onAddSpecialSensor=()=>{}, onCustomizeSensors=()=>{},  onRemoveSpecialSensor = () => {}, onReadSpecialSensorListFile = () => {}}){
     const classes = useStyles()
+    let [showMessage, setShowMessage] = useState(false)
+    let [message, setMessage] = useState()
+    const handleCloseDialog = () => {
+        setShowMessage(false)
+    }
     
     let [selected, setSelected] = useState([])
     let [constantState, setConstantState] = useState(false)
     let [newSensor, setNewSensor] = useState({sensors: [], maxSensor: 0, calType: "select", constant: "", tag: "", name: ""})
 
+    // Handle calculation type
     const handleChangeCalType = useCallback((type) => {
         if(type !== newSensor.calType){
             let tag = generateSensorTag({derivedSensors: newSensor.sensors, calType: type})
@@ -33,6 +41,7 @@ export default function AddSpecialSensor({ sensors, specialSensors, onAddSpecial
         }
     }, [newSensor, setNewSensor])
 
+    // Add sensor to calculate
     const onAddSensor = useCallback((curSensor) => {
         let index = newSensor.sensors.findIndex(sensor => sensor.tag === curSensor.tag)
         if(newSensor.sensors.length < newSensor.maxSensor && index === -1){
@@ -40,31 +49,42 @@ export default function AddSpecialSensor({ sensors, specialSensors, onAddSpecial
             setSelected([...selected, curSensor.tag])
             let tag = generateSensorTag({derivedSensors: sensors, calType: newSensor.calType})
             setNewSensor({...newSensor, sensors: sensors, tag: tag})
+        }else{
+            if(newSensor.calType !== "select"){
+                setMessage(`Max sensors is ${newSensor.maxSensor}`)
+                setShowMessage(true)
+            }else{
+                setMessage(`Please select calculation.`)
+                setShowMessage(true)
+            }
         }
-    },[newSensor, selected, setSelected, setNewSensor])
+    },[newSensor, selected, setSelected, setNewSensor, setMessage, setShowMessage])
 
+    // Add constant to calculate
     const onAddConstant = useCallback(() => {
         setConstantState(true)
         let max = maximumSensorSelection({calType: newSensor.calType, constant: true})
         setNewSensor({...newSensor, maxSensor: max, constant: undefined})
     },[newSensor, setConstantState, setNewSensor])
 
+    // Remove constant
     const onRemoveConstant = useCallback(() => {
         setConstantState(false)
         let max = maximumSensorSelection({calType: newSensor.calType, constant: false})
         setNewSensor({...newSensor, maxSensor: max, constant: ""})
     },[newSensor, setConstantState, setNewSensor])
 
+    // Remove sensor to calculate
     const onRemoveSensor = useCallback((curSensor) => {
         let sensors = newSensor.sensors.filter(sensor=>sensor.tag !== curSensor.tag)
         let tag = generateSensorTag({derivedSensors: sensors, calType: newSensor.calType})
         setNewSensor({...newSensor, sensors: sensors, tag: tag})
     },[newSensor, setNewSensor])
 
+    // Generate new special sensor
     const onGenerateSensor = useCallback(() => {
         if(newSensor.sensors && newSensor.tag && newSensor.calType){
             let objNewSensor = {sensor: newSensor.sensors, tag: newSensor.tag, name: newSensor.name, calType: newSensor.calType, constant: newSensor.constant}
-            onAddSpecialSensor(objNewSensor)
             setConstantState(false)
             setNewSensor({sensors: [], tag: "", name: "", calType: "select"})
 
@@ -74,10 +94,15 @@ export default function AddSpecialSensor({ sensors, specialSensors, onAddSpecial
                 updateSpecialSensors.push(objNew)
             }
             onCustomizeSensors(updateSpecialSensors)
+            onAddSpecialSensor(objNewSensor)
+            setShowMessage(true)
+            setMessage("Special sensor has been added successfully.")
         }else{
-            onAddSpecialSensor(undefined)
+            // onAddSpecialSensor(undefined)
+            setShowMessage(true)
+            setMessage("Failed to add special sensor.")
         }
-    },[newSensor, specialSensors, onCustomizeSensors, onAddSpecialSensor, setConstantState, setNewSensor])
+    },[newSensor, specialSensors, onCustomizeSensors, onAddSpecialSensor, setConstantState, setNewSensor, setShowMessage, setMessage])
 
     const [open, setOpen] = useState(false);
     const fullWidth = true
@@ -89,9 +114,6 @@ export default function AddSpecialSensor({ sensors, specialSensors, onAddSpecial
     const handleClose = () => {
         setOpen(false);
     };
-
-
-    console.log("new",newSensor)
 
     return(
         <>
@@ -174,6 +196,11 @@ export default function AddSpecialSensor({ sensors, specialSensors, onAddSpecial
                         )
                     })}
                     </Grid>
+                    <Grid item lg={12} align="right">
+                        <Typography className={classes.whiteText}>
+                        {selected.length}/{newSensor.maxSensor}
+                        </Typography>
+                    </Grid>
                 </Grid>
 
                 <Grid item container xs={12} sm={12} md={12} lg={12} align="left">
@@ -185,7 +212,7 @@ export default function AddSpecialSensor({ sensors, specialSensors, onAddSpecial
                     {newSensor.sensors.map((sensor,i) => {
                         return(
                         <Grid item xs={4} sm={4} md={4} lg={3} style={{paddingLeft: 10}}>
-                            <Grid item container xs={12} sm={12} md={12} lg={12} spacing={0} direction="row" flexWrap="nowrap">
+                            <Grid item container xs={12} sm={12} md={12} lg={12} spacing={0} direction="row" flexWrap="wrap">
                                 {/* show ( symbol */}
                                 {i === 0 && newSensor.sensors.length > 1 && newSensor.calType === "AVG" &&
                                 <Grid item xs={1} sm={1} md={1} lg={1} align="left">
@@ -247,7 +274,8 @@ export default function AddSpecialSensor({ sensors, specialSensors, onAddSpecial
                     </Grid>
                 </Grid>
 
-                {newSensor.calType !== "AVG" && ((newSensor.calType !== "ABSDIFF" || newSensor.calType !== "MUL") && newSensor.sensors.length !== 2) && 
+                {/* {newSensor.calType !== "AVG" && ((newSensor.calType !== "ABSDIFF" || newSensor.calType !== "MUL") && newSensor.sensors.length !== 2) &&  */}
+                {newSensor.calType === "DIV" && newSensor.sensors.length !== 2 && 
                 <Grid item container xs={12} sm={12} md={12} lg={12} align="left" >
                     {constantState === false &&
                     <>
@@ -320,6 +348,7 @@ export default function AddSpecialSensor({ sensors, specialSensors, onAddSpecial
                     <Typography className={classes.contentTextBlack}>Close</Typography>
                 </Button>
             </DialogActions>
+            <DialogMessage  message={message} open={showMessage} handleCloseDialog={handleCloseDialog} ></DialogMessage>
         </Dialog>
         </>
     )

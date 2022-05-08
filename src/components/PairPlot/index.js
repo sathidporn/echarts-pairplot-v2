@@ -252,8 +252,8 @@ export default function PairPlot({series, timestamps, clusters, dataClusterIndex
         xAxisIndex: brushLink,
         yAxisIndex: brushLink,
         toolbox: ['rect', 'polygon', 'keep', 'clear'],    
-        throttleType: 'debounce',   
-        throttleDelay: 100
+        // throttleType: 'debounce',   
+        // throttleDelay: 100
       },
       toolbox: {
         show: true,
@@ -357,11 +357,6 @@ export default function PairPlot({series, timestamps, clusters, dataClusterIndex
     if (batch?.length > 0) {
       let selectedIndex = batch[0].selected.find(({dataIndex}) => dataIndex.length > 0)
       if (selectedIndex !== undefined) {
-        // echarts.setOption(option,
-        //   {
-        //     // notMerge: false,
-        //     replaceMerge: ['xAxis', 'yAxis', 'grid']
-        // })
         onSelected(selectedIndex.dataIndex)
       } else {
         onSelected([])

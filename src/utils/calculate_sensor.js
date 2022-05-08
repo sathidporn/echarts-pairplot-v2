@@ -1,23 +1,23 @@
 
-export function generateSpecialSensor({filteredSensors, specialSensor}){
+export function generateSpecialSensor({data, specialSensor}){
     // start -> ADD / max 10 sensor 
     if(specialSensor.calType === "ADD"){
       if(specialSensor.constant === undefined){
         let avg = []
         for(let i=0; i<specialSensor.sensor.length; i++){
           if(i===0){
-            avg = filteredSensors[specialSensor.sensor[i].tag].map(function (num, idx) {
-              return num + filteredSensors[specialSensor.sensor[i+1].tag][idx]
+            avg = data[specialSensor.sensor[i].tag].map(function (num, idx) {
+              return num + data[specialSensor.sensor[i+1].tag][idx]
             })
           }else if(i>1) {
             avg = avg.map(function (num, idx) {
-              return num + filteredSensors[specialSensor.sensor[i].tag][idx]
+              return num + data[specialSensor.sensor[i].tag][idx]
             })
           }
         }
         return avg
       }else if(specialSensor.constant !== undefined){
-        let avg = filteredSensors[specialSensor.sensor[0].tag].map(function (num, idx) {
+        let avg = data[specialSensor.sensor[0].tag].map(function (num, idx) {
           return num + specialSensor.constant
         })
         return avg
@@ -26,12 +26,12 @@ export function generateSpecialSensor({filteredSensors, specialSensor}){
     // start -> abs ABSDIFF  / max 2 sensor 
     }else if(specialSensor.calType === "ABSDIFF"){
       if(specialSensor.constant === undefined){
-        let ABSDIFF = filteredSensors[specialSensor.sensor[0].tag].map(function (num, idx) {
-          return Math.abs(num - filteredSensors[specialSensor.sensor[1].tag][idx])
+        let ABSDIFF = data[specialSensor.sensor[0].tag].map(function (num, idx) {
+          return Math.abs(num - data[specialSensor.sensor[1].tag][idx])
         })
         return ABSDIFF
       }else if(specialSensor.constant !== undefined){
-        let ABSDIFF = filteredSensors[specialSensor.sensor[0].tag].map(function (num, idx) {
+        let ABSDIFF = data[specialSensor.sensor[0].tag].map(function (num, idx) {
           return Math.abs(num - specialSensor.constant)
         })
         return ABSDIFF
@@ -42,12 +42,12 @@ export function generateSpecialSensor({filteredSensors, specialSensor}){
       let mul = []
       for(let i=0; i<specialSensor.sensor.length; i++){
         if(i===0){
-          mul = filteredSensors[specialSensor.sensor[i].tag].map(function (num, idx) {
-            return num * filteredSensors[specialSensor.sensor[i+1].tag][idx]
+          mul = data[specialSensor.sensor[i].tag].map(function (num, idx) {
+            return num * data[specialSensor.sensor[i+1].tag][idx]
           })
         }else if(i>1) {
           mul = mul.map(function (num, idx) {
-            return num * filteredSensors[specialSensor.sensor[i].tag][idx]
+            return num * data[specialSensor.sensor[i].tag][idx]
           })
         }
       }
@@ -60,12 +60,12 @@ export function generateSpecialSensor({filteredSensors, specialSensor}){
     // start -> DIV / max 2 sensor
     }else if(specialSensor.calType === "DIV"){
       if(specialSensor.constant === undefined){
-        let div = filteredSensors[specialSensor.sensor[0].tag].map(function (num, idx) {
-          return num /filteredSensors[specialSensor.sensor[1].tag][idx]
+        let div = data[specialSensor.sensor[0].tag].map(function (num, idx) {
+          return num /data[specialSensor.sensor[1].tag][idx]
         })
         return div
       }else if(specialSensor.constant !== undefined){
-        let div =  filteredSensors[specialSensor.sensor[0].tag].map(function (num, idx) {
+        let div =  data[specialSensor.sensor[0].tag].map(function (num, idx) {
           return num / specialSensor.constant
         })
         return div
@@ -76,12 +76,12 @@ export function generateSpecialSensor({filteredSensors, specialSensor}){
       let avg = []
       for(let i=0; i<specialSensor.sensor.length; i++){
         if(i===0){
-          avg = filteredSensors[specialSensor.sensor[i].tag].map(function (num, idx) {
-            return num + filteredSensors[specialSensor.sensor[i+1].tag][idx]
+          avg = data[specialSensor.sensor[i].tag].map(function (num, idx) {
+            return num + data[specialSensor.sensor[i+1].tag][idx]
           })
         }else if(i>1) {
           avg = avg.map(function (num, idx) {
-            return num + filteredSensors[specialSensor.sensor[i].tag][idx]
+            return num + data[specialSensor.sensor[i].tag][idx]
           })
         }
       }
@@ -91,8 +91,8 @@ export function generateSpecialSensor({filteredSensors, specialSensor}){
       return avg
     }else if(specialSensor.calType === "WHERE >"){
       let where = []
-      where = filteredSensors[specialSensor.sensor[0].tag].map((num, idx) => {
-        return num > filteredSensors[specialSensor.sensor[1].tag][idx] ? num : filteredSensors[specialSensor.sensor[1].tag][idx]
+      where = data[specialSensor.sensor[0].tag].map((num, idx) => {
+        return num > data[specialSensor.sensor[1].tag][idx] ? num : data[specialSensor.sensor[1].tag][idx]
       })
       return where
     }else{

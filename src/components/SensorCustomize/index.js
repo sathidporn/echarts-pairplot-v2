@@ -48,6 +48,8 @@ export default function SensorCustomize({sensors, specialSensor=false, onRemoveS
     const maxWidth = 'xxs'
     const csvLinkEl = createRef()
 
+    console.log("sensors",sensors, specialSensor)
+
     const [edit, setEdit] = useState(false)
 
     const handleEdit = useCallback(() => {
